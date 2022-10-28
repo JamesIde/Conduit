@@ -1,8 +1,12 @@
 import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { AxiosError } from "axios";
-import { getArticles } from "../config/api";
-import { Articles } from "../types/Article";
+import baseAPI from "../config/api";
+import { Article, GetArticles } from "../types/Article";
 import Error from "../components/Error";
+import { APIError } from "../types/Error";
+import { UserSignInSuccess } from "../types/User";
+import Tags from "../components/tags/Tags";
+import Articles from "../components/articles/Articles";
 function Home() {
   const queryClient = useQueryClient();
   const {
@@ -10,7 +14,9 @@ function Home() {
     isError,
     error = {} as AxiosError,
     data: articles,
-  } = useQuery<Articles, AxiosError>(["articles"], getArticles, {});
+  } = useQuery<GetArticles, AxiosError>(["articles"], baseAPI.getArticles, {
+    refetchOnWindowFocus: false,
+  });
 
   if (isLoading)
     return (
@@ -20,12 +26,22 @@ function Home() {
     );
 
   if (error) {
-    return <Error error={error} />;
+    return <Error error={error as AxiosError<APIError>} />;
   }
   return (
-    <div className="App">
-      <div>
-        {articles?.articles.map((article: any) => {
+    <div className="xl:max-w-5xl md:max-w-4xl w-full mx-auto border-2 pt-1">
+      <div className="flex xl:flex-row md:flex-row flex-col-reverse xl:mt-12 md:mt-10 mt-0">
+        <Articles />
+        <Tags />
+      </div>
+    </div>
+  );
+}
+
+export default Home;
+{
+  /* <div>
+        {articles?.articles.map((article: Article) => {
           return (
             <>
               <p>Title: {article.title}</p>
@@ -33,9 +49,5 @@ function Home() {
             </>
           );
         })}
-      </div>
-    </div>
-  );
+      </div> */
 }
-
-export default Home;

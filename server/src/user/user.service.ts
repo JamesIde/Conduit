@@ -89,6 +89,7 @@ export class UserService {
             id: createdUser.id,
             username: createdUser.username,
             email: createdUser.email,
+            avatar: createdUser.image,
           },
           token: await this.authService.generateAccessToken(createdUser),
         };
@@ -142,6 +143,7 @@ export class UserService {
         id: isValidUser.id,
         username: isValidUser.username,
         email: isValidUser.email,
+        avatar: isValidUser.image,
       },
       token: await this.authService.generateAccessToken(isValidUser),
     };

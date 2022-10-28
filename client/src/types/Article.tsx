@@ -1,4 +1,4 @@
-export interface Articles {
+export interface GetArticles {
   articles: Article[];
   articleCount: number;
   metadata: Metadata;
@@ -43,4 +43,8 @@ export interface Metadata {
   skip: any;
   searchTerm?: any;
   isLogged?: boolean;
+}
+
+export interface PopularTags {
+  tags: string[];
 }
