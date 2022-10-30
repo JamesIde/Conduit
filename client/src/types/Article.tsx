@@ -21,6 +21,7 @@ export interface Article {
   body: string;
   tags?: string[];
   createdAt: Date;
+  isFavourited: boolean;
   favouriteCount: number;
   author: Author;
   comments?: Comment[];
@@ -63,4 +64,9 @@ export interface Filters {
   limit?: number;
   offset?: number;
   feed?: boolean;
+}
+
+export interface FavouriteStatus {
+  slug: string;
+  isFavourited: boolean;
 }

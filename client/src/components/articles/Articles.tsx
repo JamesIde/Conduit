@@ -4,6 +4,7 @@ import Error from "../../components/Error";
 import baseAPI from "../../config/api";
 import { Filters, GetArticles } from "../../types/Article";
 import { APIError } from "../../types/Error";
+import ArticlePreview from "./ArticlePreview";
 
 function Articles({ filters }: { filters: Filters }) {
   const {
@@ -25,7 +26,10 @@ function Articles({ filters }: { filters: Filters }) {
       {isLoading && <p>Loading articles...</p>}
       {isError && <Error error={error as AxiosError<APIError>} />}
       {isSuccess && !articles?.articles.length && <p>No articles found</p>}
-      {isSuccess && articles?.articles.map((article) => <p>{article.title}</p>)}
+      {isSuccess &&
+        articles?.articles.map((article) => {
+          return <ArticlePreview article={article} key={article.slug} />;
+        })}
     </div>
   );
 }

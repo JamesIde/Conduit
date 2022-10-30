@@ -1,7 +1,8 @@
 import Tags from "../components/tags/Tags";
 import Articles from "../components/articles/Articles";
 import { useStore } from "../components/store/userStore";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
+import TagContext from "../components/store/context";
 function Home() {
   const initialFilters = { tag: "", feed: false, offset: null, take: 10 };
   useEffect(() => {
@@ -31,6 +32,7 @@ function Home() {
   };
 
   const currentUser = useStore((state) => state.currentUser);
+
   return (
     <div className="xl:max-w-5xl md:max-w-4xl w-full mx-auto pt-1">
       <div className="xl:mt-12 md:mt-10 border-b-[1px] xl:w-[70%] md:w-[70%] w-full">

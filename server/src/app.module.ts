@@ -36,7 +36,7 @@ import { ThrottlerGuard } from '@nestjs/throttler/dist/throttler.guard';
     CommentsModule,
     ThrottlerModule.forRoot({
       ttl: 60,
-      limit: 10,
+      limit: 50,
     }),
   ],
   controllers: [],

@@ -21,6 +21,7 @@ function App() {
         <Route path="/profile/:username" element={<PrivateRoute />}>
           <Route path="/profile/:username" element={<Profile />} />
         </Route>
+        {/* This is public profikle */}
         {/* /profile/user/:username, then query for user based on username param */}
       </Routes>
     </Layout>

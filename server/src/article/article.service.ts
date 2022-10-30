@@ -93,6 +93,7 @@ export class ArticleService {
       return await this.getUnfilteredArticles(user, take, skip);
     }
 
+    // Assume search term is passed in
     if (user) {
       const slugs = await this.getFavouriteArticleSlugs(user);
       console.log('user is present', user);
