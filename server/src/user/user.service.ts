@@ -13,6 +13,8 @@ import { UserProfile } from './dto/UserProfileDto';
 import { Article } from 'src/article/entities/Article';
 import * as bcrypt from 'bcryptjs';
 import { Follows } from 'src/follows/entities/Follows';
+import { Comment } from 'src/comments/entities/Comments';
+import { UpdateProfileSuccess } from './dto/UpdateProfileSuccessDto';
 /*
   _    _  _____ ______ _____            _    _ _______ _    _ ______ _   _ _______ _____ _____       _______ _____ ____  _   _ 
  | |  | |/ ____|  ____|  __ \      /\  | |  | |__   __| |  | |  ____| \ | |__   __|_   _/ ____|   /\|__   __|_   _/ __ \| \ | |
@@ -89,7 +91,8 @@ export class UserService {
             id: createdUser.id,
             username: createdUser.username,
             email: createdUser.email,
-            avatar: createdUser.image,
+            image: createdUser.image,
+            bio: createdUser.bio,
           },
           token: await this.authService.generateAccessToken(createdUser),
         };
@@ -143,7 +146,8 @@ export class UserService {
         id: isValidUser.id,
         username: isValidUser.username,
         email: isValidUser.email,
-        avatar: isValidUser.image,
+        image: isValidUser.image,
+        bio: isValidUser.bio,
       },
       token: await this.authService.generateAccessToken(isValidUser),
     };
@@ -153,13 +157,23 @@ export class UserService {
    * A public method to update the user profile
    * Fields like name, image and bio may be updated
    */
-  async updateProfile(@Req() req, updateProfile: UpdateProfileDto) {
+  async updateProfile(
+    @Req() req,
+    updateProfile: UpdateProfileDto,
+  ): Promise<UpdateProfileSuccess> {
+    console.log('the user', req.user);
+    console.log('data received', updateProfile);
+
     try {
-      await this.userRepo.update(req.user, updateProfile);
-      return {
-        success: true,
-        message: 'Successfully updated profile',
-      };
+      const user = await this.userRepo.update(req.user, updateProfile);
+      if (user) {
+        const updatedUser = await this.userRepo.findOne({
+          where: {
+            id: req.user,
+          },
+        });
+        return updatedUser as UpdateProfileSuccess;
+      }
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
@@ -202,7 +216,7 @@ export class UserService {
         select: {
           email: false,
         },
-        relations: ['articles'],
+        relations: ['comments', 'articles'],
       });
 
       if (!queryUser) {
@@ -215,6 +229,7 @@ export class UserService {
         image: queryUser.name,
         bio: queryUser.bio,
         articles: queryUser.articles as unknown as Article[],
+        comments: queryUser.comments as unknown as Comment[],
       };
       if (!req.user) {
         return user;

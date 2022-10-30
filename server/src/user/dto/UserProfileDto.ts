@@ -1,4 +1,5 @@
 import { Article } from 'src/article/dto/RetrieveArticleDto';
+import { Comment } from 'src/comments/dto/CommentDto';
 export interface UserProfile {
   id?: number;
   username: string;
@@ -8,4 +9,5 @@ export interface UserProfile {
   isFollowed?: boolean;
   bio: string;
   articles: Article[];
+  comments: Comment[];
 }

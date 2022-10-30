@@ -22,28 +22,34 @@ function Header() {
           </Link>
           {user ? (
             <>
-              <div className="flex flex-row text-gray-400 cursor-pointer hover:text-gray-600 p-2">
-                <p className="mt-[5px] mr-1">
-                  <BsPencilSquare size={14} />
-                </p>
-                <p>New Article</p>
-              </div>
-              <div className="flex flex-row text-gray-400 cursor-pointer hover:text-gray-600 p-2">
-                <p className="mt-1 mr-1">
-                  <IoSettingsOutline />
-                </p>
-                <p>Settings</p>
-              </div>
-              <div className="flex flex-row text-gray-400 cursor-pointer hover:text-gray-600 p-2">
-                <p className="mt-1 mr-1">
-                  <img
-                    src={user.user.avatar}
-                    alt={user.user.username}
-                    className="object-fit h-6 rounded"
-                  />
-                </p>
-                <p className="">{user.user.username}</p>
-              </div>
+              <Link to="/article/new">
+                <div className="flex flex-row text-gray-400 cursor-pointer hover:text-gray-600 p-2">
+                  <p className="mt-[5px] mr-1">
+                    <BsPencilSquare size={14} />
+                  </p>
+                  <p>New Article</p>
+                </div>
+              </Link>
+              <Link to={`/profile/${user.user.username}/settings`}>
+                <div className="flex flex-row text-gray-400 cursor-pointer hover:text-gray-600 p-2">
+                  <p className="mt-1 mr-1">
+                    <IoSettingsOutline />
+                  </p>
+                  <p>Settings</p>
+                </div>
+              </Link>
+              <Link to={`/profile/${user.user.username}`}>
+                <div className="flex flex-row text-gray-400 cursor-pointer hover:text-gray-600 p-2">
+                  <p className="mt-1 mr-1">
+                    <img
+                      src={user.user.image}
+                      alt={user.user.username}
+                      className="object-fit h-6 rounded"
+                    />
+                  </p>
+                  <p className="">{user.user.username}</p>
+                </div>
+              </Link>
             </>
           ) : (
             // New article, settings, username with icon (on left side)

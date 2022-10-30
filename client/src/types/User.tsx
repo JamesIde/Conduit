@@ -7,7 +7,23 @@ export interface User {
   id: number;
   username: string;
   email: string;
-  avatar: string;
+  image: string;
+  bio: string;
+}
+
+export interface UpdateProfile {
+  email: string;
+  image: string;
+  bio: string;
+}
+
+export interface UpdateProfileSuccess {
+  id: number;
+  username: string;
+  email: string;
+  name: string;
+  image: string;
+  bio: string;
 }
 
 export interface UserSignInSuccess {

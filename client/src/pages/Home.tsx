@@ -1,37 +1,66 @@
-import { useQueryClient, useQuery } from "@tanstack/react-query";
-import { AxiosError } from "axios";
-import baseAPI from "../config/api";
-import { Article, GetArticles } from "../types/Article";
-import Error from "../components/Error";
-import { APIError } from "../types/Error";
-import { UserSignInSuccess } from "../types/User";
 import Tags from "../components/tags/Tags";
 import Articles from "../components/articles/Articles";
+import { useStore } from "../components/store/userStore";
+import { useState, useEffect } from "react";
 function Home() {
-  const queryClient = useQueryClient();
-  const {
-    isLoading,
-    isError,
-    error = {} as AxiosError,
-    data: articles,
-  } = useQuery<GetArticles, AxiosError>(["articles"], baseAPI.getArticles, {
-    refetchOnWindowFocus: false,
+  const initialFilters = { tag: "", feed: false, offset: null, take: 10 };
+  useEffect(() => {
+    setIsGlobalFeed(true);
+    setFilters({ ...initialFilters });
+  }, []);
+
+  const [isGlobalFeed, setIsGlobalFeed] = useState(false);
+  const [isUserFeed, setIsUserFeed] = useState(false);
+  const [filters, setFilters] = useState({
+    tag: "",
+    feed: false,
+    offset: null,
+    take: 10,
   });
 
-  if (isLoading)
-    return (
-      <>
-        <h1>loading...</h1>
-      </>
-    );
+  const handleGlobalFeedClick = () => {
+    setIsGlobalFeed(true);
+    setIsUserFeed(false);
+    setFilters({ ...initialFilters });
+  };
 
-  if (error) {
-    return <Error error={error as AxiosError<APIError>} />;
-  }
+  const handleUserFeedClick = () => {
+    setIsUserFeed(true);
+    setIsGlobalFeed(false);
+    setFilters({ ...initialFilters, feed: true });
+  };
+
+  const currentUser = useStore((state) => state.currentUser);
   return (
-    <div className="xl:max-w-5xl md:max-w-4xl w-full mx-auto border-2 pt-1">
-      <div className="flex xl:flex-row md:flex-row flex-col-reverse xl:mt-12 md:mt-10 mt-0">
-        <Articles />
+    <div className="xl:max-w-5xl md:max-w-4xl w-full mx-auto pt-1">
+      <div className="xl:mt-12 md:mt-10 border-b-[1px] xl:w-[70%] md:w-[70%] w-full">
+        <div className="flex flex-row">
+          <button
+            className="p-2 hover:text-gray-500 text-[#aaa]"
+            onClick={handleGlobalFeedClick}
+            style={{
+              borderBottom: isGlobalFeed ? "1px solid green" : "white",
+              color: isGlobalFeed ? "green" : "black",
+            }}
+          >
+            Global Feed
+          </button>
+          {currentUser && (
+            <button
+              className="p-2 text-[#aaa] hover:text-gray-500"
+              onClick={handleUserFeedClick}
+              style={{
+                borderBottom: isUserFeed ? "1px solid green" : "white",
+                color: isUserFeed ? "green" : "black",
+              }}
+            >
+              Your Feed
+            </button>
+          )}
+        </div>
+      </div>
+      <div className="flex xl:flex-row md:flex-row flex-col-reverse mt-0">
+        <Articles filters={filters} />
         <Tags />
       </div>
     </div>
@@ -39,15 +68,3 @@ function Home() {
 }
 
 export default Home;
-{
-  /* <div>
-        {articles?.articles.map((article: Article) => {
-          return (
-            <>
-              <p>Title: {article.title}</p>
-              <p>Hello</p>
-            </>
-          );
-        })}
-      </div> */
-}

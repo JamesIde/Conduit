@@ -1,6 +1,5 @@
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
 import { AccessTokenSuccess, UserSignInSuccess } from "../types/User";
-import { conduitDomain } from "./URLs";
 
 const baseClient = axios.create({
   baseURL: `http://localhost:3000`,
@@ -38,17 +37,11 @@ const onResponseError = async (error: AxiosError) => {
         const { data } = await baseClient.get(`/auth/refresh_token`);
 
         const rs = data as AccessTokenSuccess;
-
-        console.log("new token received", data.accessToken);
-
         const user: UserSignInSuccess = JSON.parse(
           localStorage.getItem("user")
         );
-        console.log("old user token", user.token);
         user.token = rs.accessToken;
-        console.log("new user token", user.token);
         localStorage.setItem("user", JSON.stringify(user));
-        console.log("updated user in local storage");
         //Return the original request with new token
         return baseClient(originalConfig);
       } catch (_error) {

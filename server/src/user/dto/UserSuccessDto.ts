@@ -4,7 +4,8 @@ export interface UserSuccessDto {
     id: number;
     username: string;
     email: string;
-    avatar: string;
+    image: string;
+    bio: string;
   };
   token?: string;
 }

@@ -48,3 +48,19 @@ export interface Metadata {
 export interface PopularTags {
   tags: string[];
 }
+
+export interface NewArticle {
+  title: string;
+  description: string;
+  body: string;
+  tags: string[];
+}
+
+export interface Filters {
+  tag?: string;
+  author?: string;
+  favorited?: string;
+  limit?: number;
+  offset?: number;
+  feed?: boolean;
+}

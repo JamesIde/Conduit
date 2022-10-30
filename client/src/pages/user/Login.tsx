@@ -5,9 +5,9 @@ import { useMutation } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { useNavigate } from "react-router-dom";
 import { APIError } from "../../types/Error";
-import Error from "../Error";
+import Error from "../../components/Error";
 import baseAPI from "../../config/api";
-import { useStore } from "../store/userStore";
+import { useStore } from "../../components/store/userStore";
 function Login() {
   const navigate = useNavigate();
   const [currentUser, setUser] = useStore((state) => [
@@ -33,6 +33,7 @@ function Login() {
     reset,
     formState: { errors },
   } = useForm<SignIn>();
+
   const onSubmit: SubmitHandler<SignIn> = (data, e) => {
     e.target.reset();
     mutate(data);

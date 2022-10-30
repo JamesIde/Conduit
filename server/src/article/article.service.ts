@@ -409,7 +409,7 @@ export class ArticleService {
   /**
    * A publically available method to get the articles of the logged in users followers
    */
-  async getUserFeed(@Req() req): Promise<any> {
+  async getUserFeed(@Req() req): Promise<ArticlesDto> {
     let take = req.query.hasOwnProperty('take') ? req.query.take : 10;
     let skip = req.query.hasOwnProperty('skip') ? req.query.skip : 0;
     let order = req.query.hasOwnProperty('order') ? req.query.order : 'DESC';
@@ -447,8 +447,13 @@ export class ArticleService {
     });
 
     return {
+      metadata: {
+        take: take,
+        skip: skip,
+        isLogged: req.user ? true : false,
+      },
       articleCount: userFeed.length,
-      userFeed: userFeed,
+      articles: userFeed,
     };
   }
 
