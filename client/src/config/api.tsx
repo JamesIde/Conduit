@@ -53,6 +53,11 @@ async function getTags(): Promise<PopularTags> {
   return data;
 }
 
+async function getArticleBySlug(slug: string): Promise<Article> {
+  const { data } = await baseClient.get(`/articles/${slug}`);
+  return data;
+}
+
 /**
  *_    _  _____ ______ _____  
  | |  | |/ ____|  ____|  __ \ 
@@ -76,6 +81,7 @@ async function updateUser(
 
 const baseAPI = {
   getArticles,
+  getArticleBySlug,
   createArticle,
   favouriteArticle,
   getTags,

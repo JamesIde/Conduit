@@ -23,9 +23,15 @@ function Articles({ filters }: { filters: Filters }) {
 
   return (
     <div className="xl:w-[70%] md:w-[70%] w-full">
-      {isLoading && <p>Loading articles...</p>}
+      {isLoading && (
+        <p className="p-1 mt-3 text-gray-500">Loading articles...</p>
+      )}
       {isError && <Error error={error as AxiosError<APIError>} />}
-      {isSuccess && !articles?.articles.length && <p>No articles found</p>}
+      {isSuccess && !articles?.articles.length && (
+        <p className="p-1 mt-3 text-gray-500">
+          No articles found... Start following some users!
+        </p>
+      )}
       {isSuccess &&
         articles?.articles.map((article) => {
           return <ArticlePreview article={article} key={article.slug} />;

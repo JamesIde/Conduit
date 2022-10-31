@@ -6,12 +6,14 @@ import Settings from "./pages/user/Settings";
 import Profile from "./pages/user/Profile";
 import CreateArticle from "./pages/articles/CreateArticle";
 import PrivateRoute from "./components/guards/PrivateRoute";
+import ViewArticle from "./pages/articles/ViewArticle";
 function App() {
   return (
     <Layout>
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/article/:slug" element={<ViewArticle />} />
         {/* Private */}
         <Route path="/profile/:username/settings" element={<PrivateRoute />}>
           <Route path="/profile/:username/settings" element={<Settings />} />

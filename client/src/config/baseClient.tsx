@@ -2,7 +2,7 @@ import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
 import { AccessTokenSuccess, UserSignInSuccess } from "../types/User";
 
 const baseClient = axios.create({
-  baseURL: `http://localhost:3000`,
+  baseURL: `http://localhost:3001`,
   headers: {
     "Content-Type": "application/json",
   },

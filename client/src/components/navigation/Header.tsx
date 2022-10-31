@@ -5,7 +5,7 @@ import { IoSettingsOutline } from "react-icons/io5";
 function Header() {
   const user = useStore((state) => state.currentUser);
   return (
-    <div className="xl:max-w-5xl md:max-w-4xl w-full mx-auto border-2 pt-1">
+    <div className="xl:max-w-5xl md:max-w-4xl w-full mx-auto pt-1">
       <div className="flex flex-row justify-between">
         <div>
           <Link to="/">

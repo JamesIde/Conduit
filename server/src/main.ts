@@ -13,7 +13,7 @@ async function bootstrap() {
   );
   app.enableCors({
     credentials: true,
-    origin: 'http://localhost:3006',
+    origin: 'http://localhost:3000',
   });
   app.use(cookieParser());
   const port = process.env.PORT || 5000;

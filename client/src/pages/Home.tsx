@@ -61,7 +61,7 @@ function Home() {
           )}
         </div>
       </div>
-      <div className="flex xl:flex-row md:flex-row flex-col-reverse mt-0">
+      <div className="flex xl:flex-row md:flex-row flex-col-reverse mt-0 p-2">
         <Articles filters={filters} />
         <Tags />
       </div>

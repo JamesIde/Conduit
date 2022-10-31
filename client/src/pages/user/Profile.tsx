@@ -24,7 +24,7 @@ function Profile() {
               </p>
             </div>
           </div>
-          <div className="flex xl:justify-end md:justify-end justify-center border-2">
+          <div className="flex xl:justify-end md:justify-end justify-center">
             <Link to={`/profile/${currentUser.user.username}/settings`}>
               <div className="flex flex-row text-gray-400 cursor-pointer p-2 text-sm border-[1px] border-gray-400 rounded hover:bg-gray-300 hover:text-white">
                 <p className="mt-1 mr-1">
