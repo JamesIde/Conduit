@@ -19,10 +19,7 @@ function App() {
           <Route path="/profile/:username/settings" element={<Settings />} />
         </Route>
         <Route path="/article/new" element={<CreateArticle />} />
-        {/* Private */}
-        <Route path="/profile/:username" element={<PrivateRoute />}>
-          <Route path="/profile/:username" element={<Profile />} />
-        </Route>
+        <Route path="/profile/:username" element={<Profile />} />
         {/* This is public profikle */}
         {/* /profile/user/:username, then query for user based on username param */}
       </Routes>

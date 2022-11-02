@@ -36,6 +36,15 @@ export class ArticleController {
   }
 
   @UseGuards(JWTGuard)
+  @Get('/author/:username')
+  async getUserArticles(
+    @Req() req: Request,
+    @Param('username') username: string,
+  ) {
+    return await this.articleService.getUserArticles(req, username);
+  }
+
+  @UseGuards(JWTGuard)
   @Get('feed')
   async getUserFeed(@Req() req: Request) {
     return await this.articleService.getUserFeed(req);

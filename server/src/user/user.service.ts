@@ -226,7 +226,7 @@ export class UserService {
       const user: UserProfile = {
         username: queryUser.username,
         name: queryUser.name,
-        image: queryUser.name,
+        image: queryUser.image,
         bio: queryUser.bio,
         articles: queryUser.articles as unknown as Article[],
         comments: queryUser.comments as unknown as Comment[],

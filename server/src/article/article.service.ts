@@ -1,4 +1,10 @@
-import { HttpException, HttpStatus, Injectable, Req } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  Param,
+  Req,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import { CreateArticleDto } from './dto/CreateArticleDto';
@@ -379,35 +385,6 @@ export class ArticleService {
   }
 
   /**
-   * A public method to get a users favourited articles
-   */
-  async getFavourites(@Req() req) {
-    const favourites = await this.favRepo.find({
-      where: {
-        favUser: {
-          id: req.user,
-        },
-      },
-      relations: {
-        favouritedArticle: {
-          author: true,
-        },
-      },
-    });
-
-    if (!favourites) {
-      throw new HttpException(
-        'No articles favourited yet. Get reading!',
-        HttpStatus.NOT_FOUND,
-      );
-    }
-
-    return {
-      favourites: favourites,
-    };
-  }
-
-  /**
    * A publically available method to get the articles of the logged in users followers
    */
   async getUserFeed(@Req() req): Promise<ArticlesDto> {
@@ -455,6 +432,68 @@ export class ArticleService {
       },
       articleCount: userFeed.length,
       articles: userFeed,
+    };
+  }
+
+  /**
+   * A public method to retrieve all articles written by the logged in user
+   */
+  async getUserArticles(
+    @Req() req,
+    @Param('username') username: string,
+  ): Promise<any> {
+    const userArticles = await this.articleRepo.find({
+      where: {
+        author: {
+          username: username,
+        },
+      },
+      relations: ['author'],
+    });
+
+    return {
+      articleCount: userArticles.length,
+      articles: userArticles,
+    };
+  }
+
+  /**
+   * A public method to get a users favourited articles
+   */
+  async getFavourites(@Req() req) {
+    const favourites = await this.favRepo.find({
+      where: {
+        favUser: {
+          id: req.user,
+        },
+      },
+      // TODO map the response to same format as getArticles
+      relations: {
+        favouritedArticle: {
+          author: true,
+        },
+      },
+    });
+
+    if (!favourites) {
+      throw new HttpException(
+        'No articles favourited yet. Get reading!',
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    // Find articles where they are favourited by the user
+    const favArticles = await this.articleRepo.find({
+      where: {
+        id: In(favourites.map((fav) => fav.favouritedArticle.id)),
+      },
+      relations: ['author'],
+      // TODO Fix ordering by latest favourite
+    });
+    console.log(favArticles);
+    return {
+      articleCount: favourites.length,
+      articles: favArticles,
     };
   }
 
@@ -547,9 +586,7 @@ export class ArticleService {
    */
   private async getInternalUnfilteredArticles(take: any, skip: any) {
     return await this.articleRepo.find({
-      relations: {
-        author: true,
-      },
+      relations: ['comments', 'author'],
       order: {
         createdAt: 'DESC',
       },

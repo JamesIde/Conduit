@@ -8,6 +8,7 @@ import {
 import { PopularTags } from "../types/Article";
 import baseClient from "./baseClient";
 import { NewArticle, Article } from "../types/Article";
+import { UserProfile } from "../types/Profile";
 
 /**
            _____ _______ _____ _____ _      ______  _____ 
@@ -19,10 +20,19 @@ import { NewArticle, Article } from "../types/Article";
                                                                                                            
  */
 
-async function getArticles(filters: Filters): Promise<GetArticles> {
+async function getArticles(filters: Filters): Promise<any> {
+  console.log("filters", filters);
   let url = "/articles";
   if (filters.feed) {
     url += `/feed`;
+  }
+  if (filters.author) {
+    url += `/author/${filters.author}`;
+    console.log("article");
+  }
+  if (filters.favourited) {
+    url += "/user/favourites";
+    console.log("favourite");
   }
   const { data } = await baseClient.get(url, {
     params: { ...filters },
@@ -79,6 +89,11 @@ async function updateUser(
   return data;
 }
 
+async function getProfile(username: string): Promise<UserProfile> {
+  const { data } = await baseClient.get(`auth/profile/${username}`);
+  return data;
+}
+
 const baseAPI = {
   getArticles,
   getArticleBySlug,
@@ -87,5 +102,6 @@ const baseAPI = {
   getTags,
   signInUser,
   updateUser,
+  getProfile,
 };
 export default baseAPI;

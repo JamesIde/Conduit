@@ -1,5 +1,7 @@
 import { Article } from "../../types/Article";
 import { Link } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 function AuthorThumbnail({
   article,
   size,
@@ -11,24 +13,32 @@ function AuthorThumbnail({
   fontSize: string;
   fontColor: string;
 }) {
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
+  const redirecToAuthor = (username: string) => {
+    queryClient.invalidateQueries(["profile"]);
+    navigate(`/profile/${username}`);
+  };
+
   return (
     <div className="flex flex-row">
       <div>
-        <Link to={`/profile/user/${article.author.username}`}>
+        <div onClick={() => redirecToAuthor(article.author.username)}>
           <img
             className="rounded mt-2"
             style={{ width: size }}
             src={
-              article.author.image
-                ? article.author.image
+              article?.author?.image
+                ? article?.author?.image
                 : "https://api.realworld.io/images/demo-avatar.png"
             }
-            alt={article.author.username}
+            alt={article?.author?.username}
           />
-        </Link>
+        </div>
       </div>
       <div className="ml-2">
-        <Link to={`/profile/user/${article.author.username}`}>
+        <div onClick={() => redirecToAuthor(article.author.username)}>
           <p
             className="pt-1"
             style={{
@@ -37,7 +47,7 @@ function AuthorThumbnail({
           >
             {article.author.username}
           </p>
-        </Link>
+        </div>
         <p
           className="text-gray-400"
           style={{

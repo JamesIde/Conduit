@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import { Article } from "../../types/Article";
-
-import AuthorThumbnail from "./Author";
+import AuthorThumbnail from "./AuthorThumbnail";
 import FavouriteArticleButton from "./FavouriteArticleButton";
 const parse = require("html-react-parser");
 function ArticlePreview({ article }: { article: Article }) {
@@ -17,11 +16,6 @@ function ArticlePreview({ article }: { article: Article }) {
               fontSize={"13px"}
             />
           </div>
-          {/* {APIError && (
-            <p className="text-sm text-red-500">
-              {error.response.data.message}
-            </p>
-          )} */}
           <FavouriteArticleButton article={article} feed={true} />
         </div>
       </section>

@@ -31,6 +31,11 @@ export interface Comment {
   id: number;
   body: string;
   createdAt: Date;
+  author: CommentAuthor;
+}
+
+export interface CommentAuthor extends Author {
+  createdAt: Date;
 }
 
 export interface ArticlesDto {
@@ -59,10 +64,10 @@ export interface NewArticle {
 
 export interface Filters {
   tag?: string;
-  author?: string;
-  favorited?: string;
-  limit?: number;
-  offset?: number;
+  author?: null | string;
+  favourited?: boolean;
+  limit: number;
+  offset: number;
   feed?: boolean;
 }
 

@@ -3,8 +3,16 @@ import Articles from "../components/articles/Articles";
 import { useStore } from "../components/store/userStore";
 import { useState, useEffect, useContext } from "react";
 import TagContext from "../components/store/context";
+import { Filters } from "../types/Article";
 function Home() {
-  const initialFilters = { tag: "", feed: false, offset: null, take: 10 };
+  const initialFilters: Filters = {
+    tag: "",
+    feed: false,
+    author: "",
+    favourited: false,
+    offset: 0,
+    limit: 10,
+  };
   useEffect(() => {
     setIsGlobalFeed(true);
     setFilters({ ...initialFilters });
@@ -13,16 +21,13 @@ function Home() {
   const [isGlobalFeed, setIsGlobalFeed] = useState(false);
   const [isUserFeed, setIsUserFeed] = useState(false);
   const [filters, setFilters] = useState({
-    tag: "",
-    feed: false,
-    offset: null,
-    take: 10,
+    ...initialFilters,
   });
 
   const handleGlobalFeedClick = () => {
     setIsGlobalFeed(true);
     setIsUserFeed(false);
-    setFilters({ ...initialFilters });
+    setFilters({ ...initialFilters, feed: false });
   };
 
   const handleUserFeedClick = () => {

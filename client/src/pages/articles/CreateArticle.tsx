@@ -48,7 +48,7 @@ function CreateArticle() {
         tags: tags,
       };
       console.log(article);
-      // mutate(article);
+      mutate(article);
     }
   };
 
