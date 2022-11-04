@@ -21,7 +21,7 @@ function Tags() {
   }
 
   return (
-    <div className="xl:w-[30%] md:w-[30%] w-full border-2 p-2 bg-[#f3f3f3] rounded h-max">
+    <div className="xl:w-[30%] md:w-[30%] w-full border-2 p-3 bg-[#f3f3f3] rounded h-max">
       <p>Popular Tags</p>
       {isLoading && <p>Loading tags...</p>}
       <>

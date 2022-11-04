@@ -28,9 +28,7 @@ function Articles({ filters }: { filters: Filters }) {
       )}
       {isError && <p className="text-sm text-red-500">An error occured</p>}
       {isSuccess && !articles?.articles.length && (
-        <p className="p-1 mt-3 text-gray-500">
-          No articles found... Start following some users!
-        </p>
+        <p className="p-1 mt-3 text-gray-500">No articles found...</p>
       )}
       {isSuccess &&
         articles?.articles.map((article) => {

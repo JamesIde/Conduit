@@ -1,6 +1,7 @@
 import { FavouriteStatus, Filters, GetArticles } from "../types/Article";
 import {
-  SignIn,
+  LoginUser,
+  RegisterUser,
   UpdateProfile,
   UpdateProfileSuccess,
   UserSignInSuccess,
@@ -78,8 +79,13 @@ async function getArticleBySlug(slug: string): Promise<Article> {
   \____/|_____/|______|_|  \_\                        
  */
 
-async function signInUser(userData: SignIn): Promise<UserSignInSuccess> {
+async function signInUser(userData: LoginUser): Promise<UserSignInSuccess> {
   const { data } = await baseClient.post("/auth/login", userData);
+  return data;
+}
+
+async function signUpUser(userData: RegisterUser): Promise<UserSignInSuccess> {
+  const { data } = await baseClient.post("/auth/register", userData);
   return data;
 }
 
@@ -102,6 +108,7 @@ const baseAPI = {
   favouriteArticle,
   getTags,
   signInUser,
+  signUpUser,
   updateUser,
   getProfile,
 };

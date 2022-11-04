@@ -19,6 +19,7 @@ function Settings() {
     mutate,
     isLoading,
     isError,
+    isSuccess,
     error = {} as AxiosError,
   } = useMutation(["updateProfile"], baseAPI.updateUser, {
     onSuccess: (data) => {
@@ -26,7 +27,10 @@ function Settings() {
       oldUser.user = data;
       const newUser = oldUser;
       updateUser(newUser);
-      navigate(`/`);
+
+      setTimeout(() => {
+        navigate("/");
+      }, 1500);
     },
   });
   const user = {
@@ -65,6 +69,13 @@ function Settings() {
           <div>
             {isLoading && (
               <p className="text-center text-sm">Updating your profile...</p>
+            )}
+          </div>
+          <div>
+            {isSuccess && (
+              <p className="text-green-500 text-center">
+                Profile settings updated!
+              </p>
             )}
           </div>
           <div className="flex justify-center text-sm">

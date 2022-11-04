@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { SignIn, UserSignInSuccess } from "../../types/User";
+import { LoginUser, UserSignInSuccess } from "../../types/User";
 import { useMutation } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { useNavigate } from "react-router-dom";
@@ -15,14 +15,16 @@ function Login() {
     state.setUser,
   ]);
 
-  const { mutate, isLoading, isError, error } = useMutation(
+  const { mutate, isLoading, isError, isSuccess, error } = useMutation(
     ["signin"],
     baseAPI.signInUser,
     {
       onSuccess: (data: UserSignInSuccess) => {
         setUser(data);
         localStorage.setItem("user", JSON.stringify(data));
-        navigate("/");
+        setTimeout(() => {
+          navigate("/");
+        }, 1500);
       },
     }
   );
@@ -32,16 +34,16 @@ function Login() {
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<SignIn>();
+  } = useForm<LoginUser>();
 
-  const onSubmit: SubmitHandler<SignIn> = (data, e) => {
-    e.target.reset();
+  const onSubmit: SubmitHandler<LoginUser> = (data, e) => {
+    reset();
     mutate(data);
   };
 
   return (
     <>
-      <div className="xl:w-2/5 md:w-2/5 w-full mx-auto border-2">
+      <div className="xl:w-2/5 md:w-3/5 w-full mx-auto">
         <h1 className="text-center font-tilly text-3xl p-2 text-neutral-700 font-medium xl:mt-24 md:mt-14 mt-0">
           Sign in
         </h1>
@@ -49,13 +51,16 @@ function Login() {
         <div className="flex justify-center">
           <Link to="/register">
             <p className="text-center text-green-500 hover:underline duration-500 cursor-pointer w-max">
-              Already have an account?
+              Need an account?
             </p>
           </Link>
         </div>
         <div className="text-center">
           {isLoading && <p>Signing you in...</p>}
           {isError && <Error error={error as AxiosError<APIError>} />}
+          {isSuccess && (
+            <p className="text-green-500">Signed in, hang tight!</p>
+          )}
         </div>
         <div className="mx-auto xl:w-3/4 md:w-full w-full p-2">
           <form onSubmit={handleSubmit(onSubmit)}>

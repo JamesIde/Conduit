@@ -91,7 +91,7 @@ export class UserService {
             id: createdUser.id,
             username: createdUser.username,
             email: createdUser.email,
-            image: createdUser.image,
+            image: 'https://api.realworld.io/images/demo-avatar.png',
             bio: createdUser.bio,
           },
           token: await this.authService.generateAccessToken(createdUser),
@@ -134,7 +134,7 @@ export class UserService {
     if (!isValidPassword) {
       throw new HttpException(
         'Incorrect password, please try again',
-        HttpStatus.UNAUTHORIZED,
+        HttpStatus.BAD_REQUEST,
       );
     }
 
