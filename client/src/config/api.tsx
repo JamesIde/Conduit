@@ -9,6 +9,7 @@ import { PopularTags } from "../types/Article";
 import baseClient from "./baseClient";
 import { NewArticle, Article } from "../types/Article";
 import { UserProfile } from "../types/Profile";
+import { ArticleComment, Comment } from "../types/Comment";
 
 /**
            _____ _______ _____ _____ _      ______  _____ 

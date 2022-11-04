@@ -49,7 +49,6 @@ function FavouriteArticleButton({
   const handleFavourite = (slug: string, isFavourited: boolean) => {
     // TODO register a user
     // TODO Tag context for tag filtering (backend needs fixing too)
-    // TODO Re-do profile page logic, see other todo.
 
     if (!currentUser) {
       navigate("/login");

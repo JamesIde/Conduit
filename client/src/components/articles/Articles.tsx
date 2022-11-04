@@ -7,7 +7,6 @@ import { APIError } from "../../types/Error";
 import ArticlePreview from "./ArticlePreview";
 
 function Articles({ filters }: { filters: Filters }) {
-  console.log("in article, filters", filters);
   const {
     isLoading,
     isSuccess,
@@ -27,7 +26,7 @@ function Articles({ filters }: { filters: Filters }) {
       {isLoading && (
         <p className="p-1 mt-3 text-gray-500">Loading articles...</p>
       )}
-      {isError && <p>An error occured</p>}
+      {isError && <p className="text-sm text-red-500">An error occured</p>}
       {isSuccess && !articles?.articles.length && (
         <p className="p-1 mt-3 text-gray-500">
           No articles found... Start following some users!

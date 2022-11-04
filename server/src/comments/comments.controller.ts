@@ -38,10 +38,12 @@ export class CommentsController {
   }
 
   @Delete(':articleId/:articleSlug/:commentId')
-  remove(@Req() req: Request,
-  @Param('articleId') articleId: number,
-  @Param('commentId') commentId: number,
-  @Param('articleSlug') slug: string) {
-    return this.commentsService.deleteComment(req, articleId, commentId,slug)
+  remove(
+    @Req() req: Request,
+    @Param('articleId') articleId: number,
+    @Param('commentId') commentId: number,
+    @Param('articleSlug') slug: string,
+  ) {
+    return this.commentsService.deleteComment(req, articleId, commentId, slug);
   }
 }

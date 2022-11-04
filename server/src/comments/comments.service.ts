@@ -24,7 +24,7 @@ export class CommentsService {
     const isValidArticle = await this.articleRepo.findOne({
       where: {
         slug: slug,
-        id: id
+        id: id,
       },
     });
 
@@ -37,7 +37,7 @@ export class CommentsService {
 
     try {
       const comment = this.commentRepo.create({
-        body: createCommentDto.body,
+        body: req.body.body,
         createdAt: new Date(),
         updatedAt: new Date(),
         author: req.user,
@@ -52,14 +52,19 @@ export class CommentsService {
     }
   }
 
- /**
+  /**
    * A public method to delet a comment to an article
    */
-  async deleteComment(@Req() req, articleId: number, commentId: number,slug: string) {
+  async deleteComment(
+    @Req() req,
+    articleId: number,
+    commentId: number,
+    slug: string,
+  ) {
     const isValidArticle = await this.articleRepo.findOne({
       where: {
         id: articleId,
-        slug: slug
+        slug: slug,
       },
     });
     if (!isValidArticle) {
@@ -67,23 +72,22 @@ export class CommentsService {
     }
 
     try {
-    const comment =  await this.commentRepo.findOne({
+      const comment = await this.commentRepo.findOne({
         where: {
-        author: req.user,
+          author: req.user,
           id: commentId,
           article: {
             id: articleId,
           },
         },
       });
-      await this.commentRepo.delete(comment.id)
+      await this.commentRepo.delete(comment.id);
       return {
         ok: true,
-        message:"Comment deleted!"
-      }
+        message: 'Comment deleted!',
+      };
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR)
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 }
-

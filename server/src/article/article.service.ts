@@ -490,10 +490,15 @@ export class ArticleService {
       relations: ['author'],
       // TODO Fix ordering by latest favourite
     });
-    console.log(favArticles);
+    const articles = favArticles.map((article) => {
+      return {
+        ...article,
+        isFavourited: true,
+      };
+    });
     return {
       articleCount: favourites.length,
-      articles: favArticles,
+      articles: articles,
     };
   }
 

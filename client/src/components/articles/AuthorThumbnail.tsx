@@ -24,7 +24,10 @@ function AuthorThumbnail({
   return (
     <div className="flex flex-row">
       <div>
-        <div onClick={() => redirecToAuthor(article.author.username)}>
+        <div
+          onClick={() => redirecToAuthor(article.author.username)}
+          className="hover:cursor-pointer"
+        >
           <img
             className="rounded mt-2"
             style={{ width: size }}
@@ -38,7 +41,10 @@ function AuthorThumbnail({
         </div>
       </div>
       <div className="ml-2">
-        <div onClick={() => redirecToAuthor(article.author.username)}>
+        <div
+          onClick={() => redirecToAuthor(article.author.username)}
+          className="hover:cursor-pointer"
+        >
           <p
             className="pt-1"
             style={{
