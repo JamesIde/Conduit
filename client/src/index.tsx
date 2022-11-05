@@ -5,7 +5,6 @@ import App from "./App";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { BrowserRouter } from "react-router-dom";
-import TagContext from "./components/store/context";
 
 const queryClient = new QueryClient();
 const root = ReactDOM.createRoot(
@@ -15,9 +14,7 @@ root.render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
-        <TagContext.Provider value={{ tag: "" }}>
-          <App />
-        </TagContext.Provider>
+        <App />
       </BrowserRouter>
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>

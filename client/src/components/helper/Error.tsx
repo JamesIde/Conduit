@@ -1,5 +1,5 @@
 import { AxiosError } from "axios";
-import { APIError } from "../types/Error";
+import { APIError } from "../../types/Error";
 
 function Error({ error }: { error: AxiosError<APIError> }) {
   console.log("in error handler", error.response.data.message);

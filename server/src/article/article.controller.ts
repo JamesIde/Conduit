@@ -35,7 +35,7 @@ export class ArticleController {
     return await this.articleService.getArticles(req);
   }
 
-  @UseGuards(JWTGuard)
+  // @UseGuards(JWTGuard)
   @Get('/author/:username')
   async getUserArticles(
     @Req() req: Request,

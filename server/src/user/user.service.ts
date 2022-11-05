@@ -35,6 +35,7 @@ export class UserService {
   constructor(
     @InjectRepository(User) private userRepo: Repository<User>,
     @InjectRepository(Follows) private followRepo: Repository<Follows>,
+    @InjectRepository(Article) private articleRepo: Repository<Article>,
     private authService: HelperService,
   ) {}
   /**
@@ -188,7 +189,7 @@ export class UserService {
         where: {
           id: req.user,
         },
-        relations: ['comments', 'articles'],
+        relations: ['comments'],
       });
       return user as unknown as UserProfile;
     } catch (error) {
@@ -219,6 +220,15 @@ export class UserService {
         relations: ['comments', 'articles'],
       });
 
+      const queryArticle = await this.articleRepo.find({
+        where: {
+          author: {
+            username: queryUser.username,
+          },
+        },
+        relations: ['author', 'comments'],
+      });
+
       if (!queryUser) {
         throw new HttpException('User profile not found', HttpStatus.NOT_FOUND);
       }
@@ -228,7 +238,7 @@ export class UserService {
         name: queryUser.name,
         image: queryUser.image,
         bio: queryUser.bio,
-        articles: queryUser.articles as unknown as Article[],
+        articles: queryArticle,
         comments: queryUser.comments as unknown as Comment[],
       };
       if (!req.user) {

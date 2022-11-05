@@ -66,7 +66,11 @@ function ViewArticle() {
                 </div>
                 <div className="mt-3">
                   {isSuccess && (
-                    <FavouriteArticleButton article={article} feed={false} />
+                    <FavouriteArticleButton
+                      article={article}
+                      feed={false}
+                      isProfile={false}
+                    />
                   )}
                 </div>
               </div>

@@ -1,8 +1,7 @@
 import Tags from "../components/tags/Tags";
 import Articles from "../components/articles/Articles";
-import { useStore } from "../components/store/userStore";
+import { useStore, useTagStore } from "../components/store/userStore";
 import { useState, useEffect, useContext } from "react";
-import TagContext from "../components/store/context";
 import { Filters } from "../types/Article";
 function Home() {
   const initialFilters: Filters = {
@@ -12,7 +11,9 @@ function Home() {
     favourited: false,
     offset: 0,
     limit: 10,
+    isProfile: false,
   };
+  const filterTag: string = useTagStore((state) => state.filterTag);
   useEffect(() => {
     setIsGlobalFeed(true);
     setFilters({ ...initialFilters });
@@ -20,6 +21,7 @@ function Home() {
 
   const [isGlobalFeed, setIsGlobalFeed] = useState(false);
   const [isUserFeed, setIsUserFeed] = useState(false);
+  const [isFilterTag, setIsFilterTag] = useState(false);
   const [filters, setFilters] = useState({
     ...initialFilters,
   });
@@ -37,7 +39,6 @@ function Home() {
   };
 
   const currentUser = useStore((state) => state.currentUser);
-
   return (
     <div className="xl:max-w-5xl md:max-w-4xl w-full mx-auto pt-1">
       <div className="xl:mt-12 md:mt-10 border-b-[1px] xl:w-[70%] md:w-[70%] w-full">
@@ -63,6 +64,20 @@ function Home() {
             >
               Your Feed
             </button>
+          )}
+          {filterTag && (
+            <>
+              <button
+                className="p-2 text-[#aaa] hover:text-gray-500"
+                // TODO Fix
+                style={{
+                  borderBottom: "1px solid green",
+                  color: "green",
+                }}
+              >
+                #{filterTag}
+              </button>
+            </>
           )}
         </div>
       </div>

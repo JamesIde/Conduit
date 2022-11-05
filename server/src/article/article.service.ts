@@ -88,14 +88,14 @@ export class ArticleService {
    * A public method to retrieve all articles based on the following criteria
    * @param Take: The max number of records to return
    * @param Skip: The number of records to skip
-   * @param searchTerm: The search term to filter by
+   * @param tag:  The tag to filter articles e.g. [Angular, React]
    * @param user: The user id of a logged in user. May be undefined.
    * Protected by @see LoggedUserGuard
    */
   async getArticles(@Req() req: Request): Promise<ArticlesDto> {
-    let { user, searchTerm, take, skip } = this.getQueryParams(req);
+    let { user, tag, take, skip } = this.getQueryParams(req);
 
-    if (!searchTerm) {
+    if (!tag) {
       return await this.getUnfilteredArticles(user, take, skip);
     }
 
@@ -104,8 +104,8 @@ export class ArticleService {
       const slugs = await this.getFavouriteArticleSlugs(user);
       console.log('user is present', user);
       console.log('slugs returned', slugs);
-      console.warn('the search term is', searchTerm);
-      const articles = await this.getArticleQueryBuilder(searchTerm);
+      console.warn('the search term is', tag);
+      const articles = await this.getArticleQueryBuilder(tag);
       // If user favourite matches articles, add favourite property to article
       const filteredFavouritedArticlesWithUserAndSearchTerm = articles.map(
         (article) => {
@@ -125,7 +125,7 @@ export class ArticleService {
         metadata: {
           take: take,
           skip: skip,
-          searchTerm: searchTerm,
+          tag: tag,
           isLogged: true,
         },
         articleCount: filteredFavouritedArticlesWithUserAndSearchTerm.length,
@@ -142,7 +142,7 @@ export class ArticleService {
       metadata: {
         take: take,
         skip: skip,
-        searchTerm: searchTerm,
+        tag: tag,
         isLogged: false,
       },
       articleCount: articlesNoUserWithSearch.articles.length,
@@ -467,7 +467,6 @@ export class ArticleService {
           id: req.user,
         },
       },
-      // TODO map the response to same format as getArticles
       relations: {
         favouritedArticle: {
           author: true,
@@ -580,9 +579,9 @@ export class ArticleService {
   private getQueryParams(@Req() req) {
     let take = req.query.hasOwnProperty('take') ? req.query.take : 10;
     let skip = req.query.hasOwnProperty('skip') ? req.query.skip : 0;
-    let searchTerm = req.query.searchTerm;
+    let tag = req.query.tag;
     let user: any = req.user;
-    return { user, searchTerm, take, skip };
+    return { user, tag, take, skip };
   }
 
   /**

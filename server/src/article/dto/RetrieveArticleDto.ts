@@ -15,7 +15,7 @@ export interface Author {
 export interface Metadata {
   take: any;
   skip: any;
-  searchTerm?: any;
+  tag?: any;
   isLogged?: boolean;
 }
 export interface Article {

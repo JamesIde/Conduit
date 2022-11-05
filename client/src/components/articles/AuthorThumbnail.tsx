@@ -16,8 +16,8 @@ function AuthorThumbnail({
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
-  const redirecToAuthor = (username: string) => {
-    queryClient.invalidateQueries(["profile"]);
+  const redirectToAuthor = (username: string) => {
+    queryClient.refetchQueries(["profile", username]);
     navigate(`/profile/${username}`);
   };
 
@@ -25,7 +25,7 @@ function AuthorThumbnail({
     <div className="flex flex-row">
       <div>
         <div
-          onClick={() => redirecToAuthor(article.author.username)}
+          onClick={() => redirectToAuthor(article.author.username)}
           className="hover:cursor-pointer"
         >
           <img
@@ -42,7 +42,7 @@ function AuthorThumbnail({
       </div>
       <div className="ml-2">
         <div
-          onClick={() => redirecToAuthor(article.author.username)}
+          onClick={() => redirectToAuthor(article.author.username)}
           className="hover:cursor-pointer"
         >
           <p

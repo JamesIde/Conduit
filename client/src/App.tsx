@@ -8,9 +8,11 @@ import CreateArticle from "./pages/articles/CreateArticle";
 import PrivateRoute from "./components/guards/PrivateRoute";
 import ViewArticle from "./pages/articles/ViewArticle";
 import Register from "./pages/user/Register";
+import ScrollToTop from "./components/helper/ScrollToTop";
 function App() {
   return (
     <Layout>
+      <ScrollToTop />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />

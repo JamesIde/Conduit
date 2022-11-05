@@ -22,4 +22,23 @@ export const useStore = create<State & Action>()((set) => ({
   },
 }));
 
-// setUser: (user: UserSignInSuccess) => set({ user }),
+type tagState = {
+  filterTag: string;
+};
+type TagAction = {
+  updateTag: (tag: string) => void;
+  clearTag(): void;
+};
+
+// Tagstore
+export const useTagStore = create<tagState & TagAction>()((set) => ({
+  filterTag: JSON.parse(localStorage.getItem("tag"))
+    ? JSON.parse(localStorage.getItem("tag")!)
+    : null,
+  updateTag: (tag: string) => {
+    set(() => ({ filterTag: tag }));
+  },
+  clearTag: () => {
+    set(() => ({ filterTag: null }));
+  },
+}));

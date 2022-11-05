@@ -5,7 +5,7 @@ import { NewArticle } from "../../types/Article";
 import { useMutation } from "@tanstack/react-query";
 import { APIError } from "../../types/Error";
 import { AxiosError } from "axios";
-import Error from "../../components/Error";
+import Error from "../../components/helper/Error";
 import baseAPI from "../../config/api";
 import { useNavigate } from "react-router-dom";
 function CreateArticle() {
@@ -58,7 +58,7 @@ function CreateArticle() {
     {
       onSuccess: (data) => {
         clearFields();
-        // TODO navigate to article
+        // TODO navigate to the article
         navigate("/");
         console.log(data);
       },

@@ -8,6 +8,7 @@ import { UserProfile } from "../../types/Profile";
 import { useState, useEffect } from "react";
 import baseAPI from "../../config/api";
 import Articles from "../../components/articles/Articles";
+import ArticlePreview from "../../components/articles/ArticlePreview";
 function Profile() {
   const { username } = useParams<string>();
   const initialFilters = {
@@ -16,6 +17,7 @@ function Profile() {
     favourited: false,
     limit: 10,
     offset: 0,
+    isProfile: true,
   };
   const [isLogged, setIsLogged] = useState(false);
   const [isAuthor, setIsAuthor] = useState(false);
@@ -27,7 +29,7 @@ function Profile() {
   // TODO Re do page logic. Remove blend between logged in user and user from params. Too complicated. Make them seperated.
   const storedUser = useStore((state) => state.currentUser);
   const {
-    data: user,
+    data: profile,
     isLoading,
     isError,
     isSuccess,
@@ -37,13 +39,14 @@ function Profile() {
     () => baseAPI.getProfile(username),
     {
       onSuccess: (data) => {
-        isLoggedUser(data.username);
+        console.log("data", data);
         setIsAuthor(true);
         setFilters({
           ...initialFilters,
           author: username,
         });
       },
+      refetchOnMount: true,
     }
   );
 
@@ -67,33 +70,33 @@ function Profile() {
       <div className="bg-[#f3f3f3] xl:h-[300px] md:h-[290px] h-[250px]">
         <div className="max-w-3xl mx-auto xl:pt-10 md:pt-5">
           {isLoading && <p>Loading...</p>}
-          {user && (
+          {profile && (
             <>
               <div className="flex flex-col">
                 <div className="mx-auto">
                   <img
                     src={
-                      user.image
-                        ? user.image
+                      profile.image
+                        ? profile.image
                         : "https://api.realworld.io/images/demo-avatar.png"
                     }
-                    alt={user.username}
+                    alt={profile.username}
                     className="w-[150px] object-cover rounded-xl"
                   />
                 </div>
                 <div>
                   <h5 className="font-bold text-center mt-2 text-lg">
-                    @{user.username}
+                    @{profile.username}
                   </h5>
                   <p className="text-center italic">
-                    {user.bio ? user.bio : "No bio yet"}
+                    {profile.bio ? profile.bio : "No bio yet"}
                   </p>
                 </div>
               </div>
-              {isLogged && (
+              {storedUser?.user?.username === username && (
                 <>
                   <div className="flex xl:justify-end md:justify-end justify-center mt-1">
-                    <Link to={`/profile/${user.username}/settings`}>
+                    <Link to={`/profile/${profile.username}/settings`}>
                       <div className="flex flex-row text-gray-400 cursor-pointer p-2 text-sm border-[1px] border-gray-400 rounded hover:bg-gray-300 hover:text-white">
                         <p className="mt-1 mr-1">
                           <IoSettingsOutline />
@@ -122,7 +125,7 @@ function Profile() {
               >
                 Your Articles
               </button>
-              {isLoggedUser && (
+              {storedUser?.user?.username === username && (
                 <button
                   className="p-2 text-[#aaa] hover:text-gray-500"
                   onClick={handleFavouritedClick}
@@ -143,13 +146,5 @@ function Profile() {
       </section>
     </>
   );
-
-  function isLoggedUser(username: string) {
-    if (username === storedUser.user.username) {
-      setIsLogged(true);
-    } else {
-      setIsLogged(false);
-    }
-  }
 }
 export default Profile;

@@ -5,7 +5,7 @@ import { useMutation } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { useNavigate } from "react-router-dom";
 import { APIError } from "../../types/Error";
-import Error from "../../components/Error";
+import Error from "../../components/helper/Error";
 import baseAPI from "../../config/api";
 import { useStore } from "../../components/store/userStore";
 function Login() {

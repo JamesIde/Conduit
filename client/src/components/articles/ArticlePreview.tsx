@@ -3,7 +3,13 @@ import { Article } from "../../types/Article";
 import AuthorThumbnail from "./AuthorThumbnail";
 import FavouriteArticleButton from "./FavouriteArticleButton";
 const parse = require("html-react-parser");
-function ArticlePreview({ article }: { article: Article }) {
+function ArticlePreview({
+  article,
+  isProfile,
+}: {
+  article: Article;
+  isProfile: boolean;
+}) {
   return (
     <div className="p-2">
       <section id="article-heading">
@@ -16,7 +22,12 @@ function ArticlePreview({ article }: { article: Article }) {
               fontSize={"13px"}
             />
           </div>
-          <FavouriteArticleButton article={article} feed={true} />
+
+          <FavouriteArticleButton
+            article={article}
+            feed={true}
+            isProfile={isProfile}
+          />
         </div>
       </section>
       <section id="article-information">

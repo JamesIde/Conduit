@@ -6,7 +6,7 @@ import { AxiosError } from "axios";
 import { APIError } from "../../types/Error";
 import { useNavigate } from "react-router-dom";
 import Logout from "../../components/navigation/Logout";
-import Error from "../../components/Error";
+import Error from "../../components/helper/Error";
 import baseAPI from "../../config/api";
 function Settings() {
   const navigate = useNavigate();

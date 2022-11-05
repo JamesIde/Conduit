@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { AxiosError } from "axios";
-import Error from "../../components/Error";
+import Error from "../helper/Error";
 import baseAPI from "../../config/api";
 import { Filters, GetArticles } from "../../types/Article";
 import { APIError } from "../../types/Error";
@@ -32,7 +32,13 @@ function Articles({ filters }: { filters: Filters }) {
       )}
       {isSuccess &&
         articles?.articles.map((article) => {
-          return <ArticlePreview article={article} key={article.slug} />;
+          return (
+            <ArticlePreview
+              article={article}
+              key={article.slug}
+              isProfile={filters.isProfile}
+            />
+          );
         })}
     </div>
   );

@@ -7,7 +7,7 @@ import { useStore } from "../../components/store/userStore";
 import baseAPI from "../../config/api";
 import { APIError } from "../../types/Error";
 import { RegisterUser, UserSignInSuccess } from "../../types/User";
-import Error from "../../components/Error";
+import Error from "../../components/helper/Error";
 function Register() {
   const navigate = useNavigate();
   const [currentUser, setUser] = useStore((state) => [

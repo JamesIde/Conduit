@@ -11,9 +11,11 @@ import { useStore } from "../store/userStore";
 function FavouriteArticleButton({
   article,
   feed,
+  isProfile,
 }: {
   article: Article;
   feed: boolean;
+  isProfile: boolean;
 }) {
   const navigate = useNavigate();
   const currentUser = useStore((state) => state.currentUser);
@@ -35,6 +37,7 @@ function FavouriteArticleButton({
         setIsProcessing(false);
         queryClient.invalidateQueries(["articles"]);
         queryClient.invalidateQueries(["article"]);
+        queryClient.refetchQueries(["articles"]);
       },
       onError: (error: AxiosError<APIError>) => {
         setIsProcessing(false);
@@ -48,7 +51,8 @@ function FavouriteArticleButton({
 
   const handleFavourite = (slug: string, isFavourited: boolean) => {
     // TODO Tag context for tag filtering (backend needs fixing too)
-
+    // TODO Pagination of all articles (make it reusable)
+    // Frontend functionality for following a user
     if (!currentUser) {
       navigate("/login");
     } else {
@@ -69,41 +73,79 @@ function FavouriteArticleButton({
   };
   return (
     <>
-      {isAuthor && (
-        <p className="text-sm text-red-500">Can't favourite own article!</p>
-      )}
-      <button
-        className="h-min border-[1px] border-[#5CB85C] rounded pr-1 hover:cursor-pointer hover:border-green-900 hover:duration-500"
-        style={{
-          color: article.isFavourited ? "white" : "#5CB85C",
-          backgroundColor: article.isFavourited ? "#5CB85C" : "transparent",
-          cursor: isProcessing ? "not-allowed" : "pointer",
-        }}
-        onClick={() => handleFavourite(article.slug, article.isFavourited)}
-      >
-        <div className="flex flex-row">
-          {feed ? (
-            <>
-              <div className="p-1">
-                <AiFillHeart />
-              </div>
-              {article.favouriteCount}
-            </>
-          ) : (
-            <>
-              <div className="p-1 flex flex-row ">
-                <div className="pt-1 pr-1">
-                  <AiFillHeart />
-                </div>
-                <div className="font-medium text-sm">
-                  {article.isFavourited ? "Unfavourite" : "Favourite"} article (
-                  {article.favouriteCount})
-                </div>
-              </div>
-            </>
+      {!isProfile ? (
+        <>
+          {isAuthor && (
+            <p className="text-sm text-red-500">Can't favourite own article!</p>
           )}
-        </div>
-      </button>
+          <button
+            className="h-min border-[1px] border-[#5CB85C] rounded pr-1 hover:cursor-pointer hover:border-green-900 hover:duration-500"
+            style={{
+              color: article.isFavourited ? "white" : "#5CB85C",
+              backgroundColor: article.isFavourited ? "#5CB85C" : "transparent",
+              cursor: isProcessing ? "not-allowed" : "pointer",
+            }}
+            onClick={() => handleFavourite(article.slug, article.isFavourited)}
+          >
+            <div className="flex flex-row">
+              {feed ? (
+                <>
+                  <div className="p-1">
+                    <AiFillHeart />
+                  </div>
+                  {article.favouriteCount}
+                </>
+              ) : (
+                <>
+                  <div className="p-1 flex flex-row ">
+                    <div className="pt-1 pr-1">
+                      <AiFillHeart />
+                    </div>
+                    <div className="font-medium text-sm">
+                      {article.isFavourited ? "Unfavourite" : "Favourite"}{" "}
+                      article ({article.favouriteCount})
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+          </button>
+        </>
+      ) : (
+        <>
+          <button
+            className="h-min border-[1px] border-[#5CB85C] rounded pr-1 hover:cursor-pointer hover:border-green-900 hover:duration-500"
+            style={{
+              color: article.isFavourited ? "white" : "#5CB85C",
+              backgroundColor: article.isFavourited ? "#5CB85C" : "transparent",
+              cursor: "not-allowed",
+            }}
+          >
+            <div className="flex flex-row">
+              {feed ? (
+                <>
+                  <div className="p-1">
+                    <AiFillHeart />
+                  </div>
+                  {article.favouriteCount}
+                </>
+              ) : (
+                <>
+                  <div className="p-1 flex flex-row ">
+                    <div className="pt-1 pr-1">
+                      <AiFillHeart />
+                    </div>
+                    <div className="font-medium text-sm">
+                      {article.isFavourited ? "Unfavourite" : "Favourite"}{" "}
+                      article ({article.favouriteCount})
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+          </button>
+        </>
+      )}
     </>
   );
 }
