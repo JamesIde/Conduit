@@ -9,6 +9,7 @@ import { useState, useEffect } from "react";
 import baseAPI from "../../config/api";
 import Articles from "../../components/articles/Articles";
 import ArticlePreview from "../../components/articles/ArticlePreview";
+import FollowUserButton from "../../components/follows/FollowUserButton";
 function Profile() {
   const { username } = useParams<string>();
   const initialFilters = {
@@ -47,6 +48,7 @@ function Profile() {
         });
       },
       refetchOnMount: true,
+      refetchOnWindowFocus: false,
     }
   );
 
@@ -67,7 +69,7 @@ function Profile() {
 
   return (
     <>
-      <div className="bg-[#f3f3f3] xl:h-[300px] md:h-[290px] h-[250px]">
+      <div className="bg-[#f7f6f6] xl:h-[300px] md:h-[290px] h-[250px]">
         <div className="max-w-3xl mx-auto xl:pt-10 md:pt-5">
           {isLoading && <p>Loading...</p>}
           {profile && (
@@ -93,9 +95,14 @@ function Profile() {
                   </p>
                 </div>
               </div>
-              {storedUser?.user?.username === username && (
-                <>
-                  <div className="flex xl:justify-end md:justify-end justify-center mt-1">
+              <div className="flex justify-center mt-1">
+                {storedUser?.user?.username !== profile.username && (
+                  <div>
+                    <FollowUserButton profile={profile} />
+                  </div>
+                )}
+                {storedUser?.user?.username === username && (
+                  <>
                     <Link to={`/profile/${profile.username}/settings`}>
                       <div className="flex flex-row text-gray-400 cursor-pointer p-2 text-sm border-[1px] border-gray-400 rounded hover:bg-gray-300 hover:text-white">
                         <p className="mt-1 mr-1">
@@ -104,15 +111,15 @@ function Profile() {
                         <p>Edit Profile Settings</p>
                       </div>
                     </Link>
-                  </div>
-                </>
-              )}
+                  </>
+                )}
+              </div>
             </>
           )}
         </div>
       </div>
       <section id="profile-articles">
-        <div className="xl:max-w-5xl md:max-w-4xl w-full mx-auto pt-1">
+        <div className="xl:max-w-5xl md:max-w-4xl w-full mx-auto pt-1 ">
           <div className="xl:mt-12 md:mt-10 border-b-[1px] xl:w-[70%] md:w-[70%] w-full">
             <div className="flex flex-row">
               <button
@@ -139,7 +146,7 @@ function Profile() {
               )}
             </div>
           </div>
-          <div className="flex xl:flex-row md:flex-row flex-col-reverse mt-0 p-2">
+          <div className="mx-auto mt-0 p-2">
             <Articles filters={filters} />
           </div>
         </div>

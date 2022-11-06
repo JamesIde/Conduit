@@ -7,6 +7,7 @@ import { Article } from "../../types/Article";
 import { useNavigate } from "react-router-dom";
 import baseAPI from "../../config/api";
 import { useStore } from "../store/userStore";
+import { toast } from "react-toastify";
 
 function FavouriteArticleButton({
   article,
@@ -22,14 +23,7 @@ function FavouriteArticleButton({
   const queryClient = useQueryClient();
   const [isProcessing, setIsProcessing] = useState(false);
   const [APIError, setAPIError] = useState(false);
-  const [isAuthor, setIsAuthor] = useState(false);
-  const {
-    mutate,
-    isLoading,
-    isSuccess,
-    isError,
-    error = {} as AxiosError<APIError>,
-  } = useMutation(
+  const { mutate, error = {} as AxiosError<APIError> } = useMutation(
     ["favouriteArticle", article.slug],
     baseAPI.favouriteArticle,
     {
@@ -37,7 +31,7 @@ function FavouriteArticleButton({
         setIsProcessing(false);
         queryClient.invalidateQueries(["articles"]);
         queryClient.invalidateQueries(["article"]);
-        queryClient.refetchQueries(["articles"]);
+        // queryClient.refetchQueries(["articles"]);
       },
       onError: (error: AxiosError<APIError>) => {
         setIsProcessing(false);
@@ -49,18 +43,25 @@ function FavouriteArticleButton({
     }
   );
 
+  const notify = () =>
+    toast.error("You can't favourite your own article!", {
+      position: "top-center",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "colored",
+    });
+
   const handleFavourite = (slug: string, isFavourited: boolean) => {
-    // TODO Tag context for tag filtering (backend needs fixing too)
     // TODO Pagination of all articles (make it reusable)
-    // Frontend functionality for following a user
     if (!currentUser) {
       navigate("/login");
     } else {
       if (article.author.username === currentUser.user.username) {
-        setIsAuthor(true);
-        setTimeout(() => {
-          setIsAuthor(false);
-        }, 3000);
+        notify();
       } else {
         setIsProcessing((prevState) => !prevState);
         const metadata = {
@@ -73,11 +74,8 @@ function FavouriteArticleButton({
   };
   return (
     <>
-      {!isProfile ? (
+      {
         <>
-          {isAuthor && (
-            <p className="text-sm text-red-500">Can't favourite own article!</p>
-          )}
           <button
             className="h-min border-[1px] border-[#5CB85C] rounded pr-1 hover:cursor-pointer hover:border-green-900 hover:duration-500"
             style={{
@@ -111,8 +109,14 @@ function FavouriteArticleButton({
             </div>
           </button>
         </>
-      ) : (
-        <>
+      }
+    </>
+  );
+}
+export default FavouriteArticleButton;
+
+/**
+ * <>
           <button
             className="h-min border-[1px] border-[#5CB85C] rounded pr-1 hover:cursor-pointer hover:border-green-900 hover:duration-500"
             style={{
@@ -145,8 +149,4 @@ function FavouriteArticleButton({
             </div>
           </button>
         </>
-      )}
-    </>
-  );
-}
-export default FavouriteArticleButton;
+ */

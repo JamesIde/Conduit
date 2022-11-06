@@ -45,11 +45,11 @@ export class UserController {
     return this.userService.updateProfile(req, updateProfile);
   }
 
-  @UseGuards(JWTGuard)
-  @Get('profile')
-  loggedInUserProfile(@Req() req) {
-    return this.userService.getProfile(req);
-  }
+  // @UseGuards(JWTGuard)
+  // @Get('profile')
+  // loggedInUserProfile(@Req() req) {
+  //   return this.userService.getProfile(req);
+  // }
 
   @UseGuards(LoggedUserGuard)
   @Get('profile/:username')

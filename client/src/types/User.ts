@@ -43,3 +43,8 @@ export interface AccessTokenSuccess {
   ok: boolean;
   accessToken: string;
 }
+
+export interface FollowMetadata {
+  isFollowed: boolean;
+  username: string;
+}

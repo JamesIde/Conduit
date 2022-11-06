@@ -8,7 +8,19 @@ import baseAPI from "../../config/api";
 import { APIError } from "../../types/Error";
 import { RegisterUser, UserSignInSuccess } from "../../types/User";
 import Error from "../../components/helper/Error";
+import { toast } from "react-toastify";
 function Register() {
+  const notify = () =>
+    toast.success("Registered!", {
+      position: "top-center",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "colored",
+    });
   const navigate = useNavigate();
   const [currentUser, setUser] = useStore((state) => [
     state.currentUser,
@@ -22,6 +34,7 @@ function Register() {
       onSuccess: (data: UserSignInSuccess) => {
         setUser(data);
         localStorage.setItem("user", JSON.stringify(data));
+        notify();
         setTimeout(() => {
           navigate("/");
         }, 1500);
@@ -57,7 +70,6 @@ function Register() {
       <div className="text-center">
         {isLoading && <p>Signing you in...</p>}
         {isError && <Error error={error as AxiosError<APIError>} />}
-        {isSuccess && <p className="text-green-500">Registered, hang tight!</p>}
       </div>
       <div className="mx-auto xl:w-3/4 md:w-full w-full p-2">
         <form onSubmit={handleSubmit(onSubmit)}>

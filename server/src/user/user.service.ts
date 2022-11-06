@@ -183,19 +183,19 @@ export class UserService {
   /**
    * A public method to fetch the user based on decoded token
    */
-  async getProfile(@Req() req): Promise<UserProfile> {
-    try {
-      const user = await this.userRepo.findOne({
-        where: {
-          id: req.user,
-        },
-        relations: ['comments'],
-      });
-      return user as unknown as UserProfile;
-    } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
-    }
-  }
+  // async getProfile(@Req() req): Promise<UserProfile> {
+  //   try {
+  //     const user = await this.userRepo.findOne({
+  //       where: {
+  //         id: req.user,
+  //       },
+  //       relations: ['comments'],
+  //     });
+  //     return user as unknown as UserProfile;
+  //   } catch (error) {
+  //     throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+  //   }
+  // }
 
   /**
    * A publicly available method to get a user profile based on slug
@@ -203,6 +203,12 @@ export class UserService {
    * Used by general users to click on user profiles and see their articles
    */
   async getUserProfile(@Req() req, username: string): Promise<UserProfile> {
+    // TODO Changes to make
+    /**
+     * If there is logged in user, check if they follow the user by username.
+     * If they do, attach the isFollowed property to the response.
+     * Else, return the user as per norm.
+     */
     if (!username)
       throw new HttpException(
         'Username must be provided',
@@ -251,10 +257,11 @@ export class UserService {
         },
       });
 
-      if (isFollowed) {
+      if (isFollowed.userBeingFollowed === username) {
         user.isFollowed = true;
         return user;
       } else {
+        user.isFollowed = false;
         return user;
       }
     } catch (error) {

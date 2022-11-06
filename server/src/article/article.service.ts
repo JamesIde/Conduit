@@ -86,8 +86,8 @@ export class ArticleService {
 
   /**
    * A public method to retrieve all articles based on the following criteria
-   * @param Take: The max number of records to return
-   * @param Skip: The number of records to skip
+   * @param take: The max number of records to return
+   * @param skip: The number of records to skip
    * @param tag:  The tag to filter articles e.g. [Angular, React]
    * @param user: The user id of a logged in user. May be undefined.
    * Protected by @see LoggedUserGuard
@@ -99,12 +99,9 @@ export class ArticleService {
       return await this.getUnfilteredArticles(user, take, skip);
     }
 
-    // Assume search term is passed in
+    // Assume tag is passed in
     if (user) {
       const slugs = await this.getFavouriteArticleSlugs(user);
-      console.log('user is present', user);
-      console.log('slugs returned', slugs);
-      console.warn('the search term is', tag);
       const articles = await this.getArticleQueryBuilder(tag);
       // If user favourite matches articles, add favourite property to article
       const filteredFavouritedArticlesWithUserAndSearchTerm = articles.map(
@@ -133,11 +130,7 @@ export class ArticleService {
       };
     }
 
-    const articlesNoUserWithSearch = await this.getUnfilteredArticles(
-      user,
-      take,
-      skip,
-    );
+    const articles = await this.getArticleQueryBuilder(tag);
     return {
       metadata: {
         take: take,
@@ -145,8 +138,8 @@ export class ArticleService {
         tag: tag,
         isLogged: false,
       },
-      articleCount: articlesNoUserWithSearch.articles.length,
-      articles: articlesNoUserWithSearch.articles,
+      articleCount: articles.length,
+      articles: articles,
     };
   }
 
@@ -356,7 +349,9 @@ export class ArticleService {
 
     const unfavouriteArticle = await this.favRepo.findOne({
       where: {
-        favUser: req.user,
+        favUser: {
+          id: req.user,
+        },
         favouritedArticle: {
           id: isValidArticle.id,
         },
@@ -449,6 +444,9 @@ export class ArticleService {
         },
       },
       relations: ['author'],
+      order: {
+        createdAt: 'DESC',
+      },
     });
 
     return {
@@ -675,27 +673,19 @@ export class ArticleService {
    * A private method to get all articles using the query builder for text searching based on searchTerm param
    */
   // TODO Fix why this isn't searching properly
-  private async getArticleQueryBuilder(searchTerm: string) {
-    console.log('search term received: ', searchTerm);
-    const querybuilderArticles = await this.articleRepo
-      .createQueryBuilder()
-      .select()
-      .where('to_tsvector(title) @@ plainto_tsquery (:searchTerm)', {
-        searchTerm: `${searchTerm}:*`,
-      })
-      .where('to_tsvector(description) @@ plainto_tsquery (:searchTerm)', {
-        searchTerm: `${searchTerm}:*`,
-      })
-      // orWhere tsVector tags array
-      .where('array_to_tsvector(tags) @@ plainto_tsquery (:searchTerm)', {
-        searchTerm: `${searchTerm}`,
-      })
-      .orderBy(
-        'ts_rank(to_tsvector(title), plainto_tsquery (:searchTerm))',
-        'DESC',
-      )
+  private async getArticleQueryBuilder(tag: string) {
+    console.log('search term received: ', tag);
+
+    // Search articles where tags matches the tag passed in using queryBuilder
+    const articles = await this.articleRepo
+      .createQueryBuilder('article')
+      // Return author and comments
+      .leftJoinAndSelect('article.author', 'author')
+      .leftJoinAndSelect('article.comments', 'comments')
+      .where('article.tags @> :tag', { tag: `{"${tag}"}` })
+      .orderBy('article.createdAt', 'DESC')
       .getMany();
-    console.log('query builder arts', querybuilderArticles.length);
-    return querybuilderArticles;
+
+    return articles;
   }
 }

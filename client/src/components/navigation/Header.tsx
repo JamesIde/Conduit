@@ -2,8 +2,20 @@ import { Link } from "react-router-dom";
 import { useStore } from "../store/userStore";
 import { BsPencilSquare } from "react-icons/bs";
 import { IoSettingsOutline } from "react-icons/io5";
+import { useNavigate } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
+import baseAPI from "../../config/api";
 function Header() {
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const user = useStore((state) => state.currentUser);
+
+  const handleProfilePrefetch = (username: string) => {
+    queryClient.prefetchQuery(["profile", username], () => {
+      return baseAPI.getProfile(username);
+    });
+    navigate(`/profile/${username}`);
+  };
   return (
     <div className="xl:max-w-5xl md:max-w-4xl w-full mx-auto pt-1">
       <div className="flex flex-row justify-between">
@@ -38,18 +50,20 @@ function Header() {
                   <p>Settings</p>
                 </div>
               </Link>
-              <Link to={`/profile/${user.user.username}`}>
-                <div className="flex flex-row text-gray-400 cursor-pointer hover:text-gray-600 p-2">
-                  <p className="mt-1 mr-1">
-                    <img
-                      src={user.user.image}
-                      alt={user.user.username}
-                      className="object-fit h-6 rounded"
-                    />
-                  </p>
-                  <p className="">{user.user.username}</p>
-                </div>
-              </Link>
+
+              <div
+                className="flex flex-row text-gray-400 cursor-pointer hover:text-gray-600 p-2"
+                onClick={() => handleProfilePrefetch(user.user.username)}
+              >
+                <p className="mt-1 mr-1">
+                  <img
+                    src={user.user.image}
+                    alt={user.user.username}
+                    className="object-fit h-6 rounded"
+                  />
+                </p>
+                <p className="">{user.user.username}</p>
+              </div>
             </>
           ) : (
             // New article, settings, username with icon (on left side)

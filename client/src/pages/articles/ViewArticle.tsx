@@ -5,6 +5,7 @@ import { Link, useParams } from "react-router-dom";
 import AuthorThumbnail from "../../components/articles/AuthorThumbnail";
 import FavouriteArticleButton from "../../components/articles/FavouriteArticleButton";
 import AddComment from "../../components/comments/AddComment";
+import FollowUserButton from "../../components/follows/FollowUserButton";
 import { useStore } from "../../components/store/userStore";
 import baseAPI from "../../config/api";
 import { Article } from "../../types/Article";
@@ -46,33 +47,26 @@ function ViewArticle() {
                 </p>
               </div>
               <div className="flex flex-row xl:w-[650px] md:w-[500px] w-full mt-4">
-                <div className="mt-1 pr-4 ">
-                  {isSuccess && (
-                    <AuthorThumbnail
-                      article={article}
-                      size={55}
-                      fontColor={"white"}
-                      fontSize={"12px"}
-                    />
-                  )}
-                </div>
-                <div className="mt-3 pr-2">
-                  <div className="flex flex-row text-gray-400 cursor-pointer p-1 font-medium text-sm border-[1px] border-gray-400 rounded hover:bg-gray-300 hover:text-white hover:duration-500">
-                    <p className="mr-1 ">
-                      <HiOutlinePlusSm size={20} />
-                    </p>
-                    <p>Follow User</p>
-                  </div>
-                </div>
-                <div className="mt-3">
-                  {isSuccess && (
-                    <FavouriteArticleButton
-                      article={article}
-                      feed={false}
-                      isProfile={false}
-                    />
-                  )}
-                </div>
+                {isSuccess && (
+                  <>
+                    <div className="mt-1 pr-4 ">
+                      <AuthorThumbnail
+                        article={article}
+                        size={55}
+                        fontColor={"white"}
+                        fontSize={"12px"}
+                      />
+                    </div>
+                    {/* <FollowUserButton profile = {article}/> */}
+                    <div className="mt-3">
+                      <FavouriteArticleButton
+                        article={article}
+                        feed={false}
+                        isProfile={false}
+                      />
+                    </div>
+                  </>
+                )}
               </div>
             </div>
           </div>
@@ -119,7 +113,7 @@ function ViewArticle() {
                           />
                         </div>
                         <div className="flex flex-row">
-                          <Link to={`/profile/${comment.author.name}`}>
+                          <Link to={`/profile/${comment.author.username}`}>
                             <p className="text-green-600 text-md p-2 hover:text-green-800 hover:underline hover:underline-offset-1 hover:duration-500 hover:cursor-pointer">
                               {comment.author.name}
                             </p>

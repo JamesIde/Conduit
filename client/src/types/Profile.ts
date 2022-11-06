@@ -17,9 +17,10 @@ export interface Comment {
 
 export interface UserProfile {
   username: string;
-  name: string;
-  image: string;
-  bio: string;
+  name?: any;
+  image?: any;
+  bio?: any;
+  isFollowed: boolean;
   articles: Article[];
   comments: Comment[];
 }

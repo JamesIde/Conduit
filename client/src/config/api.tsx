@@ -1,5 +1,11 @@
-import { FavouriteStatus, Filters, GetArticles } from "../types/Article";
 import {
+  FavouriteStatus,
+  Filters,
+  GetArticles,
+  Metadata,
+} from "../types/Article";
+import {
+  FollowMetadata,
   LoginUser,
   RegisterUser,
   UpdateProfile,
@@ -71,6 +77,36 @@ async function getArticleBySlug(slug: string): Promise<Article> {
 }
 
 /**
+ *______ ____  _      _      ______          __  _    _  _____ ______ _____  
+ |  ____/ __ \| |    | |    / __ \ \        / / | |  | |/ ____|  ____|  __ \ 
+ | |__ | |  | | |    | |   | |  | \ \  /\  / /  | |  | | (___ | |__  | |__) |
+ |  __|| |  | | |    | |   | |  | |\ \/  \/ /   | |  | |\___ \|  __| |  _  / 
+ | |   | |__| | |____| |___| |__| | \  /\  /    | |__| |____) | |____| | \ \ 
+ |_|    \____/|______|______\____/   \/  \/      \____/|_____/|______|_|  \_\
+                                                                                                                                                        
+ */
+
+async function handleFollowUser(metadata: FollowMetadata): Promise<any> {
+  let data: any;
+  console.log("meta in api", metadata);
+  if (!metadata.isFollowed) {
+    ({ data } = await baseClient.post(
+      `/auth/profile/${metadata.username}/follow`
+    ));
+  } else {
+    ({ data } = await baseClient.delete(
+      `/auth/profile/${metadata.username}/follow`
+    ));
+  }
+  return data;
+}
+
+async function unfollowUser(username: string): Promise<any> {
+  const { data } = await baseClient.delete(`/auth/profile/${username}/follow`);
+  return data;
+}
+
+/**
  *_    _  _____ ______ _____  
  | |  | |/ ____|  ____|  __ \ 
  | |  | | (___ | |__  | |__) |
@@ -111,5 +147,7 @@ const baseAPI = {
   signUpUser,
   updateUser,
   getProfile,
+  handleFollowUser,
+  unfollowUser,
 };
 export default baseAPI;

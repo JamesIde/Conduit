@@ -8,7 +8,19 @@ import { APIError } from "../../types/Error";
 import Error from "../../components/helper/Error";
 import baseAPI from "../../config/api";
 import { useStore } from "../../components/store/userStore";
+import { toast } from "react-toastify";
 function Login() {
+  const notify = () =>
+    toast.success("Logged in!", {
+      position: "top-center",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "colored",
+    });
   const navigate = useNavigate();
   const [currentUser, setUser] = useStore((state) => [
     state.currentUser,
@@ -21,6 +33,7 @@ function Login() {
     {
       onSuccess: (data: UserSignInSuccess) => {
         setUser(data);
+        notify();
         localStorage.setItem("user", JSON.stringify(data));
         setTimeout(() => {
           navigate("/");
@@ -58,9 +71,9 @@ function Login() {
         <div className="text-center">
           {isLoading && <p>Signing you in...</p>}
           {isError && <Error error={error as AxiosError<APIError>} />}
-          {isSuccess && (
+          {/* {isSuccess && (
             <p className="text-green-500">Signed in, hang tight!</p>
-          )}
+          )} */}
         </div>
         <div className="mx-auto xl:w-3/4 md:w-full w-full p-2">
           <form onSubmit={handleSubmit(onSubmit)}>

@@ -2,13 +2,14 @@ import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { useRef, useState } from "react";
 import { NewArticle } from "../../types/Article";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { APIError } from "../../types/Error";
 import { AxiosError } from "axios";
 import Error from "../../components/helper/Error";
 import baseAPI from "../../config/api";
-import { useNavigate } from "react-router-dom";
+import { redirect, useNavigate } from "react-router-dom";
 function CreateArticle() {
+  const queryClient = useQueryClient();
   const ref = useRef(null);
   const navigate = useNavigate();
   const [tags, setTags] = useState([]);
@@ -58,8 +59,8 @@ function CreateArticle() {
     {
       onSuccess: (data) => {
         clearFields();
-        // TODO navigate to the article
-        navigate("/");
+        // queryClient.prefetchQuery(["article", data.slug]);
+        navigate(`/article/${data.slug}`);
         console.log(data);
       },
     }

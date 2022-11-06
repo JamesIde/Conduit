@@ -13,13 +13,19 @@ function Home() {
     limit: 10,
     isProfile: false,
   };
-  const filterTag: string = useTagStore((state) => state.filterTag);
-  useEffect(() => {
-    setIsGlobalFeed(true);
-    setFilters({ ...initialFilters });
-  }, []);
+  const [filterTag, clearTag] = useTagStore((state) => [
+    state.filterTag,
+    state.clearTag,
+  ]);
 
-  const [isGlobalFeed, setIsGlobalFeed] = useState(false);
+  useEffect(() => {
+    setFilters({ ...initialFilters });
+    if (filterTag) {
+      handleFilterTag(filterTag);
+    }
+  }, [filterTag]);
+
+  const [isGlobalFeed, setIsGlobalFeed] = useState(true);
   const [isUserFeed, setIsUserFeed] = useState(false);
   const [isFilterTag, setIsFilterTag] = useState(false);
   const [filters, setFilters] = useState({
@@ -29,13 +35,24 @@ function Home() {
   const handleGlobalFeedClick = () => {
     setIsGlobalFeed(true);
     setIsUserFeed(false);
+    setIsFilterTag(false);
     setFilters({ ...initialFilters, feed: false });
+    clearTag();
   };
 
   const handleUserFeedClick = () => {
     setIsUserFeed(true);
     setIsGlobalFeed(false);
+    setIsFilterTag(false);
     setFilters({ ...initialFilters, feed: true });
+    clearTag();
+  };
+
+  const handleFilterTag = (filterTag: string) => {
+    setIsFilterTag(true);
+    setFilters({ ...initialFilters, tag: filterTag });
+    setIsUserFeed(false);
+    setIsGlobalFeed(false);
   };
 
   const currentUser = useStore((state) => state.currentUser);
