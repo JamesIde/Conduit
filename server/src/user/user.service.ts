@@ -253,17 +253,15 @@ export class UserService {
 
       const isFollowed = await this.followRepo.findOne({
         where: {
-          followerUser: req.user,
+          userBeingFollowed: username,
+          userFollowingThePerson: req.user,
         },
       });
 
-      if (isFollowed.userBeingFollowed === username) {
-        user.isFollowed = true;
-        return user;
-      } else {
-        user.isFollowed = false;
-        return user;
+      if (isFollowed) {
+        return { ...user, isFollowed: true };
       }
+      return { ...user, isFollowed: false };
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }

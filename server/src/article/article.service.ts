@@ -419,6 +419,30 @@ export class ArticleService {
       skip: skip as number,
     });
 
+    const userFavourites = await this.getFavouriteArticleSlugs(req.user);
+
+    const userFeedWithFavouritedArticles = userFeed.map((article) => {
+      if (userFavourites.includes(article.slug)) {
+        return {
+          ...article,
+          isFavourited: true,
+        };
+      }
+      return {
+        ...article,
+        isFavourited: false,
+      };
+    });
+    return {
+      metadata: {
+        take: take,
+        skip: skip,
+        isLogged: true,
+      },
+      articleCount: userFeedWithFavouritedArticles.length,
+      articles: userFeedWithFavouritedArticles,
+    };
+
     return {
       metadata: {
         take: take,

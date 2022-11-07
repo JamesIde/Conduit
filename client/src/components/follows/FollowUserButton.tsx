@@ -39,11 +39,11 @@ function FollowUserButton({ profile }: { profile: UserProfile }) {
     {
       onSuccess: (data) => {
         setIsProcessing(false);
-        queryClient.invalidateQueries(["profile"]);
+        queryClient.refetchQueries(["profile"]);
       },
-      onError: (err) => {
+      onError: (err: AxiosError<APIError>) => {
         setIsProcessing(false);
-        notify(err as string);
+        notify(err.response.data?.message);
       },
     }
   );
