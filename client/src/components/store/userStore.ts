@@ -30,7 +30,6 @@ type TagAction = {
   clearTag(): void;
 };
 
-// Tagstore
 export const useTagStore = create<tagState & TagAction>()((set) => ({
   filterTag: JSON.parse(localStorage.getItem("tag"))
     ? JSON.parse(localStorage.getItem("tag")!)

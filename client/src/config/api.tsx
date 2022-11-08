@@ -132,6 +132,11 @@ async function getProfile(username: string): Promise<UserProfile> {
   return data;
 }
 
+async function logoutUser(): Promise<any> {
+  const { data } = await baseClient.get("auth/revoke_token");
+  return data;
+}
+
 const baseAPI = {
   getArticles,
   getArticleBySlug,
@@ -144,5 +149,6 @@ const baseAPI = {
   getProfile,
   handleFollowUser,
   unfollowUser,
+  logoutUser,
 };
 export default baseAPI;

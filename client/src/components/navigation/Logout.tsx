@@ -1,16 +1,26 @@
 import { useNavigate } from "react-router-dom";
+import baseAPI from "../../config/api";
 import { useStore } from "../store/userStore";
 
+import { toast } from "react-toastify";
 function Logout() {
   const navigate = useNavigate();
   const [currentUser, removeUser] = useStore((state) => [
     state.currentUser,
     state.removeUser,
   ]);
-  const handleClick = (e) => {
-    removeUser();
-    localStorage.removeItem("user");
-    navigate("/");
+  const handleClick = async (e) => {
+    await baseAPI
+      .logoutUser()
+      .then((res) => {
+        removeUser();
+        localStorage.removeItem("user");
+        toast.success("Logged out successfully");
+        navigate("/");
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
   return (
     <>
