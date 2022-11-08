@@ -29,23 +29,19 @@ import { ArticleComment, Comment } from "../types/Comment";
  */
 
 async function getArticles(filters: Filters): Promise<any> {
-  console.log("filters", filters);
   let url = "/articles";
   if (filters.feed) {
     url += `/feed`;
   }
   if (filters.author) {
     url += `/author/${filters.author}`;
-    console.log("article");
   }
   if (filters.favourited) {
     url += "/user/favourites";
-    console.log("favourite");
   }
   const { data } = await baseClient.get(url, {
     params: { ...filters },
   });
-  console.log("articles", { data });
   return data;
 }
 
@@ -88,7 +84,6 @@ async function getArticleBySlug(slug: string): Promise<Article> {
 
 async function handleFollowUser(metadata: FollowMetadata): Promise<any> {
   let data: any;
-  console.log("meta in api", metadata);
   if (!metadata.isFollowed) {
     ({ data } = await baseClient.post(
       `/auth/profile/${metadata.username}/follow`

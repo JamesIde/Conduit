@@ -41,7 +41,6 @@ function Profile() {
     () => baseAPI.getProfile(username),
     {
       onSuccess: (data) => {
-        console.log("data", data);
         setIsAuthor(true);
         setFilters({
           ...initialFilters,
@@ -52,13 +51,6 @@ function Profile() {
       refetchOnWindowFocus: false,
     }
   );
-
-  useEffect(() => {
-    // Invalidate the query
-    console.log("invalidating");
-    queryClient.invalidateQueries(["profile"]);
-    queryClient.invalidateQueries(["articles"]);
-  }, [profile]);
 
   const handleAuthorClick = () => {
     setIsAuthor(true);

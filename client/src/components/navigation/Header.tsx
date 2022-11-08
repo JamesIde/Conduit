@@ -34,7 +34,7 @@ function Header() {
           </Link>
           {user ? (
             <>
-              {/* <Link to="/article/new">
+              <Link to="/article/new">
                 <div className="flex flex-row text-gray-400 cursor-pointer hover:text-gray-600 p-2">
                   <p className="mt-[5px] mr-1">
                     <BsPencilSquare size={14} />
@@ -49,7 +49,7 @@ function Header() {
                   </p>
                   <p>Settings</p>
                 </div>
-              </Link> */}
+              </Link>
               <div
                 className="flex flex-row text-gray-400 cursor-pointer hover:text-gray-600 p-2"
                 onClick={() => handleProfilePrefetch(user.user.username)}

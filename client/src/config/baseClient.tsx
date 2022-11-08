@@ -32,7 +32,6 @@ const onResponseError = async (error: AxiosError) => {
   if (error.response) {
     if (error.response.status == 401) {
       try {
-        console.log("unauthorized... refreshing");
         axios.defaults.withCredentials = true;
         const { data } = await baseClient.get(`/auth/refresh_token`);
 
