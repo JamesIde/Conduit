@@ -3,12 +3,14 @@ import Home from "./pages/Home";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Login from "./pages/user/Login";
 import Settings from "./pages/user/Settings";
-import Profile from "./pages/user/Profile";
+import PublicProfile from "./pages/user/PublicProfile";
+import PrivateProfile from "./pages/user/PrivateProfile";
 import CreateArticle from "./pages/articles/CreateArticle";
 import PrivateRoute from "./components/guards/PrivateRoute";
 import ViewArticle from "./pages/articles/ViewArticle";
 import Register from "./pages/user/Register";
 import ScrollToTop from "./components/helper/ScrollToTop";
+import IsLoggedUser from "./components/guards/IsLoggedUser";
 function App() {
   return (
     <Layout>
@@ -23,8 +25,10 @@ function App() {
           <Route path="/profile/:username/settings" element={<Settings />} />
         </Route>
         <Route path="/article/new" element={<CreateArticle />} />
-        <Route path="/profile/:username" element={<Profile />} />
-        {/* This is public profikle */}
+        <Route path="/profile/:username" element={<IsLoggedUser />}>
+          <Route path="/profile/:username" element={<PublicProfile />} />
+        </Route>
+        <Route path="/profile/user/:username" element={<PrivateProfile />} />
         {/* /profile/user/:username, then query for user based on username param */}
       </Routes>
     </Layout>

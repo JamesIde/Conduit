@@ -86,7 +86,6 @@ function Home() {
             <>
               <button
                 className="p-2 text-[#aaa] hover:text-gray-500"
-                // TODO Fix
                 style={{
                   borderBottom: "1px solid green",
                   color: "green",

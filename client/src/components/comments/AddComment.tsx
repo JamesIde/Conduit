@@ -42,9 +42,9 @@ function AddComment({ articleId, slug, currentUser }: AddCommentProps) {
   };
 
   return (
-    <section id="article-add-comment">
+    <section id="article-add-comment" className="p-2">
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="max-w-2xl border-[1px] border-t-[#E5E5E5]  border-l-[#E5E5E5] border-r-[#E5E5E5] rounded-t mx-auto mt-2">
+        <div className="max-w-2xl border-[1px] border-t-[#E5E5E5]  border-l-[#E5E5E5] border-r-[#E5E5E5] rounded-t mx-auto mt-2 ">
           <textarea
             {...register("body", { required: true })}
             rows={3}

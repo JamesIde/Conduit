@@ -23,9 +23,6 @@ function Articles({ filters }: { filters: Filters }) {
 
   return (
     <div className="xl:w-[70%] md:w-[70%] w-full">
-      {isLoading && (
-        <p className="p-1 mt-3 text-gray-500">Loading articles...</p>
-      )}
       {isError && <p className="text-sm text-red-500">An error occured</p>}
       {isSuccess && !articles?.articles.length && (
         <p className="p-1 mt-3 text-gray-500">No articles found...</p>

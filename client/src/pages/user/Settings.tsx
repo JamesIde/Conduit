@@ -59,7 +59,7 @@ function Settings() {
   // Use mutation to update user, destructure mutate, call it on handleUpdate
 
   return (
-    <div>
+    <div className="p-4">
       {/* <p>This is settings page for {user.user.username}</p> */}
       <div className="max-w-xl mx-auto">
         <h1 className="text-center text-4xl xl:mt-8 md:mt-6 mt-4 mb-4">

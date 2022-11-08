@@ -43,19 +43,14 @@ function AuthorThumbnail({
       <div className="ml-2">
         <div
           onClick={() => redirectToAuthor(article.author.username)}
-          className="hover:cursor-pointer"
+          className="hover:cursor-pointer hover:text-[#5CB85C]"
         >
-          <p
-            className="pt-1"
-            style={{
-              color: fontColor,
-            }}
-          >
+          <p className="pt-1 font-medium hover:text-[#5CB85C] hover:duration-500">
             {article.author.username}
           </p>
         </div>
         <p
-          className="text-gray-400"
+          className="text-black"
           style={{
             fontSize: fontSize,
           }}

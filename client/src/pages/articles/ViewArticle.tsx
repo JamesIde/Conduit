@@ -30,34 +30,29 @@ function ViewArticle() {
   return (
     <div>
       <section id="article-banner">
-        <div className="bg-[#333] xl:h-[290px] md:h-[250px] h-[220px]">
+        <div className="bg-[#f7f6f6] xl:h-[290px] md:h-[250px] h-[280px] border-b-[1px] border-b-[#b6b6b6]">
           <div className="mx-auto text-center flex justify-center items-center">
             <div className="xl:h-[200px] md:h-[150px] h-[150px] flex-col">
-              <div className="text-center xl:mt-28 md:mt-16 mt-10">
-                <div>
-                  {isLoading && (
-                    <p className="text-white text-center">Loading...</p>
-                  )}
-                </div>
-                <h3 className="font-bold text-4xl text-white">
+              <div className="text-center xl:mt-[85px] md:mt-5 mt-5">
+                <h3 className="font-bold xl:text-4xl md:text-3xl text-2xl text-black">
                   {article?.title}
                 </h3>
-                <p className="text-md font-bold text-white xl:mt-5 md:mt-2 mt-2">
+                <hr className="p-2 mt-2 xl:hidden md:hidden" />
+                <p className="p-2 xl:text-xl md:text-md text-sm text-black xl:mt-5 md:mt-2">
                   {article?.description}
                 </p>
               </div>
-              <div className="flex flex-row xl:w-[650px] md:w-[500px] w-full mt-4">
+              <div className="flex xl:flex-row flex-col w-max mt-2 mx-auto">
                 {isSuccess && (
                   <>
                     <div className="mt-1 pr-4 ">
                       <AuthorThumbnail
                         article={article}
                         size={55}
-                        fontColor={"white"}
+                        fontColor={"#5CB85C"}
                         fontSize={"12px"}
                       />
                     </div>
-                    {/* <FollowUserButton profile = {article}/> */}
                     <div className="mt-3">
                       <FavouriteArticleButton
                         article={article}
@@ -75,7 +70,7 @@ function ViewArticle() {
       <section id="article-information">
         {isSuccess && (
           <>
-            <div className="max-w-2xl border-2 mx-auto">
+            <div className="max-w-2xl mx-auto">
               <div className="text-center font-bold text-2xl mt-4">
                 {article.title}
               </div>
@@ -91,7 +86,7 @@ function ViewArticle() {
       </section>
 
       <section id="article-display-comments">
-        <div className="mt-6 mb-5">
+        <div className="mt-6 mb-5 p-2">
           {isSuccess &&
             article.comments.map((comment) => {
               return (

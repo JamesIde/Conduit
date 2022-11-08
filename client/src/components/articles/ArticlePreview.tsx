@@ -44,10 +44,12 @@ function ArticlePreview({
         </div>
       </section>
       <section id="article-metadata">
-        <div className="flex flex-row justify-between mt-4">
+        <div className="flex xl:flex-row md:flex-row flex-col justify-between mt-4">
           <div>
             <Link to={`/article/${article.slug}`}>
-              <p className="text-gray-500 text-sm">Read more...</p>
+              <p className="text-gray-500 text-sm xl:text-right md:text-right text-center pb-1 hover:text-[#5CB85C] hover:duration-500">
+                Read more...
+              </p>
             </Link>
           </div>
           <div>

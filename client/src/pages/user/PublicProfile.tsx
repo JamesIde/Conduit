@@ -1,7 +1,7 @@
 import { IoSettingsOutline } from "react-icons/io5";
 import { useStore } from "../../components/store/userStore";
 import { Link } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { QueryClient, useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 import { AxiosError } from "axios";
 import { UserProfile } from "../../types/Profile";
@@ -12,6 +12,7 @@ import ArticlePreview from "../../components/articles/ArticlePreview";
 import FollowUserButton from "../../components/follows/FollowUserButton";
 function Profile() {
   const { username } = useParams<string>();
+  const queryClient = new QueryClient();
   const initialFilters = {
     feed: false,
     author: null,
@@ -27,7 +28,6 @@ function Profile() {
     ...initialFilters,
   });
 
-  // TODO Re do page logic. Remove blend between logged in user and user from params. Too complicated. Make them seperated.
   const storedUser = useStore((state) => state.currentUser);
   const {
     data: profile,
@@ -52,6 +52,13 @@ function Profile() {
     }
   );
 
+  useEffect(() => {
+    // Invalidate the query
+    console.log("invalidating");
+    queryClient.invalidateQueries(["profile"]);
+    queryClient.invalidateQueries(["articles"]);
+  }, [profile]);
+
   const handleAuthorClick = () => {
     setIsAuthor(true);
     setIsFavourited(false);
@@ -69,9 +76,8 @@ function Profile() {
 
   return (
     <>
-      <div className="bg-[#f7f6f6] xl:h-[300px] md:h-[290px] h-[250px]">
-        <div className="max-w-3xl mx-auto xl:pt-10 md:pt-5">
-          {isLoading && <p>Loading...</p>}
+      <div className="bg-[#f7f6f6] xl:h-[300px] md:h-[290px] h-[280px]">
+        <div className="max-w-3xl mx-auto xl:pt-10 md:pt-5 pt-4">
           {profile && (
             <>
               <div className="flex flex-col">
@@ -83,7 +89,7 @@ function Profile() {
                         : "https://api.realworld.io/images/demo-avatar.png"
                     }
                     alt={profile.username}
-                    className="w-[150px] object-cover rounded-xl"
+                    className="w-[125px] object-cover rounded-full"
                   />
                 </div>
                 <div>
@@ -95,7 +101,7 @@ function Profile() {
                   </p>
                 </div>
               </div>
-              <div className="flex justify-center mt-1">
+              <div className="flex xl:justify-end md:justify-end justify-center mt-2">
                 {storedUser?.user?.username !== profile.username && (
                   <div>
                     <FollowUserButton profile={profile} />

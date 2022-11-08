@@ -35,9 +35,7 @@ function Login() {
         setUser(data);
         notify();
         localStorage.setItem("user", JSON.stringify(data));
-        setTimeout(() => {
-          navigate("/");
-        }, 1500);
+        navigate("/");
       },
     }
   );

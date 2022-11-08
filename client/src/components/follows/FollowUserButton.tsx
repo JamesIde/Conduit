@@ -58,20 +58,16 @@ function FollowUserButton({ profile }: { profile: UserProfile }) {
         username: username,
         isFollowed: isFollowedByLoggedUser,
       };
-
-      console.log("metadata", metadata);
       mutate(metadata);
     }
   };
   return (
-    <div className="pr-2 w-[150px] mx-auto pb-5">
+    <div className="pr-2 mx-auto pb-5 w-full">
       <button
         className="flex flex-row p-1 rounded pr-4 border-[1px] border-gray-400 hover:cursor-pointer hover:border-gray-900 hover:bg-gray-400 hover:duration-500"
         style={{
-          color: profile.isFollowed ? "white" : "rgb(156 163 175)",
-          backgroundColor: profile.isFollowed
-            ? "rgb(156 163 175)"
-            : "transparent",
+          color: profile.isFollowed ? "rgb(156 163 175)" : "rgb(156 163 175)",
+          backgroundColor: profile.isFollowed ? "transparent" : "transparent",
           cursor: "pointer",
         }}
         onClick={() => handleFollow(profile.username, profile.isFollowed)}
@@ -79,7 +75,11 @@ function FollowUserButton({ profile }: { profile: UserProfile }) {
         <p className="mr-1 pt-[1px]">
           <HiOutlinePlusSm size={22} />
         </p>
-        <p>{profile.isFollowed ? "Unfollow" : "Follow"}</p>
+        <p>
+          {profile.isFollowed
+            ? `Unfollow ${profile.username}`
+            : `Follow ${profile.username}`}
+        </p>
       </button>
     </div>
   );
