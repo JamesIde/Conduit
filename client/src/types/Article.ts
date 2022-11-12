@@ -67,7 +67,7 @@ export interface Filters {
   author?: null | string;
   favourited?: boolean;
   limit: number;
-  offset: number;
+  page: number;
   feed?: boolean;
   isProfile?: boolean;
 }

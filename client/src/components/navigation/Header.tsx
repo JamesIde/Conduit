@@ -65,8 +65,6 @@ function Header() {
               </div>
             </>
           ) : (
-            // New article, settings, username with icon (on left side)
-            //
             <>
               <Link to="/login">
                 <p className="text-gray-400 hover:text-gray-900 hover:duration-500 p-2 cursor-pointer">

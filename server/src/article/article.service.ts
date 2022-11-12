@@ -11,7 +11,11 @@ import { CreateArticleDto } from './dto/CreateArticleDto';
 import { UpdateArticleDto } from './dto/UpdateArticleDto';
 import { Article } from './entities/Article';
 import { Request } from 'express';
-import { ArticlesDto, Article as ArticleDto } from './dto/RetrieveArticleDto';
+import {
+  ArticlesDto,
+  Article as ArticleDto,
+  Metadata,
+} from './dto/RetrieveArticleDto';
 import { User } from 'src/user/entities/User';
 import { Favourites } from 'src/favourites/entities/Favourites';
 import { Follows } from 'src/follows/entities/Follows';
@@ -86,63 +90,37 @@ export class ArticleService {
 
   /**
    * A public method to retrieve all articles based on the following criteria
-   * @param take: The max number of records to return
-   * @param skip: The number of records to skip
+   * @param limit: The max number of records to return
+   * @param skip: The offset of the records to return
+   * @param page: The current page number
    * @param tag:  The tag to filter articles e.g. [Angular, React]
    * @param user: The user id of a logged in user. May be undefined.
    * Protected by @see LoggedUserGuard
    */
-  async getArticles(@Req() req: Request): Promise<ArticlesDto> {
-    let { user, tag, take, skip } = this.getQueryParams(req);
-
-    if (!tag) {
-      return await this.getUnfilteredArticles(user, take, skip);
+  async getArticles(@Req() req): Promise<any> {
+    const page = parseInt(req.query.page);
+    const limit = parseInt(req.query.limit);
+    const user = req.user;
+    const tag: string = req.query.tag;
+    if (!user && !tag) {
+      return await this.getDefaultArticles(page, limit);
     }
-
-    // Assume tag is passed in
-    if (user) {
-      const slugs = await this.getFavouriteArticleSlugs(user);
-      const articles = await this.getArticleQueryBuilder(tag);
-      // If user favourite matches articles, add favourite property to article
-      const filteredFavouritedArticlesWithUserAndSearchTerm = articles.map(
-        (article) => {
-          if (slugs.includes(article.slug)) {
-            return {
-              ...article,
-              isFavourited: true,
-            };
-          }
-          return {
-            ...article,
-            isFavourited: false,
-          };
-        },
+    if (user && !tag) {
+      const { startIndex, results } = await this.paginateArticles(page, limit);
+      return await this.getUserFavouritedArticles(
+        user,
+        startIndex,
+        limit,
+        results,
       );
-      return {
-        metadata: {
-          take: take,
-          skip: skip,
-          tag: tag,
-          isLogged: true,
-        },
-        articleCount: filteredFavouritedArticlesWithUserAndSearchTerm.length,
-        articles: filteredFavouritedArticlesWithUserAndSearchTerm,
-      };
     }
-
-    const articles = await this.getArticleQueryBuilder(tag);
-    return {
-      metadata: {
-        take: take,
-        skip: skip,
-        tag: tag,
-        isLogged: false,
-      },
-      articleCount: articles.length,
-      articles: articles,
-    };
+    if (!user && tag) {
+      return await this.getArticlesByTag(tag, page, limit);
+    }
+    if (user && tag) {
+      return await this.getArticlesByTagAndUser(tag, page, limit, user);
+    }
   }
-
   /**
    * A public method for finding an article based on slug
    */
@@ -382,13 +360,13 @@ export class ArticleService {
   /**
    * A publically available method to get the articles of the logged in users followers
    */
-  async getUserFeed(@Req() req): Promise<ArticlesDto> {
-    let take = req.query.hasOwnProperty('take') ? req.query.take : 10;
-    let skip = req.query.hasOwnProperty('skip') ? req.query.skip : 0;
-    let order = req.query.hasOwnProperty('order') ? req.query.order : 'DESC';
+  async getUserFeed(@Req() req): Promise<any> {
+    const page = parseInt(req.query.page);
+    const limit = parseInt(req.query.limit);
+    const user = req.user;
 
     const following = await this.followRepo.find({
-      where: { userFollowingThePerson: req.user },
+      where: { userFollowingThePerson: user },
     });
 
     if (!following) {
@@ -397,15 +375,10 @@ export class ArticleService {
         HttpStatus.BAD_REQUEST,
       );
     }
-    // const articles = console.log(
-    //   'printing out users being followed by logged user',
-    //   following.map((follow) => follow.userBeingFollowed),
-    // );
 
     const userFeed = await this.articleRepo.find({
       where: {
         author: {
-          // Now this is wizardry...
           username: In(following.map((follow) => follow.userBeingFollowed)),
         },
       },
@@ -415,12 +388,27 @@ export class ArticleService {
       order: {
         createdAt: 'DESC',
       },
-      take: take as number,
-      skip: skip as number,
     });
 
-    const userFavourites = await this.getFavouriteArticleSlugs(req.user);
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
+    const results = {};
 
+    if (endIndex < userFeed.length) {
+      results['next'] = {
+        page: page + 1,
+        limit: limit,
+      };
+    }
+
+    if (startIndex > 0) {
+      results['previous'] = {
+        page: page - 1,
+        take: limit,
+      };
+    }
+
+    const userFavourites = await this.getFavouriteArticleSlugs(user);
     const userFeedWithFavouritedArticles = userFeed.map((article) => {
       if (userFavourites.includes(article.slug)) {
         return {
@@ -434,24 +422,20 @@ export class ArticleService {
       };
     });
     return {
-      metadata: {
-        take: take,
-        skip: skip,
-        isLogged: true,
-      },
+      ...results,
       articleCount: userFeedWithFavouritedArticles.length,
       articles: userFeedWithFavouritedArticles,
     };
 
-    return {
-      metadata: {
-        take: take,
-        skip: skip,
-        isLogged: req.user ? true : false,
-      },
-      articleCount: userFeed.length,
-      articles: userFeed,
-    };
+    // return {
+    //   metadata: {
+    //     take: take,
+    //     skip: skip,
+    //     isLogged: user ? true : false,
+    //   },
+    //   articleCount: userFeed.length,
+    //   articles: userFeed,
+    // };
   }
 
   /**
@@ -509,7 +493,12 @@ export class ArticleService {
         id: In(favourites.map((fav) => fav.favouritedArticle.id)),
       },
       relations: ['author'],
-      // TODO Fix ordering by latest favourite
+      order: {
+        favArticle: {
+          dateFavourited: 'ASC',
+        },
+      },
+      // TODO Check this is ordering properly
     });
     const articles = favArticles.map((article) => {
       return {
@@ -596,81 +585,6 @@ export class ArticleService {
   }
 
   /**
-   * A private method to desctructure query params from request
-   */
-  private getQueryParams(@Req() req) {
-    let take = req.query.hasOwnProperty('take') ? req.query.take : 10;
-    let skip = req.query.hasOwnProperty('skip') ? req.query.skip : 0;
-    let tag = req.query.tag;
-    let user: any = req.user;
-    return { user, tag, take, skip };
-  }
-
-  /**
-   * A private method for querying the database for all articles
-   * No searching or user params are applied here
-   */
-  private async getInternalUnfilteredArticles(take: any, skip: any) {
-    return await this.articleRepo.find({
-      relations: ['comments', 'author'],
-      order: {
-        createdAt: 'DESC',
-      },
-      take: take as number,
-      skip: skip as number,
-    });
-  }
-
-  /**
-   * A private method to return all articles, with take and skip but no search term.
-   * It also applies the user param to search for articles a user has favourited, if logged in.
-   */
-  private async getUnfilteredArticles(
-    user: boolean | undefined,
-    take: number,
-    skip: number,
-  ): Promise<ArticlesDto> {
-    if (user) {
-      const favArticleSlugs = await this.getFavouriteArticleSlugs(user);
-      const articles = await this.getInternalUnfilteredArticles(take, skip);
-
-      // If user favourite matches articles, add favourite property to article
-      const filteredFavouritedArticles = articles.map((article) => {
-        if (favArticleSlugs.includes(article.slug)) {
-          return {
-            ...article,
-            isFavourited: true,
-          };
-        }
-        return {
-          ...article,
-          isFavourited: false,
-        };
-      });
-      return {
-        metadata: {
-          take: take,
-          skip: skip,
-          isLogged: true,
-        },
-        articleCount: filteredFavouritedArticles.length,
-        articles: filteredFavouritedArticles,
-      };
-    }
-    // Return unfiltered articles with no user filtering
-    const articles = await this.getInternalUnfilteredArticles(take, skip);
-    return {
-      metadata: {
-        take: take,
-        skip: skip,
-        isLogged: false,
-      },
-      articleCount: articles.length,
-      articles: articles,
-    };
-  }
-
-  /**
    * A private method that returns all favourited article slugs with the logged in user
    */
   private async getFavouriteArticleSlugs(user) {
@@ -696,20 +610,224 @@ export class ArticleService {
   /**
    * A private method to get all articles using the query builder for text searching based on searchTerm param
    */
-  // TODO Fix why this isn't searching properly
-  private async getArticleQueryBuilder(tag: string) {
-    console.log('search term received: ', tag);
+  private async getArticlesByTag(tag: string, page: number, limit: number) {
+    if (page == 0) {
+      page = 1;
+    }
 
-    // Search articles where tags matches the tag passed in using queryBuilder
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
+    const results = {};
+
+    // We need the total count of articles with matching tag to calculate the pagination
+    const articlesByTagCount = await this.getTotalArticleTagCount(tag);
+
+    if (endIndex < articlesByTagCount.length) {
+      results['next'] = {
+        page: page + 1,
+        limit: limit,
+      };
+    }
+
+    if (startIndex > 0) {
+      results['previous'] = {
+        page: page - 1,
+        take: limit,
+      };
+    }
+
     const articles = await this.articleRepo
       .createQueryBuilder('article')
-      // Return author and comments
+      .leftJoinAndSelect('article.author', 'author')
+      .leftJoinAndSelect('article.comments', 'comments')
+      .where('article.tags @> :tag', { tag: `{"${tag}"}` })
+      .orderBy('article.createdAt', 'DESC')
+      .skip(startIndex)
+      .take(limit)
+      .getMany();
+
+    return {
+      ...results,
+      articleCount: articles.length,
+      articles: articles,
+    };
+  }
+
+  /**
+   * This method is used to get the total count of articles with matching tag for pagination.
+   * We use the number of articles to calculate the end index (whether a user can click 'next' page) of the pagination.
+   */
+  private async getTotalArticleTagCount(tag: string) {
+    return await this.articleRepo
+      .createQueryBuilder('article')
       .leftJoinAndSelect('article.author', 'author')
       .leftJoinAndSelect('article.comments', 'comments')
       .where('article.tags @> :tag', { tag: `{"${tag}"}` })
       .orderBy('article.createdAt', 'DESC')
       .getMany();
+  }
 
-    return articles;
+  /**
+   * A private method to get all articles based on a tag, and check if the user has favourited the article.
+   * It uses @see getFavouriteArticleSlugs to get all the slugs of articles the user has favourited.
+   * It uses @see getTotalArticleTagCount to get the total count of articles with matching tag for pagination.
+   * It then checks if the article slug is in the array of favourited article slugs.
+   */
+  private async getArticlesByTagAndUser(
+    tag: string,
+    page: number,
+    limit: number,
+    user: any,
+  ) {
+    console.log('Getting Articles By Tag With Logged User');
+    if (page == 0) {
+      page = 1;
+    }
+
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
+    const results = {};
+
+    const totalTagCount = await this.getTotalArticleTagCount(tag);
+
+    if (endIndex < totalTagCount.length) {
+      results['next'] = {
+        page: page + 1,
+        limit: limit,
+      };
+    }
+
+    if (startIndex > 0) {
+      results['previous'] = {
+        page: page - 1,
+        take: limit,
+      };
+    }
+
+    const articlesByTag = await this.articleRepo
+      .createQueryBuilder('article')
+      .leftJoinAndSelect('article.author', 'author')
+      .leftJoinAndSelect('article.comments', 'comments')
+      .where('article.tags @> :tag', { tag: `{"${tag}"}` })
+      .orderBy('article.createdAt', 'DESC')
+      .skip(startIndex)
+      .take(limit)
+      .getMany();
+
+    const slugs = await this.getFavouriteArticleSlugs(user);
+
+    const userFavouriteArticles = articlesByTag.map((article) => {
+      if (slugs.includes(article.slug)) {
+        return {
+          ...article,
+          isFavourited: true,
+        };
+      }
+      return {
+        ...article,
+        isFavourited: false,
+      };
+    });
+
+    return {
+      ...results,
+      articlesCount: userFavouriteArticles.length,
+      articles: userFavouriteArticles,
+    };
+  }
+
+  /**
+   * A private method for getting all articles that a logged in user has favourited.
+   * It does not filter by tag selected, only by user favourites.
+   * It relies on @see LoggedUserGuard to get the logged in user
+   */
+  private async getUserFavouritedArticles(
+    user: any,
+    startIndex: number,
+    limit: number,
+    results: {},
+  ) {
+    console.log('Getting User Favourite Articles');
+    const slugs = await this.getFavouriteArticleSlugs(user);
+    let articles = await this.articleRepo.find({
+      order: {
+        createdAt: 'DESC',
+      },
+      relations: ['author', 'comments'],
+      skip: startIndex,
+      take: limit,
+    });
+
+    const userPresentArticles = articles.map((article) => {
+      if (slugs.includes(article.slug)) {
+        return {
+          ...article,
+          isFavourited: true,
+        };
+      }
+      return {
+        ...article,
+        isFavourited: false,
+      };
+    });
+
+    return {
+      ...results,
+      articlesCount: userPresentArticles.length,
+      articles: userPresentArticles,
+    };
+  }
+
+  /**
+   * A private method to paginate articles
+   * @param page The current page number
+   * @param limit The max number of records to return
+   */
+  private async paginateArticles(page: number, limit: number, tag?: string) {
+    if (page == 0) {
+      page = 1;
+    }
+
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
+    const results = {};
+
+    if (endIndex < (await this.articleRepo.count())) {
+      results['next'] = {
+        page: page + 1,
+        limit: limit,
+      };
+    }
+
+    if (startIndex > 0) {
+      results['previous'] = {
+        page: page - 1,
+        take: limit,
+      };
+    }
+    return { startIndex, results };
+  }
+
+  /**
+   * A private method to retrieve all articles with no logged in user or tag for filtering.
+   * This is the default method called when the user visits the home page for the first time.
+   */
+  private async getDefaultArticles(page: number, limit: number) {
+    console.log('Getting Default Articles');
+    const { startIndex, results } = await this.paginateArticles(page, limit);
+    let articles = await this.articleRepo.find({
+      order: {
+        createdAt: 'DESC',
+      },
+      relations: ['author', 'comments'],
+      skip: startIndex,
+      take: limit,
+    });
+
+    return {
+      ...results,
+      articlesCount: articles.length,
+      articles: articles,
+    };
   }
 }

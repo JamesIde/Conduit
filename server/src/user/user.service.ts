@@ -181,34 +181,11 @@ export class UserService {
   }
 
   /**
-   * A public method to fetch the user based on decoded token
-   */
-  // async getProfile(@Req() req): Promise<UserProfile> {
-  //   try {
-  //     const user = await this.userRepo.findOne({
-  //       where: {
-  //         id: req.user,
-  //       },
-  //       relations: ['comments'],
-  //     });
-  //     return user as unknown as UserProfile;
-  //   } catch (error) {
-  //     throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
-  //   }
-  // }
-
-  /**
    * A publicly available method to get a user profile based on slug
    * This differs from @see getProfile
    * Used by general users to click on user profiles and see their articles
    */
   async getUserProfile(@Req() req, username: string): Promise<UserProfile> {
-    // TODO Changes to make
-    /**
-     * If there is logged in user, check if they follow the user by username.
-     * If they do, attach the isFollowed property to the response.
-     * Else, return the user as per norm.
-     */
     if (!username)
       throw new HttpException(
         'Username must be provided',
@@ -247,6 +224,9 @@ export class UserService {
         articles: queryArticle,
         comments: queryUser.comments as unknown as Comment[],
       };
+
+      // TODO If a logged in user access a profile page, check to see if they have favourited any articles by the user
+
       if (!req.user) {
         return user;
       }
@@ -343,20 +323,5 @@ export class UserService {
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
-  }
-
-  /*
-   * A dummy method to fetch all users
-   */
-  async getAllUsers() {
-    // Return all users and articles
-    return await this.userRepo.find({
-      select: {
-        articles: {
-          slug: true,
-        },
-      },
-      relations: ['articles'],
-    });
   }
 }

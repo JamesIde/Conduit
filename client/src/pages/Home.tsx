@@ -9,8 +9,8 @@ function Home() {
     feed: false,
     author: "",
     favourited: false,
-    offset: 0,
-    limit: 10,
+    page: 1,
+    limit: 5,
     isProfile: false,
   };
   const [filterTag, clearTag] = useTagStore((state) => [
@@ -50,7 +50,7 @@ function Home() {
 
   const handleFilterTag = (filterTag: string) => {
     setIsFilterTag(true);
-    setFilters({ ...initialFilters, tag: filterTag });
+    setFilters({ ...initialFilters, tag: filterTag, limit: 10 });
     setIsUserFeed(false);
     setIsGlobalFeed(false);
   };

@@ -69,11 +69,6 @@ export class UserController {
     return this.userService.unfollowUser(req, username);
   }
 
-  @Get('all')
-  getAll() {
-    return this.userService.getAllUsers();
-  }
-
   @Get('refresh_token')
   refreshToken(@Req() req) {
     return this.authService.refreshAccessToken(req);

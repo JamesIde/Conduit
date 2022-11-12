@@ -1,9 +1,4 @@
-import {
-  FavouriteStatus,
-  Filters,
-  GetArticles,
-  Metadata,
-} from "../types/Article";
+import { FavouriteStatus, Filters } from "../types/Article";
 import {
   FollowMetadata,
   LoginUser,
@@ -13,10 +8,9 @@ import {
   UserSignInSuccess,
 } from "../types/User";
 import { PopularTags } from "../types/Article";
-import baseClient from "./baseClient";
 import { NewArticle, Article } from "../types/Article";
 import { UserProfile } from "../types/Profile";
-import { ArticleComment, Comment } from "../types/Comment";
+import baseClient from "./baseClient";
 
 /**
            _____ _______ _____ _____ _      ______  _____ 

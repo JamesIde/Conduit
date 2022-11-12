@@ -67,7 +67,7 @@ function CreateArticle() {
   );
 
   const handleTagInput = (e) => {
-    if (e.key === " " || e.key === "Enter") {
+    if (e.key === "Enter") {
       if (tags.length == 6) {
         ref.current.value = "";
         setIsTagListFull(true);

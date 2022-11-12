@@ -27,7 +27,7 @@ import { ThrottlerGuard } from '@nestjs/throttler/dist/throttler.guard';
       password: 'root',
       database: 'maximus',
       synchronize: true,
-      logging: true,
+      // logging: true,
       entities: [User, Credentials, Article, Comment, Favourites, Follows],
     }),
     UserModule,

@@ -10,6 +10,7 @@ function Logout() {
     state.removeUser,
   ]);
   const handleClick = async (e) => {
+    // Revokes the refresh token
     await baseAPI
       .logoutUser()
       .then((res) => {

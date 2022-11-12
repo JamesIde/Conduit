@@ -13,8 +13,9 @@ export interface Author {
   bio: string;
 }
 export interface Metadata {
-  take: any;
-  skip: any;
+  take?: number;
+  page?: number;
+  skip?: number;
   tag?: any;
   isLogged?: boolean;
 }

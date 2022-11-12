@@ -56,7 +56,6 @@ function FavouriteArticleButton({
     });
 
   const handleFavourite = (slug: string, isFavourited: boolean) => {
-    // TODO Pagination of all articles (make it reusable)
     if (!currentUser) {
       navigate("/login");
     } else {

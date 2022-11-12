@@ -17,8 +17,8 @@ function Profile() {
     feed: false,
     author: null,
     favourited: false,
-    limit: 10,
-    offset: 0,
+    limit: 3,
+    page: 1,
     isProfile: true,
   };
   const [isLogged, setIsLogged] = useState(false);
