@@ -1,16 +1,20 @@
 import Tags from "../components/tags/Tags";
 import Articles from "../components/articles/Articles";
-import { useStore, useTagStore } from "../components/store/userStore";
-import { useState, useEffect, useContext } from "react";
+import {
+  usePaginationStore,
+  useStore,
+  useTagStore,
+} from "../components/store/globalStore";
+import { useState, useEffect } from "react";
 import { Filters } from "../types/Article";
 function Home() {
+  const page = usePaginationStore((state) => state.page);
   const initialFilters: Filters = {
     tag: "",
     feed: false,
     author: "",
+    page: page,
     favourited: false,
-    page: 1,
-    limit: 5,
     isProfile: false,
   };
   const [filterTag, clearTag] = useTagStore((state) => [
@@ -20,6 +24,7 @@ function Home() {
 
   useEffect(() => {
     setFilters({ ...initialFilters });
+    console.log("The page is ", initialFilters.page);
     if (filterTag) {
       handleFilterTag(filterTag);
     }
@@ -70,7 +75,7 @@ function Home() {
           >
             Global Feed
           </button>
-          {currentUser && (
+          {currentUser ? (
             <button
               className="p-2 text-[#aaa] hover:text-gray-500"
               onClick={handleUserFeedClick}
@@ -81,8 +86,8 @@ function Home() {
             >
               Your Feed
             </button>
-          )}
-          {filterTag && (
+          ) : null}
+          {filterTag ? (
             <>
               <button
                 className="p-2 text-[#aaa] hover:text-gray-500"
@@ -94,7 +99,7 @@ function Home() {
                 #{filterTag}
               </button>
             </>
-          )}
+          ) : null}
         </div>
       </div>
       <div className="flex xl:flex-row md:flex-row flex-col-reverse mt-0 p-2">

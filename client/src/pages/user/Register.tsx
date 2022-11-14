@@ -3,29 +3,21 @@ import { AxiosError } from "axios";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { useStore } from "../../components/store/userStore";
+import { useStore } from "../../components/store/globalStore";
 import baseAPI from "../../config/api";
 import { APIError } from "../../types/Error";
 import { RegisterUser, UserSignInSuccess } from "../../types/User";
 import Error from "../../components/helper/Error";
-import { toast } from "react-toastify";
+import { toast } from "react-hot-toast";
 function Register() {
-  const notify = () =>
-    toast.success("Registered!", {
-      position: "top-center",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "colored",
-    });
   const navigate = useNavigate();
   const [currentUser, setUser] = useStore((state) => [
     state.currentUser,
     state.setUser,
   ]);
+
+  const notify = () =>
+    toast.success("Registered successfully, welcome to Conduit!");
 
   const { mutate, isLoading, isSuccess, isError, error } = useMutation(
     ["register"],
@@ -34,9 +26,9 @@ function Register() {
       onSuccess: (data: UserSignInSuccess) => {
         setUser(data);
         localStorage.setItem("user", JSON.stringify(data));
-        notify();
         setTimeout(() => {
           navigate("/");
+          notify();
         }, 1500);
       },
     }
@@ -56,7 +48,7 @@ function Register() {
   };
 
   return (
-    <div className="xl:w-2/5 md:w-3/5 w-full mx-auto border-2">
+    <div className="xl:w-2/5 md:w-3/5 w-full mx-auto">
       <h1 className="text-center font-tilly text-3xl p-2 text-neutral-700 font-medium xl:mt-24 md:mt-14 mt-0">
         Sign Up
       </h1>

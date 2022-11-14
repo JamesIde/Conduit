@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { Article } from "../../types/Article";
+import Tags from "../tags/Tags";
 import AuthorThumbnail from "./AuthorThumbnail";
 import FavouriteArticleButton from "./FavouriteArticleButton";
 const parse = require("html-react-parser");
@@ -22,12 +23,13 @@ function ArticlePreview({
               fontSize={"13px"}
             />
           </div>
-
-          <FavouriteArticleButton
-            article={article}
-            feed={true}
-            isProfile={isProfile}
-          />
+          <div>
+            <FavouriteArticleButton
+              article={article}
+              feed={true}
+              isProfile={isProfile}
+            />
+          </div>
         </div>
       </section>
       <section id="article-information">
@@ -37,10 +39,12 @@ function ArticlePreview({
               {article.title}
             </h3>
           </Link>
-          <p className="italic text-gray-500 mt-2 mb-2">
-            {article.description}
-          </p>
-          <p>{parse(article.body.slice(0, 350))} ...</p>
+          <div>
+            <p className="italic text-gray-500 mt-2 mb-2">
+              {article.description}
+            </p>
+            <>{parse(article.body.slice(0, 350))} ... </>
+          </div>
         </div>
       </section>
       <section id="article-metadata">
@@ -54,9 +58,12 @@ function ArticlePreview({
           </div>
           <div>
             {article.tags.map((tag) => (
-              <p className="inline-block px-2 py-[2px] rounded text-black m-[2px] text-sm border-[1px] border-[#abafb3]">
+              <div
+                className="inline-block px-2 py-[2px] rounded text-black m-[2px] text-sm border-[1px] border-[#abafb3]"
+                key={tag.charAt(0)}
+              >
                 {tag}
-              </p>
+              </div>
             ))}
           </div>
         </div>

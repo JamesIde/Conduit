@@ -45,8 +45,14 @@ export interface ArticlesDto {
 }
 
 export interface Metadata {
-  take: any;
-  skip: any;
+  next?: {
+    page: number;
+    limit: number;
+  };
+  previous?: {
+    page: number;
+    limit: number;
+  };
   searchTerm?: any;
   isLogged?: boolean;
 }
@@ -66,8 +72,8 @@ export interface Filters {
   tag?: null | string;
   author?: null | string;
   favourited?: boolean;
-  limit: number;
-  page: number;
+  limit?: number;
+  page?: number;
   feed?: boolean;
   isProfile?: boolean;
 }

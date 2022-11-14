@@ -36,6 +36,7 @@ async function getArticles(filters: Filters): Promise<any> {
   const { data } = await baseClient.get(url, {
     params: { ...filters },
   });
+  console.log("API DATA", data);
   return data;
 }
 

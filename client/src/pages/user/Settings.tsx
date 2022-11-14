@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useStore } from "../../components/store/userStore";
+import { useStore } from "../../components/store/globalStore";
 import { useMutation } from "@tanstack/react-query";
 import { UpdateProfile, UserSignInSuccess } from "../../types/User";
 import { AxiosError } from "axios";

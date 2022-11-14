@@ -6,8 +6,8 @@ import { APIError } from "../../types/Error";
 import { Article } from "../../types/Article";
 import { useNavigate } from "react-router-dom";
 import baseAPI from "../../config/api";
-import { useStore } from "../store/userStore";
-import { toast } from "react-toastify";
+import { useStore } from "../store/globalStore";
+import toast from "react-hot-toast";
 
 function FavouriteArticleButton({
   article,
@@ -43,17 +43,7 @@ function FavouriteArticleButton({
     }
   );
 
-  const notify = () =>
-    toast.error("You can't favourite your own article!", {
-      position: "top-center",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "colored",
-    });
+  const notify = () => toast.error("You can't favourite your own article!");
 
   const handleFavourite = (slug: string, isFavourited: boolean) => {
     if (!currentUser) {

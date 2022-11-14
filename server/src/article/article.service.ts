@@ -98,8 +98,8 @@ export class ArticleService {
    * Protected by @see LoggedUserGuard
    */
   async getArticles(@Req() req): Promise<any> {
-    const page = parseInt(req.query.page);
-    const limit = parseInt(req.query.limit);
+    const page = req.query.page ? parseInt(req.query.page) : 1;
+    const limit = req.query.limit ? parseInt(req.query.limit) : 3;
     const user = req.user;
     const tag: string = req.query.tag;
     if (!user && !tag) {
@@ -647,7 +647,9 @@ export class ArticleService {
       .getMany();
 
     return {
-      ...results,
+      metadata: {
+        ...results,
+      },
       articleCount: articles.length,
       articles: articles,
     };
@@ -730,7 +732,9 @@ export class ArticleService {
     });
 
     return {
-      ...results,
+      metadata: {
+        ...results,
+      },
       articlesCount: userFavouriteArticles.length,
       articles: userFavouriteArticles,
     };
@@ -772,7 +776,9 @@ export class ArticleService {
     });
 
     return {
-      ...results,
+      metadata: {
+        ...results,
+      },
       articlesCount: userPresentArticles.length,
       articles: userPresentArticles,
     };
@@ -825,7 +831,9 @@ export class ArticleService {
     });
 
     return {
-      ...results,
+      metadata: {
+        ...results,
+      },
       articlesCount: articles.length,
       articles: articles,
     };

@@ -1,5 +1,5 @@
 import { IoSettingsOutline } from "react-icons/io5";
-import { useStore } from "../../components/store/userStore";
+import { useStore } from "../../components/store/globalStore";
 import { Link } from "react-router-dom";
 import { QueryClient, useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
@@ -68,7 +68,7 @@ function Profile() {
 
   return (
     <>
-      <div className="bg-[#f7f6f6] xl:h-[300px] md:h-[290px] h-[280px]">
+      <div className="bg-[#f7f6f6] xl:h-[300px] md:h-[290px] h-[290px]">
         <div className="max-w-3xl mx-auto xl:pt-10 md:pt-5 pt-4">
           {profile && (
             <>

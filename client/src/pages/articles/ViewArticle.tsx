@@ -6,7 +6,7 @@ import AuthorThumbnail from "../../components/articles/AuthorThumbnail";
 import FavouriteArticleButton from "../../components/articles/FavouriteArticleButton";
 import AddComment from "../../components/comments/AddComment";
 import FollowUserButton from "../../components/follows/FollowUserButton";
-import { useStore } from "../../components/store/userStore";
+import { useStore } from "../../components/store/globalStore";
 import baseAPI from "../../config/api";
 import { Article } from "../../types/Article";
 const parse = require("html-react-parser");
@@ -90,7 +90,7 @@ function ViewArticle() {
           {isSuccess &&
             article.comments.map((comment) => {
               return (
-                <div className="mt-3">
+                <div className="mt-3" key={comment.id}>
                   <div className="max-w-2xl mx-auto p-4 border-t-[1px] border-r-[1px] border-l-[1px] border-t-[#E5E5E5]  border-l-[#E5E5E5] border-r-[#E5E5E5] rounded-t">
                     <div className="p-2">{comment.body}</div>
                   </div>

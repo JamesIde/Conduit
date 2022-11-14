@@ -1,4 +1,4 @@
-import { useTagStore } from "../store/userStore";
+import { useTagStore } from "../store/globalStore";
 
 interface tagProp {
   tag: string;
