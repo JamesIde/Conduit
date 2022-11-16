@@ -7,25 +7,17 @@ import { useNavigate } from "react-router-dom";
 import { APIError } from "../../types/Error";
 import Error from "../../components/helper/Error";
 import baseAPI from "../../config/api";
-import { useStore } from "../../components/store/userStore";
-import { toast } from "react-toastify";
+import { useStore } from "../../components/store/globalStore";
+import toast from "react-hot-toast";
 function Login() {
-  const notify = () =>
-    toast.success("Logged in!", {
-      position: "top-center",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "colored",
-    });
   const navigate = useNavigate();
   const [currentUser, setUser] = useStore((state) => [
     state.currentUser,
     state.setUser,
   ]);
+
+  const notify = (username: string) =>
+    toast.success(`Welcome back ${username}!`);
 
   const { mutate, isLoading, isError, isSuccess, error } = useMutation(
     ["signin"],
@@ -33,9 +25,9 @@ function Login() {
     {
       onSuccess: (data: UserSignInSuccess) => {
         setUser(data);
-        notify();
         localStorage.setItem("user", JSON.stringify(data));
         navigate("/");
+        notify(data.user.username);
       },
     }
   );

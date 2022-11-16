@@ -1,14 +1,17 @@
+import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import baseAPI from "../../config/api";
-import { useStore } from "../store/userStore";
+import { useStore } from "../store/globalStore";
 
-import { toast } from "react-toastify";
 function Logout() {
   const navigate = useNavigate();
   const [currentUser, removeUser] = useStore((state) => [
     state.currentUser,
     state.removeUser,
   ]);
+
+  const notify = () => toast.success("Logout successful");
+
   const handleClick = async (e) => {
     // Revokes the refresh token
     await baseAPI
@@ -16,7 +19,7 @@ function Logout() {
       .then((res) => {
         removeUser();
         localStorage.removeItem("user");
-        toast.success("Logged out successfully");
+        notify();
         navigate("/");
       })
       .catch((err) => {
