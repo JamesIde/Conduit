@@ -8,12 +8,15 @@ import { useNavigate } from "react-router-dom";
 import Logout from "../../components/navigation/Logout";
 import Error from "../../components/helper/Error";
 import baseAPI from "../../config/api";
+import toast from "react-hot-toast";
 function Settings() {
   const navigate = useNavigate();
   const [currentUser, updateUser] = useStore((state) => [
     state.currentUser,
     state.updateUser,
   ]);
+
+  const notify = () => toast.success("Profile updated successfully!");
 
   const {
     mutate,
@@ -27,10 +30,8 @@ function Settings() {
       oldUser.user = data;
       const newUser = oldUser;
       updateUser(newUser);
-
-      setTimeout(() => {
-        navigate("/");
-      }, 1500);
+      navigate("/");
+      notify();
     },
   });
   const user = {
@@ -56,11 +57,9 @@ function Settings() {
     };
     mutate(data);
   };
-  // Use mutation to update user, destructure mutate, call it on handleUpdate
 
   return (
     <div className="p-4">
-      {/* <p>This is settings page for {user.user.username}</p> */}
       <div className="max-w-xl mx-auto">
         <h1 className="text-center text-4xl xl:mt-8 md:mt-6 mt-4 mb-4">
           Your Settings
@@ -71,13 +70,7 @@ function Settings() {
               <p className="text-center text-sm">Updating your profile...</p>
             )}
           </div>
-          <div>
-            {isSuccess && (
-              <p className="text-green-500 text-center">
-                Profile settings updated!
-              </p>
-            )}
-          </div>
+          <div>{/*  */}</div>
           <div className="flex justify-center text-sm">
             {isError && <Error error={error as AxiosError<APIError>} />}
           </div>

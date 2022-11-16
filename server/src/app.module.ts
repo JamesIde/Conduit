@@ -1,4 +1,3 @@
-import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Credentials } from './user/entities/Credentials';
@@ -12,10 +11,13 @@ import { Favourites } from './favourites/entities/Favourites';
 import { Follows } from './follows/entities/Follows';
 import { UserModule } from './user/user.module';
 import { ThrottlerModule } from '@nestjs/throttler';
-import { APP_GUARD } from '@nestjs/core';
 import { ThrottlerGuard } from '@nestjs/throttler/dist/throttler.guard';
+import { CacheInterceptor, CacheModule, Module } from '@nestjs/common';
+import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
+import { TagsModule } from './tags/tags.module';
 @Module({
   imports: [
+    CacheModule.register({ isGlobal: true }),
     ConfigModule.forRoot({
       envFilePath: '.env',
     }),
@@ -34,9 +36,10 @@ import { ThrottlerGuard } from '@nestjs/throttler/dist/throttler.guard';
     HelperModule,
     ArticleModule,
     CommentsModule,
+    TagsModule,
     ThrottlerModule.forRoot({
       ttl: 60,
-      limit: 1000,
+      limit: 100,
     }),
   ],
   controllers: [],

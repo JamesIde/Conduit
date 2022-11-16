@@ -10,7 +10,7 @@ function Logout() {
     state.removeUser,
   ]);
 
-  const notify = () => toast.success("Logged out, see ya later!");
+  const notify = () => toast.success("Logout successful");
 
   const handleClick = async (e) => {
     // Revokes the refresh token

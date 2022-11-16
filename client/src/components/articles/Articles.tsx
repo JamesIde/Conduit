@@ -41,7 +41,10 @@ function Articles({ filters }: { filters: Filters }) {
             />
           );
         })}
-      {isSuccess ? <Paginate metadata={articles.metadata} /> : null}
+      {isSuccess &&
+        (articles.metadata && articles.articles.length > 0 ? (
+          <Paginate metadata={articles.metadata} />
+        ) : null)}
     </div>
   );
 }

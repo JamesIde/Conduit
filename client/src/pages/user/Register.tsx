@@ -16,8 +16,8 @@ function Register() {
     state.setUser,
   ]);
 
-  const notify = () =>
-    toast.success("Registered successfully, welcome to Conduit!");
+  const notify = (username: string) =>
+    toast.success(`Welcome to Conduit, ${username}!`);
 
   const { mutate, isLoading, isSuccess, isError, error } = useMutation(
     ["register"],
@@ -28,7 +28,7 @@ function Register() {
         localStorage.setItem("user", JSON.stringify(data));
         setTimeout(() => {
           navigate("/");
-          notify();
+          notify(data.user.username);
         }, 1500);
       },
     }

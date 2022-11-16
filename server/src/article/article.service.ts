@@ -10,16 +10,10 @@ import { In, Repository } from 'typeorm';
 import { CreateArticleDto } from './dto/CreateArticleDto';
 import { UpdateArticleDto } from './dto/UpdateArticleDto';
 import { Article } from './entities/Article';
-import { Request } from 'express';
-import {
-  ArticlesDto,
-  Article as ArticleDto,
-  Metadata,
-} from './dto/RetrieveArticleDto';
+import { Article as ArticleDto } from './dto/RetrieveArticleDto';
 import { User } from 'src/user/entities/User';
 import { Favourites } from 'src/favourites/entities/Favourites';
 import { Follows } from 'src/follows/entities/Follows';
-import { randomUUID } from 'crypto';
 /**
            _____ _______ _____ _____ _      ______  _____ 
      /\   |  __ \__   __|_   _/ ____| |    |  ____|/ ____|
@@ -99,7 +93,7 @@ export class ArticleService {
    */
   async getArticles(@Req() req): Promise<any> {
     const page = req.query.page ? parseInt(req.query.page) : 1;
-    const limit = req.query.limit ? parseInt(req.query.limit) : 3;
+    const limit = req.query.limit ? parseInt(req.query.limit) : 2;
     const user = req.user;
     const tag: string = req.query.tag;
     if (!user && !tag) {
@@ -567,7 +561,7 @@ export class ArticleService {
         tagList.push(tags[i].tags[j]);
       }
     }
-
+    // Remove duplicates
     let filteredTags = [...new Set(tagList)];
     return filteredTags.slice(0, 10);
   }

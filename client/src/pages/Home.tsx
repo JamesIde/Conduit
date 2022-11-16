@@ -28,7 +28,7 @@ function Home() {
     if (filterTag) {
       handleFilterTag(filterTag);
     }
-  }, [filterTag]);
+  }, [filterTag, page]);
 
   const [isGlobalFeed, setIsGlobalFeed] = useState(true);
   const [isUserFeed, setIsUserFeed] = useState(false);
@@ -102,7 +102,7 @@ function Home() {
           ) : null}
         </div>
       </div>
-      <div className="flex xl:flex-row md:flex-row flex-col-reverse mt-0 p-2">
+      <div className="flex xl:flex-row md:flex-row flex-col-reverse p-2">
         <Articles filters={filters} />
         <Tags />
       </div>

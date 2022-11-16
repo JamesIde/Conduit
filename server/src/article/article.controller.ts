@@ -3,7 +3,6 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   Req,
@@ -12,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { ArticleService } from './article.service';
 import { CreateArticleDto } from './dto/CreateArticleDto';
-import { Request, Response } from 'express';
+import { Request } from 'express';
 import { JWTGuard } from 'src/user/auth.guard';
 import { UpdateArticleDto } from './dto/UpdateArticleDto';
 import { LoggedUserGuard } from 'src/user/loggedUser.guard';

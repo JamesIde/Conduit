@@ -12,7 +12,7 @@ function ArticlePreview({
   isProfile: boolean;
 }) {
   return (
-    <div className="p-2">
+    <div className="p-2 xl:h-[320px] md:h-[320px] h-[400px] mb-2">
       <section id="article-heading">
         <div className="flex flex-row justify-between">
           <div>
@@ -23,7 +23,7 @@ function ArticlePreview({
               fontSize={"13px"}
             />
           </div>
-          <div>
+          <div className="pt-1">
             <FavouriteArticleButton
               article={article}
               feed={true}
@@ -43,7 +43,9 @@ function ArticlePreview({
             <p className="italic text-gray-500 mt-2 mb-2">
               {article.description}
             </p>
-            <>{parse(article.body.slice(0, 350))} ... </>
+            <div className="h-[120px]">
+              {parse(article.body.slice(0, 180))} ...{" "}
+            </div>
           </div>
         </div>
       </section>
@@ -57,7 +59,7 @@ function ArticlePreview({
             </Link>
           </div>
           <div>
-            {article.tags.map((tag) => (
+            {article.tags.slice(0, 3).map((tag) => (
               <div
                 className="inline-block px-2 py-[2px] rounded text-black m-[2px] text-sm border-[1px] border-[#abafb3]"
                 key={tag.charAt(0)}
@@ -68,7 +70,7 @@ function ArticlePreview({
           </div>
         </div>
       </section>
-      <hr className="mt-3 mb-3" />
+      <hr className="mt-3" />
     </div>
   );
 }

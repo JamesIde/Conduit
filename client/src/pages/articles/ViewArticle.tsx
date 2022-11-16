@@ -30,14 +30,13 @@ function ViewArticle() {
   return (
     <div>
       <section id="article-banner">
-        <div className="bg-[#f7f6f6] xl:h-[290px] md:h-[250px] h-[280px] border-b-[1px] border-b-[#b6b6b6]">
+        <div className="bg-[#f7f6f6] xl:h-[250px] md:h-[250px] h-[310px] border-b-[1px] border-b-[#b6b6b6]">
           <div className="mx-auto text-center flex justify-center items-center">
             <div className="xl:h-[200px] md:h-[150px] h-[150px] flex-col">
               <div className="text-center xl:mt-[85px] md:mt-5 mt-5">
                 <h3 className="font-bold xl:text-4xl md:text-3xl text-2xl text-black">
                   {article?.title}
                 </h3>
-                <hr className="p-2 mt-2 xl:hidden md:hidden" />
                 <p className="p-2 xl:text-xl md:text-md text-sm text-black xl:mt-5 md:mt-2">
                   {article?.description}
                 </p>
@@ -53,7 +52,7 @@ function ViewArticle() {
                         fontSize={"12px"}
                       />
                     </div>
-                    <div className="mt-3">
+                    <div className="mt-4">
                       <FavouriteArticleButton
                         article={article}
                         feed={false}
@@ -71,10 +70,7 @@ function ViewArticle() {
         {isSuccess && (
           <>
             <div className="max-w-2xl mx-auto">
-              <div className="text-center font-bold text-2xl mt-4">
-                {article.title}
-              </div>
-              <div className="pt-2 p-2">{parse(article.body)}</div>
+              <div className="pt-2 p-3">{parse(article.body)}</div>
             </div>
             <AddComment
               articleId={article.id}
@@ -86,7 +82,7 @@ function ViewArticle() {
       </section>
 
       <section id="article-display-comments">
-        <div className="mt-6 mb-5 p-2">
+        <div className="mt-6 mb-5 p-3">
           {isSuccess &&
             article.comments.map((comment) => {
               return (

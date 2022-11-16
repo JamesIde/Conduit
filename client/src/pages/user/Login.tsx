@@ -16,8 +16,8 @@ function Login() {
     state.setUser,
   ]);
 
-  const notify = () =>
-    toast.success("Logged in successfully, welcome back to Conduit!");
+  const notify = (username: string) =>
+    toast.success(`Welcome back ${username}!`);
 
   const { mutate, isLoading, isError, isSuccess, error } = useMutation(
     ["signin"],
@@ -27,7 +27,7 @@ function Login() {
         setUser(data);
         localStorage.setItem("user", JSON.stringify(data));
         navigate("/");
-        notify();
+        notify(data.user.username);
       },
     }
   );
