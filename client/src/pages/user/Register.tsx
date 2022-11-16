@@ -26,10 +26,8 @@ function Register() {
       onSuccess: (data: UserSignInSuccess) => {
         setUser(data);
         localStorage.setItem("user", JSON.stringify(data));
-        setTimeout(() => {
-          navigate("/");
-          notify(data.user.username);
-        }, 1500);
+        navigate("/");
+        notify(data.user.username);
       },
     }
   );

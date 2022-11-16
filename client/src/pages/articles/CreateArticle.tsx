@@ -21,13 +21,11 @@ function CreateArticle() {
     body: "",
   });
   const handleUpdate = (e) => {
-    // Update the fields form state
     setFields((prevState) => ({
       ...prevState,
       [e.target.name]: e.target.value,
     }));
   };
-  //htmlr eact parser
   const handleEditor = (value) => {
     setFields((prevState) => ({
       ...prevState,
@@ -48,7 +46,6 @@ function CreateArticle() {
         body: fields.body,
         tags: tags,
       };
-      console.log(article);
       mutate(article);
     }
   };
@@ -59,9 +56,7 @@ function CreateArticle() {
     {
       onSuccess: (data) => {
         clearFields();
-        // queryClient.prefetchQuery(["article", data.slug]);
         navigate(`/article/${data.slug}`);
-        console.log(data);
       },
     }
   );
@@ -101,7 +96,7 @@ function CreateArticle() {
 
   return (
     <>
-      <div className="max-w-3xl mx-auto">
+      <div className="max-w-3xl mx-auto p-2">
         <h1 className="text-center font-medium text-3xl">Create Article</h1>
         <p className="text-center text-gray-400">
           Got an interest or topic you want to talk about? Write an article

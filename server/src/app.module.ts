@@ -14,7 +14,6 @@ import { ThrottlerModule } from '@nestjs/throttler';
 import { ThrottlerGuard } from '@nestjs/throttler/dist/throttler.guard';
 import { CacheInterceptor, CacheModule, Module } from '@nestjs/common';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
-import { TagsModule } from './tags/tags.module';
 @Module({
   imports: [
     CacheModule.register({ isGlobal: true }),
@@ -22,21 +21,17 @@ import { TagsModule } from './tags/tags.module';
       envFilePath: '.env',
     }),
     TypeOrmModule.forRoot({
+      name: 'default',
       type: 'postgres',
-      host: 'localhost',
-      port: 5432,
-      username: 'postgres',
-      password: 'root',
-      database: 'maximus',
+      url: process.env.DATABASE_URI,
       synchronize: true,
-      // logging: true,
       entities: [User, Credentials, Article, Comment, Favourites, Follows],
     }),
+
     UserModule,
     HelperModule,
     ArticleModule,
     CommentsModule,
-    TagsModule,
     ThrottlerModule.forRoot({
       ttl: 60,
       limit: 100,

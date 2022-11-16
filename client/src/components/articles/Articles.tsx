@@ -31,6 +31,7 @@ function Articles({ filters }: { filters: Filters }) {
       {isSuccess && !articles.articles.length && (
         <p className="p-1 mt-3 text-gray-500">No articles found...</p>
       )}
+      {isLoading && <p className="p-1 mt-3 text-gray-500">Loading...</p>}
       {isSuccess &&
         articles?.articles.map((article) => {
           return (

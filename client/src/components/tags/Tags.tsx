@@ -24,6 +24,9 @@ function Tags() {
     <div className="xl:w-[30%] md:w-[30%] w-full border-2 p-3 bg-[#f3f3f3] rounded h-max">
       <p>Popular Tags</p>
       {isLoading && <p>Loading tags...</p>}
+      {!isLoading && tags.tags.length === 0 && (
+        <p className="text-gray-500 text-sm pt-1">No tags found...</p>
+      )}
       <>
         {tags?.tags.map((tag) => {
           return <TagItem tag={tag} key={tag} />;

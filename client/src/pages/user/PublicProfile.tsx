@@ -68,6 +68,7 @@ function Profile() {
 
   return (
     <>
+      {isLoading && <p>Loading profile...</p>}
       {isSuccess && (
         <>
           <div className="bg-[#f7f6f6] xl:h-[300px] md:h-[290px] h-[290px]">
