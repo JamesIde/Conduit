@@ -14,16 +14,16 @@ Most people decide to only do a frontend or backend implementation, but I decide
 - CRU\* users (register up & settings page - no deleting)
 - CR\*D Articles
 - CR\*\* Comments on articles (no updating)
-- GET and display paginated lists of articles
+- List articles and switch between user feed or selected tag
 - Favorite articles
 - Follow other users
 - Filter articles by tag
 - Filter articles by feed (shows followed users articles)
 - Caching to reduce latency and improve user experience
+- Server-side article pagination
 
 ## To Dos
 
 - Total user follower list with unfollowing functionality (like Instagram)
 - Delete comments on logged in user basis
-- Preview and edit page for articles
 - Tinker with styling to sooth perfectionism
