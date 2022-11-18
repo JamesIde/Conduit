@@ -79,7 +79,7 @@ function AddComment({ articleId, slug, currentUser }: AddCommentProps) {
             </div>
             <div className="flex items-center p-4">
               <button
-                className="p-2 bg-[#5CB85C] hover:bg-green-700 hover:duration-500 hover:cursor-pointer text-white font-bold rounded"
+                className="p-2 bg-[#5CB85C] hover:bg-green-700 hover:duration-500 hover:cursor-pointer text-white font-bold rounded xl:text-md md:text-md text-sm"
                 disabled={!currentUser}
                 type="submit"
               >

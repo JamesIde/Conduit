@@ -1,4 +1,4 @@
-import ReactQuill from "react-quill";
+// import "quill/dist/quill.snow.css";
 import { useRef, useState } from "react";
 import { NewArticle } from "../../types/Article";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -6,10 +6,10 @@ import { APIError } from "../../types/Error";
 import { AxiosError } from "axios";
 import Error from "../../components/helper/Error";
 import baseAPI from "../../config/api";
-declare module "react-quill";
-import { redirect, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { useQuill } from "react-quilljs";
 function CreateArticle() {
-  const queryClient = useQueryClient();
+  const { quill, quillRef } = useQuill();
   const ref = useRef(null);
   const navigate = useNavigate();
   const [tags, setTags] = useState([]);
@@ -26,16 +26,14 @@ function CreateArticle() {
       [e.target.name]: e.target.value,
     }));
   };
-  const handleEditor = (value) => {
-    setFields((prevState) => ({
-      ...prevState,
-      body: value,
-    }));
-  };
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
-    if (!fields.title || !fields.description || !fields.body) {
+    if (
+      !fields.title ||
+      !fields.description ||
+      !quillRef.current.firstChild.innerHTML
+    ) {
       setIsInvalid(true);
       setErrorTimeout();
       return;
@@ -43,7 +41,7 @@ function CreateArticle() {
       const article: NewArticle = {
         title: fields.title,
         description: fields.description,
-        body: fields.body,
+        body: quillRef.current.firstChild.innerHTML,
         tags: tags,
       };
       mutate(article);
@@ -93,7 +91,6 @@ function CreateArticle() {
     });
     setTags([]);
   };
-
   return (
     <>
       <div className="max-w-3xl mx-auto p-2">
@@ -115,7 +112,7 @@ function CreateArticle() {
           <form>
             <input
               type="text"
-              className="w-full p-2 border-2 rounded mt-4"
+              className="w-[95%] p-2 border-[1px] rounded mt-4 mx-auto block"
               placeholder="Title"
               onChange={handleUpdate}
               name="title"
@@ -123,20 +120,19 @@ function CreateArticle() {
             />
             <input
               type="text"
-              className="w-full p-2 border-2 rounded mt-4 mb-4"
+              className="w-[95%] p-2 border-[1px] rounded mt-4 mb-4 mx-auto block"
               placeholder="A quick summary of the article"
               onChange={handleUpdate}
               name="description"
               required
             />
-            <ReactQuill
-              value={fields.body}
-              onChange={handleEditor}
-              name="body"
-            />
+
+            <div className="ql-editor">
+              <div ref={quillRef} />
+            </div>
             <input
               type="text"
-              className="w-full p-2 border-2 rounded mt-4 mb-2"
+              className="w-[95%] p-2 border-[1px] rounded mt-4 mb-2 mx-auto block"
               placeholder="Tags"
               onKeyDown={handleTagInput}
               name="tags"
@@ -146,7 +142,7 @@ function CreateArticle() {
             <p className="text-red-500 text-sm">
               {isTagListFull && <p>Maximum six tags allowed</p>}
             </p>
-            <div className="mb-1">
+            <div className="mb-1 ml-4">
               {tags &&
                 tags.map((tag) => {
                   return (
@@ -164,7 +160,7 @@ function CreateArticle() {
             <button
               type="submit"
               onClick={handleFormSubmit}
-              className="mx-auto flex justify-center bg-green-600 hover:bg-green-800 duration-500  hover:cursor-pointer p-1 rounded  text-center font-bold text-white w-full"
+              className="mx-auto flex justify-center bg-green-600 hover:bg-green-800 duration-500  hover:cursor-pointer p-1 rounded  text-center font-bold text-white w-[95%]"
             >
               Create Article
             </button>

@@ -24,7 +24,6 @@ function Articles({ filters }: { filters: Filters }) {
     }
   );
 
-  console.log("the article", articles);
   return (
     <div className="xl:w-[70%] md:w-[70%] w-full">
       {isError && <p className="text-sm text-red-500">An error occured</p>}

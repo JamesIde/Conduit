@@ -1,6 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
 import { AxiosError } from "axios";
-import { HiOutlinePlusSm } from "react-icons/hi";
 import { Link, useParams } from "react-router-dom";
 import AuthorThumbnail from "../../components/articles/AuthorThumbnail";
 import FavouriteArticleButton from "../../components/articles/FavouriteArticleButton";
@@ -30,7 +29,7 @@ function ViewArticle() {
   return (
     <div>
       <section id="article-banner">
-        <div className="bg-[#f7f6f6] xl:h-[250px] md:h-[250px] h-[310px] border-b-[1px] border-b-[#b6b6b6]">
+        <div className="bg-[#f7f6f6] xl:h-[280px] md:h-[250px] h-[250px] border-b-[1px] border-b-[#b6b6b6]">
           <div className="mx-auto text-center flex justify-center items-center">
             <div className="xl:h-[200px] md:h-[150px] h-[150px] flex-col">
               <div className="text-center xl:mt-[85px] md:mt-5 mt-5">
@@ -70,7 +69,9 @@ function ViewArticle() {
         {isSuccess && (
           <>
             <div className="max-w-2xl mx-auto">
-              <div className="pt-2 p-3">{parse(article.body)}</div>
+              <div className="xl:pt-10 md:pt-5 pt-3 p-3">
+                {parse(article.body)}
+              </div>
             </div>
             <AddComment
               articleId={article.id}
@@ -80,7 +81,6 @@ function ViewArticle() {
           </>
         )}
       </section>
-
       <section id="article-display-comments">
         <div className="mt-6 mb-5 p-3">
           {isSuccess &&

@@ -24,7 +24,6 @@ function Home() {
 
   useEffect(() => {
     setFilters({ ...initialFilters });
-    console.log("The page is ", initialFilters.page);
     if (filterTag) {
       handleFilterTag(filterTag);
     }
