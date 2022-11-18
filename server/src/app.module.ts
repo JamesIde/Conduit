@@ -25,6 +25,7 @@ import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
       type: 'postgres',
       url: process.env.DATABASE_URI,
       synchronize: true,
+      logging: true,
       entities: [User, Credentials, Article, Comment, Favourites, Follows],
     }),
 
