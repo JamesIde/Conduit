@@ -6,6 +6,7 @@ import { APIError } from "../../types/Error";
 import { AxiosError } from "axios";
 import Error from "../../components/helper/Error";
 import baseAPI from "../../config/api";
+declare module "react-quill";
 import { redirect, useNavigate } from "react-router-dom";
 function CreateArticle() {
   const queryClient = useQueryClient();

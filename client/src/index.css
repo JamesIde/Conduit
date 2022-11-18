@@ -5,5 +5,3 @@
 .ql-editor{
     min-height:200px;
 }
-
-@import "react-quill/dist/quill.snow.css"
