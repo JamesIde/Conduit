@@ -22,13 +22,13 @@ function Profile() {
     isProfile: true,
   };
   const [isLogged, setIsLogged] = useState(false);
+  const [isFetched, setIsFetched] = useState(false);
   const [isAuthor, setIsAuthor] = useState(false);
   const [isFavourited, setIsFavourited] = useState(false);
   const [filters, setFilters] = useState({
     ...initialFilters,
   });
 
-  // TODO Re do page logic. Remove blend between logged in user and user from params. Too complicated. Make them seperated.
   const storedUser = useStore((state) => state.currentUser);
   const {
     data: profile,
@@ -41,6 +41,7 @@ function Profile() {
     () => baseAPI.getProfile(username),
     {
       onSuccess: (data) => {
+        setIsFetched(true);
         setIsAuthor(true);
         setFilters({
           ...initialFilters,
@@ -71,7 +72,7 @@ function Profile() {
     <>
       <div className="bg-[#f7f6f6] xl:h-[300px] md:h-[290px] h-[290px]">
         <div className="max-w-3xl mx-auto xl:pt-10 md:pt-5 pt-4">
-          {profile && (
+          {isFetched && (
             <>
               <div className="flex flex-col">
                 <div className="mx-auto">
@@ -142,7 +143,7 @@ function Profile() {
             </div>
           </div>
           <div className="mx-auto mt-0 p-2">
-            <Articles filters={filters} />
+            {isFetched ? <Articles filters={filters} /> : null}
           </div>
         </div>
       </section>

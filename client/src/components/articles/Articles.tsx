@@ -12,7 +12,6 @@ function Articles({ filters }: { filters: Filters }) {
     isLoading,
     isSuccess,
     isError,
-    refetch,
     error = {} as AxiosError,
     data: articles,
   } = useQuery<GetArticles, AxiosError>(

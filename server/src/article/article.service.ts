@@ -511,10 +511,7 @@ export class ArticleService {
    * It uses in memory storage to cache the results every 30 minutes for improved performance.
    */
   async getTags() {
-    if (
-      this.cachedTagTime &&
-      this.cachedTagTime > Date.now() - 30 * 60 * 1000
-    ) {
+    if (this.cachedTagTime && this.cachedTagTime > Date.now() - 900000) {
       return {
         cached: true,
         cachedTagTime: new Date(this.cachedTagTime).toLocaleString('en-AU'),
