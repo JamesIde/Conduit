@@ -49,18 +49,20 @@ function AuthorThumbnail({
             {article.author.username}
           </p>
         </div>
-        <p
-          className="text-black"
-          style={{
-            fontSize: fontSize,
-          }}
-        >
-          {new Date(article.createdAt).toLocaleString("en-US", {
-            month: "long",
-            year: "numeric",
-            day: "numeric",
-          })}
-        </p>
+        <div>
+          <p
+            className="text-black"
+            style={{
+              fontSize: fontSize,
+            }}
+          >
+            {new Date(article.createdAt).toLocaleString("en-US", {
+              month: "long",
+              year: "numeric",
+              day: "numeric",
+            })}
+          </p>
+        </div>
       </div>
     </div>
   );

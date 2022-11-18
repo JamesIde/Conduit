@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { useStore } from "../store/userStore";
+import { useStore } from "../store/globalStore";
 import { BsPencilSquare } from "react-icons/bs";
 import { IoSettingsOutline } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
@@ -27,11 +27,6 @@ function Header() {
           </Link>
         </div>
         <div className="flex flex-row">
-          <Link to="/">
-            <p className="text-gray-400 hover:text-gray-900 duration-500 p-2 cursor-pointer">
-              Home
-            </p>
-          </Link>
           {user ? (
             <>
               <Link to="/article/new">
@@ -40,14 +35,6 @@ function Header() {
                     <BsPencilSquare size={14} />
                   </p>
                   <p>New Article</p>
-                </div>
-              </Link>
-              <Link to={`/profile/${user.user.username}/settings`}>
-                <div className="flex flex-row text-gray-400 cursor-pointer hover:text-gray-600 p-2">
-                  <p className="mt-1 mr-1">
-                    <IoSettingsOutline />
-                  </p>
-                  <p>Settings</p>
                 </div>
               </Link>
               <div

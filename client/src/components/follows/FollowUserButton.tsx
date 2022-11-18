@@ -1,14 +1,15 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { useState } from "react";
+import toast from "react-hot-toast";
 import { HiOutlinePlusSm } from "react-icons/hi";
 import { Navigate, useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+
 import baseAPI from "../../config/api";
 import { APIError } from "../../types/Error";
 import { UserProfile } from "../../types/Profile";
 import { FollowMetadata } from "../../types/User";
-import { useStore } from "../store/userStore";
+import { useStore } from "../store/globalStore";
 
 interface metadata {
   username: string;
@@ -21,17 +22,7 @@ function FollowUserButton({ profile }: { profile: UserProfile }) {
   const queryClient = useQueryClient();
   const [IsProcessing, setIsProcessing] = useState(false);
 
-  const notify = (text: string) =>
-    toast.error(`${text}`, {
-      position: "top-center",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "colored",
-    });
+  const notify = (text: string) => toast.error(`${text}`);
 
   const { mutate, error = {} as AxiosError<APIError> } = useMutation(
     ["followUser"],

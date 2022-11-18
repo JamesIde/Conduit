@@ -41,3 +41,20 @@ export const useTagStore = create<tagState & TagAction>()((set) => ({
     set(() => ({ filterTag: null }));
   },
 }));
+
+type paginationState = {
+  page: number;
+};
+
+type paginationAction = {
+  updatePage: (page: number) => void;
+};
+
+export const usePaginationStore = create<paginationState & paginationAction>()(
+  (set) => ({
+    page: 1,
+    updatePage: (page: number) => {
+      set(() => ({ page: page }));
+    },
+  })
+);
