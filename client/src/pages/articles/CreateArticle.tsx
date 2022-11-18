@@ -1,5 +1,4 @@
 import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
 import { useRef, useState } from "react";
 import { NewArticle } from "../../types/Article";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -132,7 +131,6 @@ function CreateArticle() {
             <ReactQuill
               value={fields.body}
               onChange={handleEditor}
-              formats
               name="body"
             />
             <input
