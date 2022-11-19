@@ -5,3 +5,20 @@
 .ql-editor{
     min-height:200px;
 }
+
+/* p > a style underline */
+p > a {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    color: rgb(62, 169, 231);
+}
+
+p > a:hover{
+    color: rgb(231, 124, 36);
+   
+}
+
+ul > li {
+    list-style-type: disc;
+    margin-left: 20px;
+}

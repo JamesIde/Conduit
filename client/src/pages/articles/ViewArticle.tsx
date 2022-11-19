@@ -76,7 +76,7 @@ function ViewArticle() {
       <section id="article-information">
         {isFetched && (
           <>
-            <div className="max-w-2xl mx-auto">
+            <div className="max-w-2xl mx-auto xl:p-0 md:p-0 p-2">
               <div className="xl:pt-10 md:pt-5 pt-3 p-3">
                 {parse(article.body)}
               </div>
