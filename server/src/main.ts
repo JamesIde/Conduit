@@ -13,7 +13,9 @@ async function bootstrap() {
   );
   app.enableCors({
     credentials: true,
-    origin: 'https://conduit-nu.vercel.app/',
+    origin: 'https://conduit-nu.vercel.app',
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    exposedHeaders: ['set-cookie'],
   });
   app.use(cookieParser());
   const port = process.env.PORT || 5000;
