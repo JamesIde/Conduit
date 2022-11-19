@@ -4,7 +4,7 @@ View it [here](https://conduit-nu.vercel.app/).
 
 An article sharing platform similar to Medium.
 
-The frontend is developed in [React](https://reactjs.org/), with the backend developed in [NestJS](https://nestjs.com/), connected to a PostgreSQL database with [TypeORM](https://typeorm.io/). [React-Query](https://tanstack.com/query/v4/?from=reactQueryV3&original=https://react-query-v3.tanstack.com/) is used for data fetching and [Zustand](https://github.com/pmndrs/zustand) is used to track store (minimal) global state. The frontend is styled with [TailwindCSS](https://tailwindcss.com/).
+The frontend is developed in [React](https://reactjs.org/), with the backend developed in [NestJS](https://nestjs.com/), connected to a PostgreSQL database with [TypeORM](https://typeorm.io/). [React-Query](https://tanstack.com/query/v4/?from=reactQueryV3&original=https://react-query-v3.tanstack.com/) is used for data fetching and [Zustand](https://github.com/pmndrs/zustand) is used to store (minimal) global state. The frontend is styled with [TailwindCSS](https://tailwindcss.com/).
 
 The frontend is hosted on [Vercel](https://vercel.com/home) and the backend is hosted on [Google Cloud Run](https://cloud.google.com/run) using a [Docker](https://www.docker.com/) container thats pushed to [Google Container Registry](https://cloud.google.com/container-registry). This is done automatically via ```server/cloudbuild.yaml```.
 
