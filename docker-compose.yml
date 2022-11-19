@@ -1,11 +1,16 @@
 # Connect to the server docker
 version: "3.8"
 services:
-  conduitdomain:
+  conduitserver:
     build:
       context: "./server"
     ports:
       - "3001:3001"
+  conduitclient:
+    build:
+      context: "./client"
+    ports:
+      - "3000:3000"
   nginx:
     restart: always
     build:
