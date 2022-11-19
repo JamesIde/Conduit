@@ -1,6 +1,6 @@
 # Conduit
 
-View it [here](https://conduit-nu.vercel.app/)
+View it [here](https://conduit-nu.vercel.app/).
 
 An article sharing platform similar to Medium.
 
