@@ -142,7 +142,7 @@ export class UserService {
     // Send cookie
     await this.authService.sendRefreshCookie(res, isValidUser);
     return {
-      message: 'User logged in',
+      message: `${isValidUser.username} logged in successfully`,
       user: {
         id: isValidUser.id,
         username: isValidUser.username,

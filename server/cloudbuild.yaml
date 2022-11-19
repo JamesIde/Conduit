@@ -1,0 +1,23 @@
+steps:
+  # Build the container image
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      ['build', '-t', 'gcr.io/conduit-369101/tudor14/conduit-server:1.0', '.']
+  # Push the container image to Container Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/conduit-369101/tudor14/conduit-server:1.0']
+  # Deploy container image to Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      [
+        'run',
+        'deploy',
+        'conduit-server',
+        '--image',
+        'gcr.io/conduit-369101/tudor14/conduit-server:1.0',
+        '--region',
+        'australia-southeast2',
+      ]
+images:
+  - gcr.io/conduit-369101/tudor14/conduit-server:1.0
