@@ -83,6 +83,8 @@ export class HelperService {
     res.cookie('safron', refreshToken, {
       httpOnly: true,
       expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      sameSite: 'none',
+      secure: true,
     });
   }
 
