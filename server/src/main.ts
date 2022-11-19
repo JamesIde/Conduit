@@ -13,7 +13,7 @@ async function bootstrap() {
   );
   app.enableCors({
     credentials: true,
-    origin: 'http://localhost:3000',
+    origin: 'https://conduit-nu.vercel.app/',
   });
   app.use(cookieParser());
   const port = process.env.PORT || 5000;
