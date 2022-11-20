@@ -32,7 +32,7 @@ function ViewArticle() {
   return (
     <div>
       <section id="article-banner">
-        <div className="bg-[#f7f6f6] xl:h-[280px] md:h-[250px] h-[250px] border-b-[1px] border-b-[#b6b6b6]">
+        <div className="bg-[#f7f6f6] xl:h-[280px] md:h-[250px] h-[280px] border-b-[1px] border-b-[#b6b6b6]">
           <div className="mx-auto text-center flex justify-center items-center">
             <div className="xl:h-[200px] md:h-[150px] h-[150px] flex-col">
               <div className="text-center xl:mt-[85px] md:mt-5 mt-5">

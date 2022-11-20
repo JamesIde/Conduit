@@ -31,7 +31,7 @@ export class HelperService {
       let token = jwt.sign(
         { id: user.id, email: user.email },
         process.env.ACCESS_TOKEN_SECRET,
-        { expiresIn: '1hr' }, // TODO change to 15 min
+        { expiresIn: '15min' },
       );
       return token;
     } catch (error) {
