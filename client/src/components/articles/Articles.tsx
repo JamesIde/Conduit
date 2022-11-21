@@ -19,7 +19,6 @@ function Articles({ filters }: { filters: Filters }) {
     () => baseAPI.getArticles(filters),
     {
       refetchOnWindowFocus: false,
-      // enabled: false,
     }
   );
 

@@ -61,9 +61,6 @@ function Login() {
         <div className="text-center">
           {isLoading && <p>Signing you in...</p>}
           {isError && <Error error={error as AxiosError<APIError>} />}
-          {/* {isSuccess && (
-            <p className="text-green-500">Signed in, hang tight!</p>
-          )} */}
         </div>
         <div className="mx-auto xl:w-3/4 md:w-full w-full p-2">
           <form onSubmit={handleSubmit(onSubmit)}>

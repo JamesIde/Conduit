@@ -34,6 +34,7 @@ function Settings() {
       notify();
     },
   });
+
   const user = {
     image: currentUser.user.image,
     email: currentUser.user.email,

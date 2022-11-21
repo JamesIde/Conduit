@@ -1,9 +1,6 @@
-import { Filters, Metadata } from "../../types/Article";
+import { Metadata } from "../../types/Article";
 import { usePaginationStore } from "../store/globalStore";
-import { useQueryClient } from "@tanstack/react-query";
-import baseAPI from "../../config/api";
 function Paginate({ metadata }: { metadata: Metadata }) {
-  const queryClient = useQueryClient();
   const [updatePage] = usePaginationStore((state) => [state.updatePage]);
   const handleNext = async (page: number) => {
     updatePage(page);
