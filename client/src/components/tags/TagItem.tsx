@@ -1,4 +1,4 @@
-import { useTagStore } from "../store/globalStore";
+import { usePaginationStore, useTagStore } from "../store/globalStore";
 
 interface tagProp {
   tag: string;
@@ -10,7 +10,10 @@ function TagItem({ tag }: tagProp) {
     state.updateTag,
   ]);
 
+  const [updatePage] = usePaginationStore((state) => [state.updatePage]);
+
   const onClick = (tag: string) => {
+    updatePage(1);
     updateTag(tag);
   };
 
