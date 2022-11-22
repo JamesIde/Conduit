@@ -29,13 +29,11 @@ function Profile() {
     () => baseAPI.getProfile(username),
     {
       onSuccess: (data) => {
-        console.log("the data is", data);
         setIsLoading(true);
         dispatch({ type: "AUTHOR", author: username });
       },
     }
   );
-
 
   const handleAuthorClick = () => {
     dispatch({ type: "AUTHOR", author: username });

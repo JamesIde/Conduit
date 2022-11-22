@@ -17,7 +17,7 @@ function Home() {
     state.filterTag,
     state.clearTag,
   ]);
-  // Requires page which must be loaded in this component 
+  // Requires page which must be loaded in this component
   const filterState: Filters = {
     tag: "",
     feed: false,
@@ -30,17 +30,14 @@ function Home() {
     isFilterTag: false,
   };
 
-
   const [state, dispatch] = useReducer(articleReducer, filterState);
 
   useEffect(() => {
     dispatch({ type: "GLOBAL_FEED", pageNum: page });
     if (filterTag) {
-      dispatch({type:"FILTER_TAG", tag: filterTag})
+      dispatch({ type: "FILTER_TAG", tag: filterTag });
     }
-    console.log("page is", page);
   }, [filterTag, page]);
-
 
   // TOGGLE FEED HANDLERS
   const handleGlobalFeedClick = () => {
