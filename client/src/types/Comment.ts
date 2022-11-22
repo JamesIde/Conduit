@@ -16,3 +16,14 @@ export interface ArticleComment {
   slug: string;
   body: string;
 }
+
+export interface AddCommentRequest {
+  body: string
+}
+
+export interface AddCommentProps { 
+  
+  articleId: number;
+  slug: string;
+  currentUser: any;
+}

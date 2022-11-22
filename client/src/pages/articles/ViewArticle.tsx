@@ -5,8 +5,8 @@ import { useState } from "react";
 import AuthorThumbnail from "../../components/articles/AuthorThumbnail";
 import FavouriteArticleButton from "../../components/articles/FavouriteArticleButton";
 import AddComment from "../../components/comments/AddComment";
-import { useStore } from "../../components/store/globalStore";
-import baseAPI from "../../config/api";
+import { useStore } from "../../utils/store/globalStore";
+import baseAPI from "../../utils/api/api";
 import { Article } from "../../types/Article";
 const parse = require("html-react-parser");
 function ViewArticle() {

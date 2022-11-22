@@ -1,5 +1,5 @@
 import { Metadata } from "../../types/Article";
-import { usePaginationStore } from "../store/globalStore";
+import { usePaginationStore } from "../../utils/store/globalStore";
 function Paginate({ metadata }: { metadata: Metadata }) {
   const [updatePage] = usePaginationStore((state) => [state.updatePage]);
   const handleNext = async (page: number) => {

@@ -1,4 +1,4 @@
-import { FavouriteStatus, Filters } from "../types/Article";
+import { FavouriteStatus, Filters } from "../../types/Article";
 import {
   FollowMetadata,
   LoginUser,
@@ -6,10 +6,10 @@ import {
   UpdateProfile,
   UpdateProfileSuccess,
   UserSignInSuccess,
-} from "../types/User";
-import { PopularTags } from "../types/Article";
-import { NewArticle, Article } from "../types/Article";
-import { UserProfile } from "../types/Profile";
+} from "../../types/User";
+import { PopularTags } from "../../types/Article";
+import { NewArticle, Article } from "../../types/Article";
+import { UserProfile } from "../../types/Profile";
 import baseClient from "./baseClient";
 
 /**

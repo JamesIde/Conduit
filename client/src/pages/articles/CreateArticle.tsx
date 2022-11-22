@@ -5,7 +5,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { APIError } from "../../types/Error";
 import { AxiosError } from "axios";
 import Error from "../../components/helper/Error";
-import baseAPI from "../../config/api";
+import baseAPI from "../../utils/api/api";
 import { useNavigate } from "react-router-dom";
 import { useQuill } from "react-quilljs";
 function CreateArticle() {

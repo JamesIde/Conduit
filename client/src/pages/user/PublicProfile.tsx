@@ -1,12 +1,12 @@
 import { IoSettingsOutline } from "react-icons/io5";
-import { useStore } from "../../components/store/globalStore";
+import { useStore } from "../../utils/store/globalStore";
 import { Link } from "react-router-dom";
 import { QueryClient, useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 import { AxiosError } from "axios";
 import { UserProfile } from "../../types/Profile";
 import { useState, useEffect } from "react";
-import baseAPI from "../../config/api";
+import baseAPI from "../../utils/api/api";
 import Articles from "../../components/articles/Articles";
 import ArticlePreview from "../../components/articles/ArticlePreview";
 import FollowUserButton from "../../components/follows/FollowUserButton";
@@ -59,7 +59,7 @@ function Profile() {
 
   return (
     <>
-      {isLoading && <p>Loading profile...</p>}
+      {isLoading && <p className="text-center">Loading profile...</p>}
       {IsLoading && (
         <>
           <div className="bg-[#f7f6f6] xl:h-[300px] md:h-[290px] h-[290px]">

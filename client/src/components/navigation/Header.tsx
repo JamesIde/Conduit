@@ -1,10 +1,10 @@
 import { Link } from "react-router-dom";
-import { useStore } from "../store/globalStore";
+import { useStore } from "../../utils/store/globalStore";
 import { BsPencilSquare } from "react-icons/bs";
 import { IoSettingsOutline } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
-import baseAPI from "../../config/api";
+import baseAPI from "../../utils/api/api";
 function Header() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();

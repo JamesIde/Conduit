@@ -1,7 +1,7 @@
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import baseAPI from "../../config/api";
-import { useStore } from "../store/globalStore";
+import baseAPI from "../../utils/api/api";
+import { useStore } from "../../utils/store/globalStore";
 
 function Logout() {
   const navigate = useNavigate();
