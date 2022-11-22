@@ -87,9 +87,7 @@ export class UserService {
       if (createdUser) {
         await this.authService.sendRefreshCookie(res, createdUser);
         return {
-          message: 'User created successfully',
           user: {
-            id: createdUser.id,
             username: createdUser.username,
             email: createdUser.email,
             image: 'https://api.realworld.io/images/demo-avatar.png',
@@ -142,9 +140,7 @@ export class UserService {
     // Send cookie
     await this.authService.sendRefreshCookie(res, isValidUser);
     return {
-      message: `${isValidUser.username} logged in successfully`,
       user: {
-        id: isValidUser.id,
         username: isValidUser.username,
         email: isValidUser.email,
         image: isValidUser.image,

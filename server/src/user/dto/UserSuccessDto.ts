@@ -1,7 +1,7 @@
 export interface UserSuccessDto {
   message?: string;
   user: {
-    id: number;
+    id?: number;
     username: string;
     email: string;
     image: string;

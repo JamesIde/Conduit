@@ -45,7 +45,6 @@ function Profile() {
 
   return (
     <>
-      {isLoading && <p className="text-center">Loading profile...</p>}
       {IsLoading && (
         <>
           <div className="bg-[#f7f6f6] xl:h-[300px] md:h-[290px] h-[290px]">

@@ -5,14 +5,15 @@ import { QueryClient, useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 import { AxiosError } from "axios";
 import { UserProfile } from "../../types/Profile";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useReducer } from "react";
 import baseAPI from "../../utils/api/api";
 import Articles from "../../components/articles/Articles";
 import ArticlePreview from "../../components/articles/ArticlePreview";
 import FollowUserButton from "../../components/follows/FollowUserButton";
+import articleReducer from "../../utils/context/articleReducer";
 function Profile() {
   const { username } = useParams<string>();
-  const queryClient = new QueryClient();
+  const storedUser = useStore((state) => state.currentUser);
   const initialFilters = {
     feed: false,
     author: null,
@@ -21,18 +22,10 @@ function Profile() {
     page: 1,
     isProfile: true,
   };
-  const [isLogged, setIsLogged] = useState(false);
-  const [isFetched, setIsFetched] = useState(false);
-  const [isAuthor, setIsAuthor] = useState(false);
-  const [isFavourited, setIsFavourited] = useState(false);
-  const [filters, setFilters] = useState({
-    ...initialFilters,
-  });
-
-  const storedUser = useStore((state) => state.currentUser);
+  const [state, dispatch] = useReducer(articleReducer, initialFilters);
+  const [isLoading, setIsLoading] = useState(false);
   const {
     data: profile,
-    isLoading,
     isError,
     isSuccess,
     error = {} as AxiosError,
@@ -41,12 +34,8 @@ function Profile() {
     () => baseAPI.getProfile(username),
     {
       onSuccess: (data) => {
-        setIsFetched(true);
-        setIsAuthor(true);
-        setFilters({
-          ...initialFilters,
-          author: username,
-        });
+        setIsLoading(true);
+        dispatch({ type: "AUTHOR", author: data.username });
       },
       refetchOnMount: true,
       refetchOnWindowFocus: false,
@@ -54,25 +43,18 @@ function Profile() {
   );
 
   const handleAuthorClick = () => {
-    setIsAuthor(true);
-    setIsFavourited(false);
-    setFilters({ ...initialFilters, author: username, favourited: false });
+    dispatch({ type: "AUTHOR", author: username });
   };
 
   const handleFavouritedClick = () => {
-    setIsAuthor(false);
-    setIsFavourited(true);
-    setFilters({
-      ...initialFilters,
-      favourited: true,
-    });
+    dispatch({ type: "FAVOURITED" });
   };
 
   return (
     <>
       <div className="bg-[#f7f6f6] xl:h-[300px] md:h-[290px] h-[290px]">
         <div className="max-w-3xl mx-auto xl:pt-10 md:pt-5 pt-4">
-          {isFetched && (
+          {isLoading && (
             <>
               <div className="flex flex-col">
                 <div className="mx-auto">
@@ -124,8 +106,8 @@ function Profile() {
                 className="p-2 hover:text-gray-500 text-[#aaa]"
                 onClick={handleAuthorClick}
                 style={{
-                  borderBottom: isAuthor ? "1px solid green" : "white",
-                  color: isAuthor ? "green" : "black",
+                  borderBottom: state.author ? "1px solid green" : "white",
+                  color: state.author ? "green" : "black",
                 }}
               >
                 Your Articles
@@ -134,8 +116,8 @@ function Profile() {
                 className="p-2 text-[#aaa] hover:text-gray-500"
                 onClick={handleFavouritedClick}
                 style={{
-                  borderBottom: isFavourited ? "1px solid green" : "white",
-                  color: isFavourited ? "green" : "black",
+                  borderBottom: state.favourited ? "1px solid green" : "white",
+                  color: state.favourited ? "green" : "black",
                 }}
               >
                 Your Favourited Articles
@@ -143,7 +125,7 @@ function Profile() {
             </div>
           </div>
           <div className="mx-auto mt-0 p-2">
-            {isFetched ? <Articles filters={filters} /> : null}
+            {isLoading ? <Articles filters={state} /> : null}
           </div>
         </div>
       </section>

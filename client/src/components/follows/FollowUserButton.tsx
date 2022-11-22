@@ -3,18 +3,13 @@ import { AxiosError } from "axios";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { HiOutlinePlusSm } from "react-icons/hi";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import baseAPI from "../../utils/api/api";
 import { APIError } from "../../types/Error";
 import { UserProfile } from "../../types/Profile";
 import { FollowMetadata } from "../../types/User";
 import { useStore } from "../../utils/store/globalStore";
-
-interface metadata {
-  username: string;
-  isFollowed: boolean;
-}
 
 function FollowUserButton({ profile }: { profile: UserProfile }) {
   const currentUser = useStore((state) => state.currentUser);
@@ -40,7 +35,6 @@ function FollowUserButton({ profile }: { profile: UserProfile }) {
   );
 
   const handleFollow = (username: string, isFollowedByLoggedUser: boolean) => {
-    console.log("user", username);
     if (!currentUser) {
       navigate("/login");
     } else {
