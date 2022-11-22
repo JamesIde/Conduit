@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useStore } from "../../components/store/globalStore";
+import { useStore } from "../../utils/store/globalStore";
 import { useMutation } from "@tanstack/react-query";
 import { UpdateProfile, UserSignInSuccess } from "../../types/User";
 import { AxiosError } from "axios";
@@ -7,7 +7,7 @@ import { APIError } from "../../types/Error";
 import { useNavigate } from "react-router-dom";
 import Logout from "../../components/navigation/Logout";
 import Error from "../../components/helper/Error";
-import baseAPI from "../../config/api";
+import baseAPI from "../../utils/api/api";
 import toast from "react-hot-toast";
 function Settings() {
   const navigate = useNavigate();

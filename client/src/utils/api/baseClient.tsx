@@ -1,5 +1,5 @@
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
-import { AccessTokenSuccess, UserSignInSuccess } from "../types/User";
+import { AccessTokenSuccess, UserSignInSuccess } from "../../types/User";
 
 const baseClient = axios.create({
   baseURL: "https://conduit-server-l7qc4hqwda-km.a.run.app",

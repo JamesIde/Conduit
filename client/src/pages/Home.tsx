@@ -4,62 +4,55 @@ import {
   usePaginationStore,
   useStore,
   useTagStore,
-} from "../components/store/globalStore";
-import { useState, useEffect } from "react";
-import { Filters } from "../types/Article";
+} from "../utils/store/globalStore";
+import { useEffect, useReducer } from "react";
+
+import articleReducer from "../utils/context/articleReducer";
+import { Filters } from "../utils/context/articleReducer";
 function Home() {
+  // GLOBAL STATE
   const page = usePaginationStore((state) => state.page);
-  const initialFilters: Filters = {
+  const currentUser = useStore((state) => state.currentUser);
+  const [filterTag, clearTag] = useTagStore((state) => [
+    state.filterTag,
+    state.clearTag,
+  ]);
+  // Requires page which must be loaded in this component 
+  const filterState: Filters = {
     tag: "",
     feed: false,
     author: "",
     page: page,
     favourited: false,
     isProfile: false,
+    userFeed: false,
+    globalFeed: true,
+    isFilterTag: false,
   };
-  const [filterTag, clearTag] = useTagStore((state) => [
-    state.filterTag,
-    state.clearTag,
-  ]);
+
+
+  const [state, dispatch] = useReducer(articleReducer, filterState);
 
   useEffect(() => {
-    setFilters({ ...initialFilters });
+    dispatch({ type: "GLOBAL_FEED", pageNum: page });
     if (filterTag) {
-      handleFilterTag(filterTag);
+      dispatch({type:"FILTER_TAG", tag: filterTag})
     }
+    console.log("page is", page);
   }, [filterTag, page]);
 
-  const [isGlobalFeed, setIsGlobalFeed] = useState(true);
-  const [isUserFeed, setIsUserFeed] = useState(false);
-  const [isFilterTag, setIsFilterTag] = useState(false);
-  const [filters, setFilters] = useState({
-    ...initialFilters,
-  });
 
+  // TOGGLE FEED HANDLERS
   const handleGlobalFeedClick = () => {
-    setIsGlobalFeed(true);
-    setIsUserFeed(false);
-    setIsFilterTag(false);
-    setFilters({ ...initialFilters, feed: false });
+    dispatch({ type: "GLOBAL_FEED" });
     clearTag();
   };
 
   const handleUserFeedClick = () => {
-    setIsUserFeed(true);
-    setIsGlobalFeed(false);
-    setIsFilterTag(false);
-    setFilters({ ...initialFilters, feed: true });
+    dispatch({ type: "USER_FEED" });
     clearTag();
   };
 
-  const handleFilterTag = (filterTag: string) => {
-    setIsFilterTag(true);
-    setFilters({ ...initialFilters, tag: filterTag, limit: 10 });
-    setIsUserFeed(false);
-    setIsGlobalFeed(false);
-  };
-
-  const currentUser = useStore((state) => state.currentUser);
   return (
     <div className="xl:max-w-5xl md:max-w-4xl w-full mx-auto pt-1">
       <div className="xl:mt-12 md:mt-10 border-b-[1px] xl:w-[70%] md:w-[70%] w-full">
@@ -68,8 +61,8 @@ function Home() {
             className="p-2 hover:text-gray-500 text-[#aaa]"
             onClick={handleGlobalFeedClick}
             style={{
-              borderBottom: isGlobalFeed ? "1px solid green" : "white",
-              color: isGlobalFeed ? "green" : "black",
+              borderBottom: state.globalFeed ? "1px solid green" : "white",
+              color: state.globalFeed ? "green" : "black",
             }}
           >
             Global Feed
@@ -79,8 +72,8 @@ function Home() {
               className="p-2 text-[#aaa] hover:text-gray-500"
               onClick={handleUserFeedClick}
               style={{
-                borderBottom: isUserFeed ? "1px solid green" : "white",
-                color: isUserFeed ? "green" : "black",
+                borderBottom: state.userFeed ? "1px solid green" : "white",
+                color: state.userFeed ? "green" : "black",
               }}
             >
               Your Feed
@@ -102,7 +95,7 @@ function Home() {
         </div>
       </div>
       <div className="flex xl:flex-row md:flex-row flex-col-reverse p-2">
-        <Articles filters={filters} />
+        <Articles filters={state} />
         <Tags />
       </div>
     </div>

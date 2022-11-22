@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { useStore } from "../store/globalStore";
+import { useStore } from "../../utils/store/globalStore";
 import { Navigate, Outlet } from "react-router-dom";
 function IsLoggedUser() {
   const { username } = useParams();

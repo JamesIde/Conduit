@@ -1,4 +1,4 @@
-import { usePaginationStore, useTagStore } from "../store/globalStore";
+import { usePaginationStore, useTagStore } from "../../utils/store/globalStore";
 
 interface tagProp {
   tag: string;

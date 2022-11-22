@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import Error from "../helper/Error";
-import baseAPI from "../../config/api";
+import baseAPI from "../../utils/api/api";
 import { PopularTags } from "../../types/Article";
 import { APIError } from "../../types/Error";
 import TagItem from "./TagItem";

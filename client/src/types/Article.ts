@@ -73,9 +73,12 @@ export interface Filters {
   author?: null | string;
   favourited?: boolean;
   limit?: number;
-  page?: number;
+  page?: number | string;
   feed?: boolean;
   isProfile?: boolean;
+  userFeed?: boolean;
+  globalFeed?: boolean;
+  isFilterTag?: boolean;
 }
 
 export interface FavouriteStatus {

@@ -1,19 +1,7 @@
-import { QueryClient, useMutation } from "@tanstack/react-query";
-import axios from "axios";
+import { QueryClient } from "@tanstack/react-query";
 import { SubmitHandler, useForm } from "react-hook-form";
-import baseAPI from "../../config/api";
-import baseClient from "../../config/baseClient";
-import { ArticleComment } from "../../types/Comment";
-
-interface AddCommentProps {
-  articleId: number;
-  slug: string;
-  currentUser: any;
-}
-
-interface Comment {
-  body: string;
-}
+import { AddCommentProps, AddCommentRequest } from "../../types/Comment";
+import baseClient from "../../utils/api/baseClient";
 
 function AddComment({ articleId, slug, currentUser }: AddCommentProps) {
   const queryClient = new QueryClient();
@@ -22,14 +10,9 @@ function AddComment({ articleId, slug, currentUser }: AddCommentProps) {
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<Comment>();
+  } = useForm<AddCommentRequest>();
 
-  const onSubmit: SubmitHandler<Comment> = async (data, e) => {
-    const comment = {
-      id: articleId,
-      slug: slug,
-      body: data.body,
-    };
+  const onSubmit: SubmitHandler<AddCommentRequest> = async (data, e) => {
     const response = await baseClient.post(
       `/comments/${articleId}/${slug}`,
       data

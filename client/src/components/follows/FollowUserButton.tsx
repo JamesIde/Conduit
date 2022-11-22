@@ -5,11 +5,11 @@ import toast from "react-hot-toast";
 import { HiOutlinePlusSm } from "react-icons/hi";
 import { Navigate, useNavigate } from "react-router-dom";
 
-import baseAPI from "../../config/api";
+import baseAPI from "../../utils/api/api";
 import { APIError } from "../../types/Error";
 import { UserProfile } from "../../types/Profile";
 import { FollowMetadata } from "../../types/User";
-import { useStore } from "../store/globalStore";
+import { useStore } from "../../utils/store/globalStore";
 
 interface metadata {
   username: string;

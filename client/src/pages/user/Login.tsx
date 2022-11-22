@@ -6,8 +6,8 @@ import { AxiosError } from "axios";
 import { useNavigate } from "react-router-dom";
 import { APIError } from "../../types/Error";
 import Error from "../../components/helper/Error";
-import baseAPI from "../../config/api";
-import { useStore } from "../../components/store/globalStore";
+import baseAPI from "../../utils/api/api";
+import { useStore } from "../../utils/store/globalStore";
 import toast from "react-hot-toast";
 function Login() {
   const navigate = useNavigate();

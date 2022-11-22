@@ -1,5 +1,5 @@
 import create from "zustand";
-import { UpdateProfileSuccess, UserSignInSuccess } from "../../types/User";
+import {  UserSignInSuccess } from "../../types/User";
 
 type State = {
   currentUser: UserSignInSuccess;

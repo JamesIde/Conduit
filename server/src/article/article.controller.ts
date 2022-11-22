@@ -35,6 +35,7 @@ export class ArticleController {
   }
 
   // @UseGuards(JWTGuard)
+  @UseGuards(LoggedUserGuard)
   @Get('/author/:username')
   async getUserArticles(
     @Req() req: Request,
