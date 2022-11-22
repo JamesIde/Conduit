@@ -450,11 +450,31 @@ export class ArticleService {
         createdAt: 'DESC',
       },
     });
-
-    return {
-      articleCount: userArticles.length,
-      articles: userArticles,
-    };
+    // A logged in user is viewing an authors page, check if they've favourited articles
+    if (req.user) {
+      const userSlugs = await this.getFavouriteArticleSlugs(req.user);
+      const authorArticles = userArticles.map((article) => {
+        if (userSlugs.includes(article.slug)) {
+          return {
+            ...article,
+            isFavourited: true,
+          };
+        }
+        return {
+          ...article,
+          isFavourited: false,
+        };
+      });
+      return {
+        articleCount: userArticles.length,
+        articles: authorArticles,
+      };
+    } 
+      return {
+        articleCount: userArticles.length,
+        articles: userArticles,
+      };
+    
   }
 
   /**

@@ -5,56 +5,44 @@ import { QueryClient, useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 import { AxiosError } from "axios";
 import { UserProfile } from "../../types/Profile";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useReducer } from "react";
 import baseAPI from "../../utils/api/api";
 import Articles from "../../components/articles/Articles";
 import ArticlePreview from "../../components/articles/ArticlePreview";
 import FollowUserButton from "../../components/follows/FollowUserButton";
+import articleReducer, { Filters } from "../../utils/context/articleReducer";
 function Profile() {
   const { username } = useParams<string>();
   const storedUser = useStore((state) => state.currentUser);
-  const initialFilters = {
+  const initialFilters: Filters = {
     feed: false,
-    author: null,
+    author: username,
     favourited: false,
     limit: 3,
     page: 1,
-    isProfile: true,
   };
+
+  const [state, dispatch] = useReducer(articleReducer, initialFilters);
   const [IsLoading, setIsLoading] = useState(false);
-  const [isAuthor, setIsAuthor] = useState(false);
-  const [isFavourited, setIsFavourited] = useState(false);
-  const [filters, setFilters] = useState({
-    ...initialFilters,
-  });
   const { data: profile, isLoading } = useQuery<UserProfile, AxiosError>(
     ["profile"],
     () => baseAPI.getProfile(username),
     {
       onSuccess: (data) => {
-        setIsAuthor(true);
+        console.log("the data is", data);
         setIsLoading(true);
-        setFilters({
-          ...initialFilters,
-          author: username,
-        });
+        dispatch({ type: "AUTHOR", author: username });
       },
     }
   );
 
+
   const handleAuthorClick = () => {
-    setIsAuthor(true);
-    setIsFavourited(false);
-    setFilters({ ...initialFilters, author: username, favourited: false });
+    dispatch({ type: "AUTHOR", author: username });
   };
 
   const handleFavouritedClick = () => {
-    setIsAuthor(false);
-    setIsFavourited(true);
-    setFilters({
-      ...initialFilters,
-      favourited: true,
-    });
+    dispatch({ type: "FAVOURITED" });
   };
 
   return (
@@ -115,8 +103,8 @@ function Profile() {
                   className="p-2 hover:text-gray-500 text-[#aaa]"
                   onClick={handleAuthorClick}
                   style={{
-                    borderBottom: isAuthor ? "1px solid green" : "white",
-                    color: isAuthor ? "green" : "black",
+                    borderBottom: "1px solid green",
+                    color: "green",
                   }}
                 >
                   Your Articles
@@ -126,8 +114,10 @@ function Profile() {
                     className="p-2 text-[#aaa] hover:text-gray-500"
                     onClick={handleFavouritedClick}
                     style={{
-                      borderBottom: isFavourited ? "1px solid green" : "white",
-                      color: isFavourited ? "green" : "black",
+                      borderBottom: state.favourited
+                        ? "1px solid green"
+                        : "white",
+                      color: state.favourited ? "green" : "black",
                     }}
                   >
                     Your Favourited Articles
@@ -136,7 +126,7 @@ function Profile() {
               </div>
             </div>
             <div className="mx-auto mt-0 p-2">
-              <Articles filters={filters} />
+              <Articles filters={state} />
             </div>
           </div>
         </>

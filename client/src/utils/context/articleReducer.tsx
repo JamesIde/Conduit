@@ -1,13 +1,13 @@
 export type Filters = {
-    tag: string;
-    feed: boolean
-    author: string
+    tag?: string;
+    feed?: boolean
+    author?: string
     page: number
-    favourited: boolean
-    isProfile: boolean
-    userFeed: boolean;
-    globalFeed: boolean;
-    isFilterTag: boolean
+    favourited?: boolean
+    isProfile?: boolean
+    userFeed?: boolean;
+    globalFeed?: boolean;
+    isFilterTag?: boolean
     limit?: number
 }
 
@@ -15,6 +15,7 @@ type Actions = {
     type: string
     pageNum?: number
     tag?: string
+    author?: string
 }
 
 
@@ -38,6 +39,27 @@ export default function articleReducer(state: Filters, action: Actions) {
                 isFilterTag: false,
                 tag: "",
                 feed: true,
+            }
+        case "AUTHOR":
+            return {
+                ...state,
+                userFeed: false,
+                globalFeed: false,
+                isFilterTag: false,
+                tag: "",
+                feed: false,
+                author: action.author,
+            }
+        case "FAVOURITED":
+            return {
+                ...state,
+                userFeed: false,
+                globalFeed: false,
+                isFilterTag: false,
+                tag: "",
+                feed: false,
+                author: "",
+                favourited: true,
             }
         case "FILTER_TAG":
             return {
