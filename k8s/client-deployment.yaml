@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: conduit-client
+spec:
+  selector:
+    matchLabels:
+      app: conduit-client
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: conduit-client
+    spec:
+      containers:
+        - name: conduit-client
+          image: tudor14/conduit-client-domain:1.2
+          ports:
+            - containerPort: 8080
+          env:
+            - name: REACT_APP_SERVER_DOMAIN
+              valueFrom:
+                secretKeyRef:
+                  name: client-secret
+                  key: REACT_APP_SERVER_DOMAIN
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: conduit-client
+spec:
+  selector:
+    app: conduit-client
+  ports:
+    - port: 8080
+      targetPort: 8080
+  type: ClusterIP

@@ -1,4 +1,12 @@
 node_modules
 package-lock.json
-client/Dockerfile
+
+docker-compose-backup.yml
+nginx/.env
+docker-compose.dev.yml
+client/.env
+k8s/postgres-secret.yaml
+k8s/client.secret.yaml
+k8s/server-secret.yaml
 server/Dockerfile
+server/Dockerfile-backup

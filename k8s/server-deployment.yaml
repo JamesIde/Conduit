@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: conduit-server
+spec:
+  selector:
+    matchLabels:
+      app: conduit-server
+  replicas: 2
+  template: # This is the blueprint for the Pod
+    metadata:
+      labels:
+        app: conduit-server
+    spec:
+      containers:
+        - name: conduit-server
+          image: tudor14/conduit-server-domain:1.1
+          ports:
+            - containerPort: 5000
+          env:
+            - name: DATABASE_URI
+              valueFrom:
+                secretKeyRef:
+                  name: server-secret
+                  key: DATABASE_URI
+            - name: ACCESS_TOKEN_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: server-secret
+                  key: ACCESS_TOKEN_SECRET
+            - name: REFRESH_TOKEN_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: server-secret
+                  key: REFRESH_TOKEN_SECRET
+            - name: PORT
+              valueFrom:
+                secretKeyRef:
+                  name: server-secret
+                  key: PORT
+            - name: ENV_FLAG
+              valueFrom:
+                secretKeyRef:
+                  name: server-secret
+                  key: ENV_FLAG
+          # NEED CLIENT DOMAIN AFTER FIXING...
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: conduit-server
+spec:
+  selector:
+    app: conduit-server
+  ports:
+    - protocol: TCP
+      port: 5000
+  type: ClusterIP
+
+  # If its clusterIP, can only be accessed from within the cluster (not postman, pgAdmin or anything like that)

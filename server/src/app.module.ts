@@ -23,9 +23,10 @@ import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
     TypeOrmModule.forRoot({
       name: 'default',
       type: 'postgres',
+      port: 5432,
       url: process.env.DATABASE_URI,
       synchronize: true,
-      // logging: true,
+      logging: true,
       entities: [User, Credentials, Article, Comment, Favourites, Follows],
     }),
 
@@ -35,7 +36,7 @@ import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
     CommentsModule,
     ThrottlerModule.forRoot({
       ttl: 60,
-      limit: 100,
+      limit: 125,
     }),
   ],
   controllers: [],

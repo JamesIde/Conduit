@@ -27,6 +27,7 @@ import { Follows } from 'src/follows/entities/Follows';
 /*
  * Set of methods for CRUD operations of articles
  * Most of these methods will require the decoded user ID in @Req() req: Request object
+ *
  */
 
 @Injectable()
@@ -35,7 +36,6 @@ export class ArticleService {
   cachedTagTime: any;
   constructor(
     @InjectRepository(Article) private articleRepo: Repository<Article>,
-    @InjectRepository(User) private userRepo: Repository<User>,
     @InjectRepository(Favourites) private favRepo: Repository<Favourites>,
     @InjectRepository(Follows) private followRepo: Repository<Follows>,
   ) {}
@@ -469,12 +469,11 @@ export class ArticleService {
         articleCount: userArticles.length,
         articles: authorArticles,
       };
-    } 
-      return {
-        articleCount: userArticles.length,
-        articles: userArticles,
-      };
-    
+    }
+    return {
+      articleCount: userArticles.length,
+      articles: userArticles,
+    };
   }
 
   /**
@@ -692,7 +691,6 @@ export class ArticleService {
     limit: number,
     user: any,
   ) {
-    console.log('Getting Articles By Tag With Logged User');
     if (page == 0) {
       page = 1;
     }
@@ -762,7 +760,6 @@ export class ArticleService {
     limit: number,
     results: {},
   ) {
-    console.log('Getting User Favourite Articles');
     const slugs = await this.getFavouriteArticleSlugs(user);
     let articles = await this.articleRepo.find({
       order: {
@@ -830,7 +827,6 @@ export class ArticleService {
    * This is the default method called when the user visits the home page for the first time.
    */
   private async getDefaultArticles(page: number, limit: number) {
-    console.log('Getting Default Articles');
     const { startIndex, results } = await this.paginateArticles(page, limit);
     let articles = await this.articleRepo.find({
       order: {

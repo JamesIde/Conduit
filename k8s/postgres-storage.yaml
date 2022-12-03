@@ -1,0 +1,34 @@
+# Postgres PV
+# A Persistent volume (PV) is a durable volume that will remain even if the pod is deleted and stores data.
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: postgres-volume
+  labels:
+    type: local
+    app: postgres
+spec:
+  capacity:
+    storage: 1Gi
+  storageClassName: manual
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/data/postgresql"
+---
+# Postgres Persistent Volume Claim
+# A persistent volume claim (PVC) is how users request and consume PV resources.
+# Think of it as requesting the PV with parameters such as size of your storage disk, access modes, and storage class.
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: postgres-volume-claim
+  labels:
+    app: postgres
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
