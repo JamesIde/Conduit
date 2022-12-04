@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { FormEvent, useState } from "react";
 import { useStore } from "../../utils/store/globalStore";
 import { useMutation } from "@tanstack/react-query";
 import { UpdateProfile, UserSignInSuccess } from "../../types/User";
@@ -9,6 +9,7 @@ import Logout from "../../components/navigation/Logout";
 import Error from "../../components/helper/Error";
 import baseAPI from "../../utils/api/api";
 import toast from "react-hot-toast";
+import UserProfileUpload from "../../components/user/UserProfileUpload";
 function Settings() {
   const navigate = useNavigate();
   const [currentUser, updateUser] = useStore((state) => [
@@ -17,7 +18,6 @@ function Settings() {
   ]);
 
   const notify = () => toast.success("Profile updated successfully!");
-
   const {
     mutate,
     isLoading,
@@ -30,13 +30,15 @@ function Settings() {
       oldUser.user = data;
       const newUser = oldUser;
       updateUser(newUser);
-      navigate("/");
+      setTimeout(() => {
+        navigate("/");
+      }, 1000);
       notify();
     },
   });
 
   const user = {
-    image: currentUser.user.image,
+    image: currentUser.user.image_url,
     email: currentUser.user.email,
     bio: currentUser.user.bio,
   };
@@ -51,10 +53,12 @@ function Settings() {
     }));
   };
 
+  // Handle submit for email, bio
   const handleSubmit = (e) => {
     e.preventDefault();
     const data: UpdateProfile = {
-      ...fields,
+      email: fields.email,
+      bio: fields.bio,
     };
     mutate(data);
   };
@@ -76,13 +80,20 @@ function Settings() {
             {isError && <Error error={error as AxiosError<APIError>} />}
           </div>
         </div>
-        <form onSubmit={handleSubmit}>
-          <input
-            className="p-2 w-full border-[1px] border-gray-300 rounded-md mb-4"
-            onChange={handleUpdate}
-            name="image"
-            value={fields.image}
+
+        <div className="mx-auto flex justify-center">
+          <img
+            src={
+              user.image
+                ? user.image
+                : "https://api.realworld.io/images/demo-avatar.png"
+            }
+            alt={user.image}
+            className="w-[125px] object-cover rounded-full"
           />
+        </div>
+        <UserProfileUpload />
+        <form onSubmit={handleSubmit}>
           <textarea
             className="p-2 w-full border-[1px] border-gray-300 rounded-md mb-4"
             rows={7}

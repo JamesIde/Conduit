@@ -104,8 +104,8 @@ function ViewArticle() {
                         <div>
                           <img
                             src={
-                              comment.author.image
-                                ? comment.author.image
+                              comment.author.image_url
+                                ? comment.author.image_url
                                 : "https://api.realworld.io/images/smiley-cyrus.jpeg"
                             }
                             className="w-10 rounded-3xl"

@@ -9,7 +9,7 @@ export interface Author {
   username: string;
   email: string;
   name?: string;
-  image?: any;
+  image_url?: string;
   bio?: string;
 }
 

@@ -1,0 +1,5 @@
+{
+    "yaml.schemas": {
+        "kubernetes://schema/v1%40service": "file:///c%3A/Users/james/Desktop/Projects/maximus/k8s/postgres-deployment.yaml"
+    }
+}

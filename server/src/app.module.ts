@@ -14,21 +14,36 @@ import { ThrottlerModule } from '@nestjs/throttler';
 import { ThrottlerGuard } from '@nestjs/throttler/dist/throttler.guard';
 import { CacheInterceptor, CacheModule, Module } from '@nestjs/common';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
+import { UploadFileModule } from './upload-file/upload-file.module';
 @Module({
   imports: [
     CacheModule.register({ isGlobal: true }),
     ConfigModule.forRoot({
       envFilePath: '.env',
     }),
-    TypeOrmModule.forRoot({
-      name: 'default',
-      type: 'postgres',
-      port: 5432,
-      url: process.env.DATABASE_URI,
-      synchronize: true,
-      logging: true,
-      entities: [User, Credentials, Article, Comment, Favourites, Follows],
-    }),
+    TypeOrmModule.forRoot(
+      // prod
+      {
+        name: 'default',
+        type: 'postgres',
+        port: parseInt(process.env.POSTGRES_PORT),
+        url: process.env.DATABASE_URI,
+        synchronize: true,
+        logging: true,
+        entities: [User, Credentials, Article, Comment, Favourites, Follows],
+      },
+      // {
+      //   // Local dev
+      //   name: 'default',
+      //   type: 'postgres',
+      //   port: parseInt(process.env.POSTGRES_PORT),
+      //   username: process.env.POSTGRES_USER,
+      //   password: process.env.POSTGRES_PASSWORD,
+      //   database: process.env.POSTGRES_DB,
+      //   synchronize: true,
+      //   entities: [User, Credentials, Article, Comment, Favourites, Follows],
+      // },
+    ),
 
     UserModule,
     HelperModule,
@@ -38,6 +53,7 @@ import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
       ttl: 60,
       limit: 125,
     }),
+    UploadFileModule,
   ],
   controllers: [],
   providers: [

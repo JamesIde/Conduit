@@ -54,8 +54,8 @@ function Profile() {
                   <div className="mx-auto">
                     <img
                       src={
-                        profile.image
-                          ? profile.image
+                        profile.image_url
+                          ? profile.image_url
                           : "https://api.realworld.io/images/demo-avatar.png"
                       }
                       alt={profile.username}
