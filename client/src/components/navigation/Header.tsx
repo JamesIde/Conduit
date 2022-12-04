@@ -11,7 +11,7 @@ function Header() {
   const user = useStore((state) => state.currentUser);
 
   const handleProfilePrefetch = (username: string) => {
-    queryClient.prefetchQuery(["profile", username], () => {
+    queryClient.fetchQuery(["profile", username], () => {
       return baseAPI.getProfile(username);
     });
     navigate(`/profile/${username}`);
@@ -43,9 +43,9 @@ function Header() {
               >
                 <p className="mt-1 mr-1">
                   <img
-                    src={user.user.image}
+                    src={user.user.image_url}
                     alt={user.user.username}
-                    className="object-fit h-6 rounded"
+                    className="h-[26px] rounded-[50px] object-cover"
                   />
                 </p>
                 <p className="">{user.user.username}</p>

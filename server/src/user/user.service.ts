@@ -90,7 +90,8 @@ export class UserService {
           user: {
             username: createdUser.username,
             email: createdUser.email,
-            image: 'https://api.realworld.io/images/demo-avatar.png',
+            image_url:
+              'https://conduit-bucket.s3.amazonaws.com/demo-avatar.png',
             bio: createdUser.bio,
           },
           token: await this.authService.generateAccessToken(createdUser),
@@ -143,7 +144,7 @@ export class UserService {
       user: {
         username: isValidUser.username,
         email: isValidUser.email,
-        image: isValidUser.image,
+        image_url: isValidUser.image_url,
         bio: isValidUser.bio,
       },
       token: await this.authService.generateAccessToken(isValidUser),
@@ -215,7 +216,7 @@ export class UserService {
       const user: UserProfile = {
         username: queryUser.username,
         name: queryUser.name,
-        image: queryUser.image,
+        image_url: queryUser.image_url,
         bio: queryUser.bio,
         articles: queryArticle,
         comments: queryUser.comments as unknown as Comment[],

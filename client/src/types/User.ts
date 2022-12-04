@@ -14,13 +14,12 @@ export interface User {
   id: number;
   username: string;
   email: string;
-  image: string;
+  image_url: string;
   bio: string;
 }
 
 export interface UpdateProfile {
   email: string;
-  image: string;
   bio: string;
 }
 

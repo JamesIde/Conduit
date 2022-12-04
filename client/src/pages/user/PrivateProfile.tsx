@@ -1,19 +1,21 @@
 import { IoSettingsOutline } from "react-icons/io5";
 import { useStore } from "../../utils/store/globalStore";
 import { Link } from "react-router-dom";
-import { QueryClient, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 import { AxiosError } from "axios";
 import { UserProfile } from "../../types/Profile";
-import { useState, useEffect, useReducer } from "react";
+import { useState, useReducer } from "react";
 import baseAPI from "../../utils/api/api";
 import Articles from "../../components/articles/Articles";
-import ArticlePreview from "../../components/articles/ArticlePreview";
 import FollowUserButton from "../../components/follows/FollowUserButton";
 import articleReducer from "../../utils/context/articleReducer";
 function Profile() {
   const { username } = useParams<string>();
-  const storedUser = useStore((state) => state.currentUser);
+  const [storedUser, updateUser] = useStore((state) => [
+    state.currentUser,
+    state.updateUser,
+  ]);
   const initialFilters = {
     feed: false,
     author: null,
@@ -22,14 +24,11 @@ function Profile() {
     page: 1,
     isProfile: true,
   };
+
   const [state, dispatch] = useReducer(articleReducer, initialFilters);
   const [isLoading, setIsLoading] = useState(false);
-  const {
-    data: profile,
-    isError,
-    isSuccess,
-    error = {} as AxiosError,
-  } = useQuery<UserProfile, AxiosError>(
+
+  const { data: profile } = useQuery<UserProfile, AxiosError>(
     ["profile"],
     () => baseAPI.getProfile(username),
     {
@@ -60,8 +59,8 @@ function Profile() {
                 <div className="mx-auto">
                   <img
                     src={
-                      profile.image
-                        ? profile.image
+                      profile.image_url
+                        ? profile.image_url
                         : "https://api.realworld.io/images/demo-avatar.png"
                     }
                     alt={profile.username}

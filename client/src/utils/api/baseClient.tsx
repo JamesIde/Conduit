@@ -2,13 +2,15 @@ import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
 import { AccessTokenSuccess, UserSignInSuccess } from "../../types/User";
 
 const baseClient = axios.create({
-  baseURL: "https://conduit-server-l7qc4hqwda-km.a.run.app",
+  // This needs to be updated to run locally (nginx routes /api/v1 to backend in k8s)
+  baseURL: process.env.REACT_APP_SERVER_DOMAIN,
   headers: {
     "Content-Type": "application/json",
   },
   withCredentials: true,
 });
 
+// https://thedutchlab.com/blog/using-axios-interceptors-for-refreshing-your-api-token
 const onRequest = (config: AxiosRequestConfig): AxiosRequestConfig => {
   if (localStorage.getItem("user")) {
     const user: UserSignInSuccess = JSON.parse(localStorage.getItem("user"));
@@ -34,7 +36,6 @@ const onResponseError = async (error: AxiosError) => {
       try {
         axios.defaults.withCredentials = true;
         const { data } = await baseClient.get(`/auth/refresh_token`);
-
         const rs = data as AccessTokenSuccess;
         const user: UserSignInSuccess = JSON.parse(
           localStorage.getItem("user")

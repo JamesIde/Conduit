@@ -23,15 +23,15 @@ import baseClient from "./baseClient";
  */
 
 async function getArticles(filters: Filters): Promise<any> {
-  let url = "/articles";
+  let url = "articles/";
   if (filters.feed) {
-    url += `/feed`;
+    url += `feed`;
   }
   if (filters.author) {
-    url += `/author/${filters.author}`;
+    url += `author/${filters.author}`;
   }
   if (filters.favourited) {
-    url += "/user/favourites";
+    url += "user/favourites";
   }
   const { data } = await baseClient.get(url, {
     params: { ...filters },
@@ -40,7 +40,7 @@ async function getArticles(filters: Filters): Promise<any> {
 }
 
 async function createArticle(articleData: NewArticle): Promise<Article> {
-  const { data } = await baseClient.post("/articles", articleData);
+  const { data } = await baseClient.post("/rticles", articleData);
   return data;
 }
 
@@ -51,18 +51,18 @@ async function favouriteArticle(metadata: FavouriteStatus): Promise<Article> {
       `/articles/${metadata.slug}/favourite`
     ));
   } else {
-    ({ data } = await baseClient.post(`/articles/${metadata.slug}/favourite`));
+    ({ data } = await baseClient.post(`articles/${metadata.slug}/favourite`));
   }
   return data;
 }
 
 async function getTags(): Promise<PopularTags> {
-  const { data } = await baseClient.get("/articles/popular/tags");
+  const { data } = await baseClient.get("articles/popular/tags");
   return data;
 }
 
 async function getArticleBySlug(slug: string): Promise<Article> {
-  const { data } = await baseClient.get(`/articles/${slug}`);
+  const { data } = await baseClient.get(`articles/${slug}`);
   return data;
 }
 
@@ -84,14 +84,14 @@ async function handleFollowUser(metadata: FollowMetadata): Promise<any> {
     ));
   } else {
     ({ data } = await baseClient.delete(
-      `/auth/profile/${metadata.username}/follow`
+      `auth/profile/${metadata.username}/follow`
     ));
   }
   return data;
 }
 
 async function unfollowUser(username: string): Promise<any> {
-  const { data } = await baseClient.delete(`/auth/profile/${username}/follow`);
+  const { data } = await baseClient.delete(`auth/profile/${username}/follow`);
   return data;
 }
 
@@ -105,19 +105,19 @@ async function unfollowUser(username: string): Promise<any> {
  */
 
 async function signInUser(userData: LoginUser): Promise<UserSignInSuccess> {
-  const { data } = await baseClient.post("/auth/login", userData);
+  const { data } = await baseClient.post("auth/login", userData);
   return data;
 }
 
 async function signUpUser(userData: RegisterUser): Promise<UserSignInSuccess> {
-  const { data } = await baseClient.post("/auth/register", userData);
+  const { data } = await baseClient.post("auth/register", userData);
   return data;
 }
 
 async function updateUser(
   userData: UpdateProfile
 ): Promise<UpdateProfileSuccess> {
-  const { data } = await baseClient.put("/auth/profile", userData);
+  const { data } = await baseClient.put("auth/profile", userData);
   return data;
 }
 
@@ -128,6 +128,15 @@ async function getProfile(username: string): Promise<UserProfile> {
 
 async function logoutUser(): Promise<any> {
   const { data } = await baseClient.get("auth/revoke_token");
+  return data;
+}
+
+async function updateProfileImage(file: FormData): Promise<any> {
+  const { data } = await baseClient.post("uploadfile", file, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
   return data;
 }
 
@@ -144,5 +153,6 @@ const baseAPI = {
   handleFollowUser,
   unfollowUser,
   logoutUser,
+  updateProfileImage,
 };
 export default baseAPI;

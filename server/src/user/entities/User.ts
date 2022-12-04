@@ -27,10 +27,10 @@ export class User {
   name: string;
 
   @Column({ default: null })
-  image: string;
+  bio: string;
 
   @Column({ default: null })
-  bio: string;
+  image_url: string;
 
   @OneToOne(() => Credentials, {
     cascade: true,

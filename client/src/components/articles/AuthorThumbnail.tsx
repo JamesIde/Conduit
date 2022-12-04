@@ -32,8 +32,8 @@ function AuthorThumbnail({
             className="rounded mt-2"
             style={{ width: size }}
             src={
-              article?.author?.image
-                ? article?.author?.image
+              article?.author?.image_url
+                ? article?.author?.image_url
                 : "https://api.realworld.io/images/demo-avatar.png"
             }
             alt={article?.author?.username}

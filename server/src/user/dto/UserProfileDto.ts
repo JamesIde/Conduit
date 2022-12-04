@@ -4,7 +4,7 @@ export interface UserProfile {
   username: string;
   email?: string;
   name: string;
-  image: string;
+  image_url: string;
   isFollowed?: boolean;
   bio: string;
   articles: Article[];
@@ -29,6 +29,6 @@ export interface Author {
   username: string;
   email: string;
   name: string;
-  image: string;
+  image_url: string;
   bio: string;
 }

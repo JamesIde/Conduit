@@ -20,8 +20,8 @@ export class JWTGuard implements CanActivate {
 
 export const validateRequest = (request) => {
   let token = request.headers.authorization?.split(' ')[1];
-  if (!token || token === 'null' || token === null) {
-    throw new HttpException('Invalid token provided', HttpStatus.UNAUTHORIZED);
+  if (!token) {
+    throw new HttpException('No identity presented', HttpStatus.UNAUTHORIZED);
   }
 
   try {
