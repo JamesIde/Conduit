@@ -114,7 +114,7 @@ function ViewArticle() {
                         <div className="flex flex-row">
                           <Link to={`/profile/${comment.author.username}`}>
                             <p className="text-green-600 text-md p-2 hover:text-green-800 hover:underline hover:underline-offset-1 hover:duration-500 hover:cursor-pointer">
-                              {comment.author.name}
+                              {comment.author.username}
                             </p>
                           </Link>
                           <p className="text-gray-400 text-sm mt-[10px]">

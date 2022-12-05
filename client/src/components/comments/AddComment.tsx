@@ -49,8 +49,8 @@ function AddComment({ articleId, slug, currentUser }: AddCommentProps) {
               <div className="p-4">
                 <img
                   src={
-                    currentUser?.user?.image
-                      ? currentUser?.user?.image
+                    currentUser?.user?.image_url
+                      ? currentUser?.user?.image_url
                       : "https://api.realworld.io/images/smiley-cyrus.jpeg"
                   }
                   className="w-12 rounded-3xl"
