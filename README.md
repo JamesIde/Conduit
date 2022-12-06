@@ -32,6 +32,8 @@ Most people decide to only do a frontend or backend implementation, but I decide
 - Total user follower list with unfollowing functionality (like Instagram)
 - Delete comments on logged in user basis
 - Tinker with styling to sooth perfectionism
+- Full text search
+- Social login
 
 ## Database
 
