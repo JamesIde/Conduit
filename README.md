@@ -6,7 +6,7 @@ An article sharing platform similar to Medium.
 
 The frontend is developed in [React](https://reactjs.org/), with the backend developed in [NestJS](https://nestjs.com/), connected to a PostgreSQL database with [TypeORM](https://typeorm.io/). [React-Query](https://tanstack.com/query/v4/?from=reactQueryV3&original=https://react-query-v3.tanstack.com/) is used for data fetching and [Zustand](https://github.com/pmndrs/zustand) is used to store (minimal) global state. The frontend is styled with [TailwindCSS](https://tailwindcss.com/).
 
-The project is hosted on [Google Kubernetes Engine](https://cloud.google.com/kubernetes-engine) as a [Kubernetes Cluster](https://kubernetes.io/) with an [Nginx Ingress Controller](https://docs.nginx.com/nginx-ingress-controller/) for routing, and [Nginx Server](https://docs.nginx.com) for serving the static build folder for the frontend.
+The project is hosted on [Google Kubernetes Engine](https://cloud.google.com/kubernetes-engine) as a [Kubernetes Cluster](https://kubernetes.io/) with an [Nginx Ingress Controller](https://docs.nginx.com/nginx-ingress-controller/) for routing, and a [Nginx Server](https://docs.nginx.com) for serving the static build folder for the frontend.
 
 It is part of a take home [real world](https://realworld-docs.netlify.app/docs/intro) project - an initiative that goes above and beyond simple todo lists. This was a great challenge and allowed me to explore new relational features like following, liking, and commenting.
 
