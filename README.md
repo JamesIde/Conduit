@@ -4,17 +4,19 @@ View it [here](http://conduits.ml/).
 
 An article sharing platform similar to Medium.
 
-The frontend is developed in [React](https://reactjs.org/), with the backend developed in [NestJS](https://nestjs.com/), connected to a PostgreSQL database with [TypeORM](https://typeorm.io/). [React-Query](https://tanstack.com/query/v4/?from=reactQueryV3&original=https://react-query-v3.tanstack.com/) is used for data fetching and [Zustand](https://github.com/pmndrs/zustand) is used to store (minimal) global state. The frontend is styled with [TailwindCSS](https://tailwindcss.com/).
+The frontend is developed in React, with the backend developed in NestJSplus a PostgreSQL database. Other tools involved: React-Query, Zustand, TypeORM.
 
-The project is hosted on [Google Kubernetes Engine](https://cloud.google.com/kubernetes-engine) as a [Kubernetes Cluster](https://kubernetes.io/) with an [Nginx Ingress Controller](https://docs.nginx.com/nginx-ingress-controller/) for routing, and a [Nginx Server](https://docs.nginx.com) for serving the static build folder for the frontend.
+The project is deployed as a Kubernetes Cluster on Google Kubernetes Engine. There is a Nginx Ingress Controller for routing and seperate Nginx server for serving static files. The cluster is built from Docker containers.
 
 It is part of a take home [real world](https://realworld-docs.netlify.app/docs/intro) project - an initiative that goes above and beyond simple todo lists. This was a great challenge and allowed me to explore new relational features like following, liking, and commenting.
 
-Most people decide to only do a frontend or backend implementation, but I decided to both and use technologies like NestJS, React-Query and Zustand for the first time.
+Most people decide to only do a frontend or backend implementation, but I decided to both. 
+
+A good opportunity to learn new tools and frameworks like NestJS, React-Query and Zustand.  
 
 ## Features
-
-- JWT authentication with cookies
+- OAuth Integration with Google and Github
+- JWT authentication with cookies for traditional sign on
 - CRU\* users (register up & settings page - no deleting)
 - CR\*D Articles
 - CR\*\* Comments on articles (no updating)
@@ -33,7 +35,6 @@ Most people decide to only do a frontend or backend implementation, but I decide
 - Delete comments on logged in user basis
 - Tinker with styling to sooth perfectionism
 - Full text search
-- Social login
 
 ## Database
 
