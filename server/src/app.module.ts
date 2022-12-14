@@ -9,12 +9,12 @@ import { CommentsModule } from './comments/comments.module';
 import { Comment } from './comments/entities/Comments';
 import { Favourites } from './favourites/entities/Favourites';
 import { Follows } from './follows/entities/Follows';
-import { IdentityModule } from './identity/identity.module';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { ThrottlerGuard } from '@nestjs/throttler/dist/throttler.guard';
-import { CacheInterceptor, CacheModule, Module } from '@nestjs/common';
-import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
+import { CacheModule, Module } from '@nestjs/common';
+import { APP_GUARD } from '@nestjs/core';
 import { UploadFileModule } from './upload-file/upload-file.module';
+import { IdentityModule } from './identity/identity.module';
 @Module({
   imports: [
     CacheModule.register({ isGlobal: true }),
@@ -44,7 +44,6 @@ import { UploadFileModule } from './upload-file/upload-file.module';
         entities: [User, Credentials, Article, Comment, Favourites, Follows],
       },
     ),
-
     IdentityModule,
     HelperModule,
     ArticleModule,

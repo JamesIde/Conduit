@@ -18,6 +18,8 @@ import { LoginUserDto } from './dto/LoginUserDto';
 import { RegisterUserDto } from './dto/RegisterUserDto';
 import { UpdateProfileDto } from './dto/UpdateProfileDto';
 import { LoggedUserGuard } from './loggedUser.guard';
+import { AuthGuard } from '@nestjs/passport';
+import { GoogleOauthGuard } from './strategies/google.guard';
 
 @Controller('identity')
 export class IdentityController {
@@ -25,6 +27,63 @@ export class IdentityController {
     private readonly identityService: IdentityService,
     private readonly authService: HelperService,
   ) {}
+
+  /**
+   _____ _____ _______ _    _ _    _ ____     ____         _    _ _______ _    _ 
+  / ____|_   _|__   __| |  | | |  | |  _ \   / __ \   /\  | |  | |__   __| |  | |
+ | |  __  | |    | |  | |__| | |  | | |_) | | |  | | /  \ | |  | |  | |  | |__| |
+ | | |_ | | |    | |  |  __  | |  | |  _ <  | |  | |/ /\ \| |  | |  | |  |  __  |
+ | |__| |_| |_   | |  | |  | | |__| | |_) | | |__| / ____ \ |__| |  | |  | |  | |
+  \_____|_____|  |_|  |_|  |_|\____/|____/   \____/_/    \_\____/   |_|  |_|  |_|
+                                                                                                                                                              
+ */
+
+  @Get('idp/github')
+  @UseGuards(AuthGuard('github'))
+  async githubLogin() {}
+
+  @Get('idp/github/callback')
+  @UseGuards(AuthGuard('github'))
+  async githubCallback(@Req() req, @Res({ passthrough: true }) res) {
+    // try {
+    //   const resp = await this.jwtService.generateAccessToken(res, req.user);
+    //   return resp;
+    // } catch (error) {
+    //   console.log(error);
+    //   throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    // }
+    return 'hey';
+  }
+
+  /**
+
+    _____  ____   ____   _____ _      ______           _    _ _______ _    _ ______ _   _ _______ _____ _____       _______ _____ ____  _   _ 
+  / ____|/ __ \ / __ \ / ____| |    |  ____|     /\  | |  | |__   __| |  | |  ____| \ | |__   __|_   _/ ____|   /\|__   __|_   _/ __ \| \ | |
+ | |  __| |  | | |  | | |  __| |    | |__       /  \ | |  | |  | |  | |__| | |__  |  \| |  | |    | || |       /  \  | |    | || |  | |  \| |
+ | | |_ | |  | | |  | | | |_ | |    |  __|     / /\ \| |  | |  | |  |  __  |  __| | . ` |  | |    | || |      / /\ \ | |    | || |  | | . ` |
+ | |__| | |__| | |__| | |__| | |____| |____   / ____ \ |__| |  | |  | |  | | |____| |\  |  | |   _| || |____ / ____ \| |   _| || |__| | |\  |
+  \_____|\____/ \____/ \_____|______|______| /_/    \_\____/   |_|  |_|  |_|______|_| \_|  |_|  |_____\_____/_/    \_\_|  |_____\____/|_| \_|
+                                                                                                                                             
+                                                                                                                                             
+
+                                                                                                                                                                                         
+ */
+  @Get('google')
+  @UseGuards(GoogleOauthGuard)
+  async googleLogin() {}
+
+  @Get('google/callback')
+  @UseGuards(GoogleOauthGuard)
+  async googleCallback(@Req() req, @Res({ passthrough: true }) res) {
+    // try {
+    //   const resp = await this.jwtService.generateAccessToken(res, req.user);
+    //   return resp;
+    // } catch (error) {
+    //   console.log(error);
+    //   throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    // }
+    return 'hey';
+  }
 
   @Post('register')
   register(
