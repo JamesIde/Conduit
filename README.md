@@ -4,7 +4,7 @@ View it [here](http://conduits.ml/).
 
 An article sharing platform similar to Medium.
 
-The frontend is developed in React, with the backend developed in NestJSplus a PostgreSQL database. Other tools involved: React-Query, Zustand, TypeORM.
+The frontend is developed in React, with the backend developed in NestJS plus a PostgreSQL database. Other tools involved: React-Query, Zustand, TypeORM.
 
 The project is deployed as a Kubernetes Cluster on Google Kubernetes Engine. There is a Nginx Ingress Controller for routing and seperate Nginx server for serving static files. The cluster is built from Docker containers.
 
