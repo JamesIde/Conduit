@@ -40,7 +40,7 @@ async function getArticles(filters: Filters): Promise<any> {
 }
 
 async function createArticle(articleData: NewArticle): Promise<Article> {
-  const { data } = await baseClient.post("/rticles", articleData);
+  const { data } = await baseClient.post("/articles", articleData);
   return data;
 }
 
