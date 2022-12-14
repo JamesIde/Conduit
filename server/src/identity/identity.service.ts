@@ -31,7 +31,7 @@ import { UpdateProfileSuccess } from './dto/UpdateProfileSuccessDto';
  */
 
 @Injectable()
-export class UserService {
+export class IdentityService {
   constructor(
     @InjectRepository(User) private userRepo: Repository<User>,
     @InjectRepository(Follows) private followRepo: Repository<Follows>,

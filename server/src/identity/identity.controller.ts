@@ -13,16 +13,16 @@ import {
 import { Request } from 'express';
 import { HelperService } from 'src/helper/helper.service';
 import { JWTGuard } from './auth.guard';
-import { UserService } from './user.service';
+import { IdentityService } from './identity.service';
 import { LoginUserDto } from './dto/LoginUserDto';
 import { RegisterUserDto } from './dto/RegisterUserDto';
 import { UpdateProfileDto } from './dto/UpdateProfileDto';
 import { LoggedUserGuard } from './loggedUser.guard';
 
-@Controller('auth')
-export class UserController {
+@Controller('identity')
+export class IdentityController {
   constructor(
-    private readonly userService: UserService,
+    private readonly identityService: IdentityService,
     private readonly authService: HelperService,
   ) {}
 
@@ -31,42 +31,42 @@ export class UserController {
     @Res({ passthrough: true }) res,
     @Body() registerUser: RegisterUserDto,
   ) {
-    return this.userService.registerUser(res, registerUser);
+    return this.identityService.registerUser(res, registerUser);
   }
 
   @Post('login')
   login(@Res({ passthrough: true }) res, @Body() loginUser: LoginUserDto) {
-    return this.userService.loginUser(res, loginUser);
+    return this.identityService.loginUser(res, loginUser);
   }
 
   @UseGuards(JWTGuard)
   @Put('profile')
   updateProfile(@Req() req: Request, @Body() updateProfile: UpdateProfileDto) {
-    return this.userService.updateProfile(req, updateProfile);
+    return this.identityService.updateProfile(req, updateProfile);
   }
 
   // @UseGuards(JWTGuard)
   // @Get('profile')
   // loggedInUserProfile(@Req() req) {
-  //   return this.userService.getProfile(req);
+  //   return this.identityService.getProfile(req);
   // }
 
   @UseGuards(LoggedUserGuard)
   @Get('profile/:username')
   userProfile(@Req() req, @Param('username') username: string) {
-    return this.userService.getUserProfile(req, username);
+    return this.identityService.getUserProfile(req, username);
   }
 
   @UseGuards(JWTGuard)
   @Post('profile/:username/follow')
   followUser(@Req() req, @Param('username') username: string) {
-    return this.userService.followUser(req, username);
+    return this.identityService.followUser(req, username);
   }
 
   @UseGuards(JWTGuard)
   @Delete('profile/:username/follow')
   unfollowUser(@Req() req, @Param('username') username: string) {
-    return this.userService.unfollowUser(req, username);
+    return this.identityService.unfollowUser(req, username);
   }
 
   @Get('refresh_token')

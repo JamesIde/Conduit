@@ -7,7 +7,7 @@ import {
   Req,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { JWTGuard } from 'src/user/auth.guard';
+import { JWTGuard } from 'src/identity/auth.guard';
 import { UploadFileService } from './upload-file.service';
 
 @Controller('uploadfile')

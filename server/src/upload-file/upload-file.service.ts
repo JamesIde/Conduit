@@ -1,8 +1,7 @@
 import { HttpException, HttpStatus, Injectable, Req } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { S3 } from 'aws-sdk';
-import { User } from '../user/entities/User';
-import { UserService } from 'src/user/user.service';
+import { User } from '../identity/entities/User';
 import { Repository } from 'typeorm';
 @Injectable()
 export class UploadFileService {

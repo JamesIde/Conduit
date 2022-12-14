@@ -11,7 +11,7 @@ import { CreateArticleDto } from './dto/CreateArticleDto';
 import { UpdateArticleDto } from './dto/UpdateArticleDto';
 import { Article } from './entities/Article';
 import { Article as ArticleDto } from './dto/RetrieveArticleDto';
-import { User } from 'src/user/entities/User';
+import { User } from 'src/identity/entities/User';
 import { Favourites } from 'src/favourites/entities/Favourites';
 import { Follows } from 'src/follows/entities/Follows';
 /**

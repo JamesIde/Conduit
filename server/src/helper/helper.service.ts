@@ -6,9 +6,9 @@ import {
   Res,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
-import { User } from 'src/user/entities/User';
+import { User } from 'src/identity/entities/User';
 import * as jwt from 'jsonwebtoken';
-import { JWTPayload } from 'src/user/dto/RefreshTokenDto';
+import { JWTPayload } from 'src/identity/dto/RefreshTokenDto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 /*

@@ -1,4 +1,4 @@
-import { User } from 'src/user/entities/User';
+import { User } from 'src/identity/entities/User';
 import { Comment } from 'src/comments/entities/Comments';
 import { Favourites } from 'src/favourites/entities/Favourites';
 import {
