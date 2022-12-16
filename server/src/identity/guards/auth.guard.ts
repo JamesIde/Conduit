@@ -7,7 +7,6 @@ import {
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import * as jwt from 'jsonwebtoken';
-import { JWTPayload } from './dto/RefreshTokenDto';
 @Injectable()
 export class JWTGuard implements CanActivate {
   canActivate(

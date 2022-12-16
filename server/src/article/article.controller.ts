@@ -12,9 +12,9 @@ import {
 import { ArticleService } from './article.service';
 import { CreateArticleDto } from './dto/CreateArticleDto';
 import { Request } from 'express';
-import { JWTGuard } from 'src/identity/auth.guard';
+import { JWTGuard } from 'src/identity/guards/auth.guard';
 import { UpdateArticleDto } from './dto/UpdateArticleDto';
-import { LoggedUserGuard } from 'src/identity/loggedUser.guard';
+import { LoggedUserGuard } from 'src/identity/guards/loggedUser.guard';
 @Controller('articles')
 export class ArticleController {
   constructor(private readonly articleService: ArticleService) {}

@@ -12,12 +12,12 @@ import {
 } from '@nestjs/common';
 import { Request } from 'express';
 import { HelperService } from 'src/helper/helper.service';
-import { JWTGuard } from './auth.guard';
+import { JWTGuard } from './guards/auth.guard';
 import { IdentityService } from './identity.service';
 import { LoginUserDto } from './dto/LoginUserDto';
 import { RegisterUserDto } from './dto/RegisterUserDto';
 import { UpdateProfileDto } from './dto/UpdateProfileDto';
-import { LoggedUserGuard } from './loggedUser.guard';
+import { LoggedUserGuard } from './guards/loggedUser.guard';
 import { AuthGuard } from '@nestjs/passport';
 import { GoogleOauthGuard } from './strategies/google.guard';
 
