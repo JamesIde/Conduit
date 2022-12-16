@@ -74,7 +74,7 @@ export class ArticleService {
         slug,
         createdAt: new Date(),
         updatedAt: new Date(),
-        author: req.user,
+        author: req.user.id,
       });
       return await this.articleRepo.save(article);
     } catch (error) {
@@ -94,7 +94,7 @@ export class ArticleService {
   async getArticles(@Req() req): Promise<any> {
     const page = req.query.page ? parseInt(req.query.page) : 1;
     const limit = req.query.limit ? parseInt(req.query.limit) : 2;
-    const user = req.user;
+    const user = req.user.id;
     const tag: string = req.query.tag;
     if (!user && !tag) {
       return await this.getDefaultArticles(page, limit);
@@ -137,7 +137,7 @@ export class ArticleService {
         HttpStatus.NOT_FOUND,
       );
     }
-    if (!req.user) {
+    if (!req.user.id) {
       return article;
     }
     // See if the user has favourited this article
@@ -147,7 +147,7 @@ export class ArticleService {
           slug: slug,
         },
         favUser: {
-          id: req.user,
+          id: req.user.id,
         },
       },
     });
@@ -175,7 +175,7 @@ export class ArticleService {
     const isValidArticle = await this.articleRepo.findOne({
       where: {
         slug: slug,
-        author: req.user,
+        author: req.user.id,
       },
     });
 
@@ -209,11 +209,11 @@ export class ArticleService {
    *  Only the author can delete the article
    */
   async deleteArticle(@Req() req, slug: string) {
-    // Check req.user matches userID linked to article
+    // Check req.user.id matches userID linked to article
     const isValidArticle = await this.articleRepo.findOne({
       where: {
         slug: slug,
-        author: req.user,
+        author: req.user.id,
       },
     });
 
@@ -249,7 +249,7 @@ export class ArticleService {
     if (!isValidArticle)
       throw new HttpException('Article not found', HttpStatus.BAD_REQUEST);
 
-    if (isValidArticle.author.id === req.user) {
+    if (isValidArticle.author.id === req.user.id) {
       throw new HttpException(
         'You cannot favourite your own article!',
         HttpStatus.BAD_REQUEST,
@@ -260,7 +260,7 @@ export class ArticleService {
     const isValidFavourite = await this.favRepo.findOne({
       where: {
         favUser: {
-          id: req.user,
+          id: req.user.id,
         },
         favouritedArticle: {
           id: isValidArticle.id,
@@ -279,7 +279,7 @@ export class ArticleService {
       const favourite = this.favRepo.create({
         dateFavourited: new Date(),
         favUser: {
-          id: req.user,
+          id: req.user.id,
         },
         favouritedArticle: {
           id: isValidArticle.id,
@@ -312,7 +312,7 @@ export class ArticleService {
     if (!isValidArticle)
       throw new HttpException('Article not found', HttpStatus.BAD_REQUEST);
 
-    if (isValidArticle.author.id === req.user) {
+    if (isValidArticle.author.id === req.user.id) {
       throw new HttpException(
         'You cannot unfavourite your own article!',
         HttpStatus.BAD_REQUEST,
@@ -322,7 +322,7 @@ export class ArticleService {
     const unfavouriteArticle = await this.favRepo.findOne({
       where: {
         favUser: {
-          id: req.user,
+          id: req.user.id,
         },
         favouritedArticle: {
           id: isValidArticle.id,
@@ -357,7 +357,7 @@ export class ArticleService {
   async getUserFeed(@Req() req): Promise<any> {
     const page = parseInt(req.query.page);
     const limit = parseInt(req.query.limit);
-    const user = req.user;
+    const user = req.user.id;
 
     const following = await this.followRepo.find({
       where: { userFollowingThePerson: user },
@@ -451,8 +451,8 @@ export class ArticleService {
       },
     });
     // A logged in user is viewing an authors page, check if they've favourited articles
-    if (req.user) {
-      const userSlugs = await this.getFavouriteArticleSlugs(req.user);
+    if (req.user.id) {
+      const userSlugs = await this.getFavouriteArticleSlugs(req.user.id);
       const authorArticles = userArticles.map((article) => {
         if (userSlugs.includes(article.slug)) {
           return {
@@ -483,7 +483,7 @@ export class ArticleService {
     const favourites = await this.favRepo.find({
       where: {
         favUser: {
-          id: req.user,
+          id: req.user.id,
         },
       },
       relations: {

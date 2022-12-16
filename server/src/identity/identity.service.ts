@@ -15,6 +15,8 @@ import * as bcrypt from 'bcryptjs';
 import { Follows } from 'src/follows/entities/Follows';
 import { Comment } from 'src/comments/entities/Comments';
 import { UpdateProfileSuccess } from './dto/UpdateProfileSuccessDto';
+import { IdentityProfile } from './models/Identity';
+import { AccessTokenSuccess } from 'src/helper/models/Token';
 /*
   _    _  _____ ______ _____            _    _ _______ _    _ ______ _   _ _______ _____ _____       _______ _____ ____  _   _ 
  | |  | |/ ____|  ____|  __ \      /\  | |  | |__   __| |  | |  ____| \ | |__   __|_   _/ ____|   /\|__   __|_   _/ __ \| \ | |
@@ -38,6 +40,7 @@ export class IdentityService {
     @InjectRepository(Article) private articleRepo: Repository<Article>,
     private authService: HelperService,
   ) {}
+
   /**
    * A public method to call to register a user
    * @returns Promise<LoggedUserDto>
@@ -45,7 +48,7 @@ export class IdentityService {
   async registerUser(
     @Res() res: Response,
     registerUser: RegisterUserDto,
-  ): Promise<UserSuccessDto> {
+  ): Promise<AccessTokenSuccess> {
     const { username, email, password, confirmPassword } = registerUser;
 
     let isValidEmail = await this.userRepo.findOne({
@@ -85,17 +88,11 @@ export class IdentityService {
 
       let createdUser = await this.userRepo.save(user);
       if (createdUser) {
-        await this.authService.sendRefreshCookie(res, createdUser);
-        return {
-          user: {
-            username: createdUser.username,
-            email: createdUser.email,
-            image_url:
-              'https://conduit-bucket.s3.amazonaws.com/demo-avatar.png',
-            bio: createdUser.bio,
-          },
-          token: await this.authService.generateAccessToken(createdUser),
-        };
+        const token = await this.authService.generateAccessToken(createdUser);
+        if (token.ok) {
+          await this.authService.sendRefreshCookie(res, createdUser);
+          return token;
+        }
       }
     } catch (error) {
       throw new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -109,7 +106,7 @@ export class IdentityService {
   async loginUser(
     @Res() res: Response,
     loginUser: LoginUserDto,
-  ): Promise<UserSuccessDto> {
+  ): Promise<AccessTokenSuccess> {
     const isValidUser = await this.userRepo.findOne({
       where: {
         email: loginUser.email,
@@ -139,16 +136,11 @@ export class IdentityService {
     }
 
     // Send cookie
-    await this.authService.sendRefreshCookie(res, isValidUser);
-    return {
-      user: {
-        username: isValidUser.username,
-        email: isValidUser.email,
-        image_url: isValidUser.image_url,
-        bio: isValidUser.bio,
-      },
-      token: await this.authService.generateAccessToken(isValidUser),
-    };
+    const token = await this.authService.generateAccessToken(isValidUser);
+    if (token.ok) {
+      await this.authService.sendRefreshCookie(res, isValidUser);
+      return token;
+    }
   }
 
   /**
@@ -320,5 +312,23 @@ export class IdentityService {
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+  }
+
+  /**
+   * A private method to check if user exists in the database based on provider Id
+   */
+  public async checkIfUserExists(profile: IdentityProfile): Promise<boolean> {
+    const user = await this.userRepo.findOne({
+      where: [
+        {
+          providerId: profile.id,
+          providerName: profile.provider,
+        },
+      ],
+    });
+    if (!user) {
+      return false;
+    }
+    return true;
   }
 }

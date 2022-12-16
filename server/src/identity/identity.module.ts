@@ -9,6 +9,7 @@ import { Article } from 'src/article/entities/Article';
 import { GithubStrategy } from './strategies/github.strategy';
 import { GoogleStrategy } from './strategies/google.strategy';
 import { ConfigModule } from '@nestjs/config';
+import { IdentityProviderService } from './identity.provider.service';
 @Module({
   imports: [
     HelperModule,
@@ -16,7 +17,12 @@ import { ConfigModule } from '@nestjs/config';
     ConfigModule,
   ],
   controllers: [IdentityController],
-  providers: [GithubStrategy, GoogleStrategy, IdentityService],
-  exports: [IdentityService],
+  providers: [
+    GithubStrategy,
+    GoogleStrategy,
+    IdentityService,
+    IdentityProviderService,
+  ],
+  exports: [IdentityService, IdentityProviderService],
 })
 export class IdentityModule {}

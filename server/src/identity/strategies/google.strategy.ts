@@ -4,12 +4,13 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-google-oauth20';
 import { IdentityProfile } from '../models/Identity';
 import { IdentityService } from '../identity.service';
+import { IdentityProviderService } from '../identity.provider.service';
 
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
   constructor(
     configService: ConfigService,
-    private identityService: IdentityService,
+    private identityService: IdentityProviderService,
   ) {
     super({
       clientID: configService.get<string>('GOOGLE_CLIENT_ID'),
@@ -24,8 +25,6 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     _refreshToken: string,
     profile: IdentityProfile,
   ) {
-    console.log('in google');
-    console.log(profile);
-    return profile;
+    return this.identityService.validateIdPUserIdentity(profile);
   }
 }

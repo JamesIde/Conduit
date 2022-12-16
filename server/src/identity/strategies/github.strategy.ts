@@ -2,11 +2,16 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-github';
+import { IdentityProviderService } from '../identity.provider.service';
+import { IdentityService } from '../identity.service';
 import { IdentityProfile } from '../models/Identity';
 
 @Injectable()
 export class GithubStrategy extends PassportStrategy(Strategy, 'github') {
-  constructor(configService: ConfigService) {
+  constructor(
+    private idPService: IdentityProviderService,
+    configService: ConfigService,
+  ) {
     super({
       clientID: configService.get<string>('GITHUB_CLIENT_ID'),
       clientSecret: configService.get<string>('GITHUB_CLIENT_SECRET'),
@@ -25,8 +30,6 @@ export class GithubStrategy extends PassportStrategy(Strategy, 'github') {
     _refreshToken: string,
     profile: IdentityProfile,
   ) {
-    console.log('in gitty');
-    // return this.identityService.validateIdentity(profile);
-    return profile;
+    return this.idPService.validateIdPUserIdentity(profile);
   }
 }

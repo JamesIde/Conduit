@@ -103,39 +103,3 @@ function FavouriteArticleButton({
   );
 }
 export default FavouriteArticleButton;
-
-/**
- * <>
-          <button
-            className="h-min border-[1px] border-[#5CB85C] rounded pr-1 hover:cursor-pointer hover:border-green-900 hover:duration-500"
-            style={{
-              color: article.isFavourited ? "white" : "#5CB85C",
-              backgroundColor: article.isFavourited ? "#5CB85C" : "transparent",
-              cursor: "not-allowed",
-            }}
-          >
-            <div className="flex flex-row">
-              {feed ? (
-                <>
-                  <div className="p-1">
-                    <AiFillHeart />
-                  </div>
-                  {article.favouriteCount}
-                </>
-              ) : (
-                <>
-                  <div className="p-1 flex flex-row ">
-                    <div className="pt-1 pr-1">
-                      <AiFillHeart />
-                    </div>
-                    <div className="font-medium text-sm">
-                      {article.isFavourited ? "Unfavourite" : "Favourite"}{" "}
-                      article ({article.favouriteCount})
-                    </div>
-                  </div>
-                </>
-              )}
-            </div>
-          </button>
-        </>
- */

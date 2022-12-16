@@ -11,6 +11,8 @@ import * as jwt from 'jsonwebtoken';
 import { JWTPayload } from 'src/identity/dto/RefreshTokenDto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { ConfigService } from '@nestjs/config';
+import { AccessTokenSuccess, RefreshTokenSuccess } from './models/Token';
 /*
        ___          _________             _____ ____   ____  _  _______ ______  _____ 
       | \ \        / /__   __|   ___     / ____/ __ \ / __ \| |/ /_   _|  ____|/ ____|
@@ -22,18 +24,32 @@ import { Repository } from 'typeorm';
 
 @Injectable()
 export class HelperService {
-  constructor(@InjectRepository(User) private userRepo: Repository<User>) {}
+  constructor(
+    @InjectRepository(User) private userRepo: Repository<User>,
+    private configService: ConfigService,
+  ) {}
   /**
    * A method to call to generate a jwt access token
    */
-  public async generateAccessToken(user: User): Promise<string> {
+  public async generateAccessToken(user: User): Promise<AccessTokenSuccess> {
+    let payload: JWTPayload = {
+      sub: user.id,
+      iat: Date.now(),
+      id: user.id,
+      username: user.username,
+      socialLogin: user.socialLogin,
+      providerName: user.providerName ? user.providerName : 'local',
+    };
     try {
       let token = jwt.sign(
-        { id: user.id, email: user.email },
-        process.env.ACCESS_TOKEN_SECRET,
+        payload,
+        this.configService.get<string>('ACCESS_TOKEN_SECRET'),
         { expiresIn: '15min' },
       );
-      return token;
+      return {
+        ok: true,
+        accessToken: token,
+      };
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -42,20 +58,27 @@ export class HelperService {
   /**
    * A public method to call to generate a refresh token
    */
-  public async generateRefreshToken(user: User): Promise<string> {
+  public async generateRefreshToken(user: User): Promise<RefreshTokenSuccess> {
+    let payload: JWTPayload = {
+      sub: user.id,
+      iat: Date.now(),
+      id: user.id,
+      username: user.username,
+      socialLogin: user.socialLogin,
+      providerName: user.providerName ? user.providerName : 'local',
+    };
     try {
       let token = jwt.sign(
-        {
-          id: user.id,
-          email: user.email,
-          tokenVersion: user.credentials.tokenVersion,
-        },
-        process.env.REFRESH_TOKEN_SECRET,
+        payload,
+        this.configService.get<string>('REFRESH_TOKEN_SECRET'),
         {
           expiresIn: '7day',
         },
       );
-      return token;
+      return {
+        ok: true,
+        refreshToken: token,
+      };
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -73,14 +96,13 @@ export class HelperService {
     }
     let refreshToken = await this.generateRefreshToken(user);
 
-    if (!refreshToken) {
+    if (!refreshToken.ok) {
       throw new HttpException(
         'Something went wrong generating the refresh token',
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
-
-    res.cookie('safron', refreshToken, {
+    res.cookie('safron', refreshToken.refreshToken, {
       httpOnly: true,
       expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
       sameSite: 'none',
@@ -101,13 +123,13 @@ export class HelperService {
 
     let token = req.cookies.safron;
 
-    let payload: JWTPayload;
+    let payload;
 
     try {
       payload = jwt.verify(
         token,
-        process.env.REFRESH_TOKEN_SECRET,
-      ) as JWTPayload;
+        this.configService.get<string>('REFRESH_TOKEN_SECRET'),
+      );
     } catch (error) {
       throw new HttpException(
         error.message || error,
@@ -117,9 +139,12 @@ export class HelperService {
 
     // Find user with credentials relation
     let isValidUser = await this.userRepo.findOne({
-      where: {
-        id: payload.id,
-      },
+      where: [
+        { id: payload?.id },
+        {
+          providerId: payload?.id.toString(),
+        },
+      ],
       relations: {
         credentials: true,
       },
@@ -144,13 +169,10 @@ export class HelperService {
    */
   public async revokeRefreshToken(@Req() req) {
     let token = req.cookies.safron;
-    let payload: JWTPayload;
+    let payload;
 
     try {
-      payload = jwt.verify(
-        token,
-        process.env.REFRESH_TOKEN_SECRET,
-      ) as JWTPayload;
+      payload = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
     } catch (error) {
       throw new HttpException(
         error.message || error,

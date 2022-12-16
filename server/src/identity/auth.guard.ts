@@ -25,11 +25,8 @@ export const validateRequest = (request) => {
   }
 
   try {
-    let decodeToken: JWTPayload = jwt.verify(
-      token,
-      process.env.ACCESS_TOKEN_SECRET,
-    ) as JWTPayload;
-    request.user = decodeToken.id;
+    let decodeToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+    request.user = decodeToken;
   } catch (error) {
     throw new HttpException('Invalid token provided', HttpStatus.UNAUTHORIZED);
   }

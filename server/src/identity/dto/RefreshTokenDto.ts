@@ -4,9 +4,11 @@ export interface RefreshTokenDto {
 }
 
 export interface JWTPayload {
-  id: number;
-  email: string;
-  tokenVersion: number;
+  sub: number;
   iat: number;
-  exp: number;
+  id: number;
+  username: string;
+  socialLogin: boolean;
+  providerName: string;
+  tokenVersion?: string;
 }

@@ -58,3 +58,34 @@ export interface IdentityProfile {
   _raw: string;
   _json: Json;
 }
+
+export interface Credentials {
+  password?: any;
+  createdAt: Date;
+  id: number;
+  tokenVersion: number;
+}
+
+export interface IdPRegisterSuccess {
+  username: string;
+  email: string;
+  image_url: string;
+  socialLogin: boolean;
+  providerId: string;
+  providerName: string;
+  credentials: Credentials;
+  name?: any;
+  bio?: any;
+  id: number;
+}
+
+export interface IdpRegisterSuccessTransformed {
+  username: string;
+  email: string;
+  image_url: string;
+  socialLogin: boolean;
+  providerId: string;
+  providerName: string;
+  name?: string | undefined;
+  bio?: string | undefined;
+}

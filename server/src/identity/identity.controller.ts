@@ -45,14 +45,11 @@ export class IdentityController {
   @Get('idp/github/callback')
   @UseGuards(AuthGuard('github'))
   async githubCallback(@Req() req, @Res({ passthrough: true }) res) {
-    // try {
-    //   const resp = await this.jwtService.generateAccessToken(res, req.user);
-    //   return resp;
-    // } catch (error) {
-    //   console.log(error);
-    //   throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
-    // }
-    return 'hey';
+    const resp = await this.authService.generateAccessToken(req.user);
+    if (resp.ok) {
+      this.authService.sendRefreshCookie(res, req.user);
+      return resp;
+    }
   }
 
   /**
@@ -63,10 +60,7 @@ export class IdentityController {
  | | |_ | |  | | |  | | | |_ | |    |  __|     / /\ \| |  | |  | |  |  __  |  __| | . ` |  | |    | || |      / /\ \ | |    | || |  | | . ` |
  | |__| | |__| | |__| | |__| | |____| |____   / ____ \ |__| |  | |  | |  | | |____| |\  |  | |   _| || |____ / ____ \| |   _| || |__| | |\  |
   \_____|\____/ \____/ \_____|______|______| /_/    \_\____/   |_|  |_|  |_|______|_| \_|  |_|  |_____\_____/_/    \_\_|  |_____\____/|_| \_|
-                                                                                                                                             
-                                                                                                                                             
-
-                                                                                                                                                                                         
+                                                                                                                                                                                                                                                                                                                               
  */
   @Get('google')
   @UseGuards(GoogleOauthGuard)
@@ -75,14 +69,11 @@ export class IdentityController {
   @Get('google/callback')
   @UseGuards(GoogleOauthGuard)
   async googleCallback(@Req() req, @Res({ passthrough: true }) res) {
-    // try {
-    //   const resp = await this.jwtService.generateAccessToken(res, req.user);
-    //   return resp;
-    // } catch (error) {
-    //   console.log(error);
-    //   throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
-    // }
-    return 'hey';
+    const resp = await this.authService.generateAccessToken(req.user);
+    if (resp.ok) {
+      this.authService.sendRefreshCookie(res, req.user);
+      return resp;
+    }
   }
 
   @Post('register')
@@ -137,6 +128,3 @@ export class IdentityController {
     return this.authService.revokeRefreshToken(req);
   }
 }
-
-// TODO Get logged in user following users
-// TODO Get logged in user followers

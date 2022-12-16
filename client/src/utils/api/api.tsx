@@ -105,29 +105,29 @@ async function unfollowUser(username: string): Promise<any> {
  */
 
 async function signInUser(userData: LoginUser): Promise<UserSignInSuccess> {
-  const { data } = await baseClient.post("auth/login", userData);
+  const { data } = await baseClient.post("identity/login", userData);
   return data;
 }
 
 async function signUpUser(userData: RegisterUser): Promise<UserSignInSuccess> {
-  const { data } = await baseClient.post("auth/register", userData);
+  const { data } = await baseClient.post("identity/register", userData);
   return data;
 }
 
 async function updateUser(
   userData: UpdateProfile
 ): Promise<UpdateProfileSuccess> {
-  const { data } = await baseClient.put("auth/profile", userData);
+  const { data } = await baseClient.put("identity/profile", userData);
   return data;
 }
 
 async function getProfile(username: string): Promise<UserProfile> {
-  const { data } = await baseClient.get(`auth/profile/${username}`);
+  const { data } = await baseClient.get(`identity/profile/${username}`);
   return data;
 }
 
 async function logoutUser(): Promise<any> {
-  const { data } = await baseClient.get("auth/revoke_token");
+  const { data } = await baseClient.get("identity/revoke_token");
   return data;
 }
 
