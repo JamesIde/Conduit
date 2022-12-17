@@ -15,7 +15,6 @@ Most people decide to only do a frontend or backend implementation, but I decide
 A good opportunity to learn new tools and frameworks like NestJS, React-Query and Zustand.  
 
 ## Features
-- OAuth Integration with Google and Github
 - JWT authentication with cookies for traditional sign on
 - CRU\* users (register up & settings page - no deleting)
 - CR\*D Articles
