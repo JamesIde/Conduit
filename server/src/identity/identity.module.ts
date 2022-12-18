@@ -2,27 +2,20 @@ import { Module } from '@nestjs/common';
 import { IdentityService } from './identity.service';
 import { User } from './entities/User';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { HelperModule } from 'src/helper/helper.module';
+import { JwtModule } from 'src/jwt/jwt.module';
 import { IdentityController } from './identity.controller';
 import { Follows } from 'src/follows/entities/Follows';
 import { Article } from 'src/article/entities/Article';
-import { GithubStrategy } from './strategies/github.strategy';
-import { GoogleStrategy } from './strategies/google.strategy';
 import { ConfigModule } from '@nestjs/config';
 import { IdentityProviderService } from './identity.provider.service';
 @Module({
   imports: [
-    HelperModule,
+    JwtModule,
     TypeOrmModule.forFeature([User, Follows, Article]),
     ConfigModule,
   ],
   controllers: [IdentityController],
-  providers: [
-    GithubStrategy,
-    GoogleStrategy,
-    IdentityService,
-    IdentityProviderService,
-  ],
+  providers: [IdentityService, IdentityProviderService],
   exports: [IdentityService, IdentityProviderService],
 })
 export class IdentityModule {}

@@ -1,20 +1,31 @@
+import { AccessTokenSuccess } from 'src/jwt/models/Token';
 import { User } from '../entities/User';
 import { IdpRegisterSuccessTransformed } from '../models/Identity';
 
 export class ProfileTransformation {
-  public static transformIdpResponse(profile: User): any {
-    console.log('input obj', JSON.stringify(profile));
+  public static transformUserProfile(
+    profile: User,
+    token: AccessTokenSuccess,
+  ): any {
     const user = {
-      username: profile.username,
-      email: profile.email,
-      image_url: profile.image_url,
-      socialLogin: profile.socialLogin,
-      providerId: profile.providerId,
-      providerName: profile.providerName,
-      name: profile.username,
-      bio: profile.bio,
+      data: {
+        id: profile?.id,
+        email: profile?.email,
+        name: profile?.username,
+        username: profile?.username,
+        bio: profile?.bio,
+        image: profile?.image_url,
+      },
+      token: {
+        accessToken: token.accessToken,
+        ok: token.ok,
+      },
+      provider: {
+        socialLogin: profile?.socialLogin,
+        providerId: profile?.providerId,
+        providerName: profile?.providerName,
+      },
     };
-    console.log('output obj', JSON.stringify(user));
     return user;
   }
 }

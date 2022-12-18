@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { RegisterUserDto } from './dto/RegisterUserDto';
 import { User } from './entities/User';
-import { HelperService } from 'src/helper/helper.service';
+import { JwtService } from 'src/jwt/jwt.service';
 import { Param, Req, Res } from '@nestjs/common/decorators';
 import { Response } from 'express';
 import { UserSuccessDto } from './dto/UserSuccessDto';
@@ -15,8 +15,8 @@ import * as bcrypt from 'bcryptjs';
 import { Follows } from 'src/follows/entities/Follows';
 import { Comment } from 'src/comments/entities/Comments';
 import { UpdateProfileSuccess } from './dto/UpdateProfileSuccessDto';
-import { IdentityProfile } from './models/Identity';
-import { AccessTokenSuccess } from 'src/helper/models/Token';
+import { AccessTokenSuccess } from 'src/jwt/models/Token';
+import { ProfileTransformation } from './transformation/ProfileTransformation';
 /*
   _    _  _____ ______ _____            _    _ _______ _    _ ______ _   _ _______ _____ _____       _______ _____ ____  _   _ 
  | |  | |/ ____|  ____|  __ \      /\  | |  | |__   __| |  | |  ____| \ | |__   __|_   _/ ____|   /\|__   __|_   _/ __ \| \ | |
@@ -25,7 +25,7 @@ import { AccessTokenSuccess } from 'src/helper/models/Token';
  | |__| |____) | |____| | \ \   / ____ \ |__| |  | |  | |  | | |____| |\  |  | |   _| || |____ / ____ \| |   _| || |__| | |\  |
   \____/|_____/|______|_|  \_\ /_/    \_\____/   |_|  |_|  |_|______|_| \_|  |_|  |_____\_____/_/    \_\_|  |_____\____/|_| \_|
                                                                                                                                
-                                                                                                                                                                                                                                                                                                                          
+                                                                                                                                                                                                                                                                                                                         
 */
 
 /**
@@ -38,7 +38,7 @@ export class IdentityService {
     @InjectRepository(User) private userRepo: Repository<User>,
     @InjectRepository(Follows) private followRepo: Repository<Follows>,
     @InjectRepository(Article) private articleRepo: Repository<Article>,
-    private authService: HelperService,
+    private jwtService: JwtService,
   ) {}
 
   /**
@@ -80,6 +80,8 @@ export class IdentityService {
       let user = this.userRepo.create({
         username: username,
         email: email,
+        isVerified: true,
+        providerName: 'local',
         credentials: {
           createdAt: new Date(),
           password: hashPwd,
@@ -88,10 +90,11 @@ export class IdentityService {
 
       let createdUser = await this.userRepo.save(user);
       if (createdUser) {
-        const token = await this.authService.generateAccessToken(createdUser);
+        console.log('Created user: ', createdUser);
+        const token = await this.jwtService.generateAccessToken(createdUser);
         if (token.ok) {
-          await this.authService.sendRefreshCookie(res, createdUser);
-          return token;
+          await this.jwtService.sendRefreshCookie(res, createdUser);
+          return ProfileTransformation.transformUserProfile(createdUser, token);
         }
       }
     } catch (error) {
@@ -107,7 +110,7 @@ export class IdentityService {
     @Res() res: Response,
     loginUser: LoginUserDto,
   ): Promise<AccessTokenSuccess> {
-    const isValidUser = await this.userRepo.findOne({
+    const user = await this.userRepo.findOne({
       where: {
         email: loginUser.email,
       },
@@ -116,7 +119,7 @@ export class IdentityService {
       },
     });
 
-    if (!isValidUser) {
+    if (!user) {
       throw new HttpException(
         `No account found with email ${loginUser.email}`,
         HttpStatus.BAD_REQUEST,
@@ -125,7 +128,7 @@ export class IdentityService {
 
     const isValidPassword = await bcrypt.compare(
       loginUser.password,
-      isValidUser.credentials.password,
+      user.credentials.password,
     );
 
     if (!isValidPassword) {
@@ -136,10 +139,10 @@ export class IdentityService {
     }
 
     // Send cookie
-    const token = await this.authService.generateAccessToken(isValidUser);
+    const token = await this.jwtService.generateAccessToken(user);
     if (token.ok) {
-      await this.authService.sendRefreshCookie(res, isValidUser);
-      return token;
+      await this.jwtService.sendRefreshCookie(res, user);
+      return ProfileTransformation.transformUserProfile(user, token);
     }
   }
 
@@ -312,23 +315,5 @@ export class IdentityService {
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
-  }
-
-  /**
-   * A private method to check if user exists in the database based on provider Id
-   */
-  public async checkIfUserExists(profile: IdentityProfile): Promise<boolean> {
-    const user = await this.userRepo.findOne({
-      where: [
-        {
-          providerId: profile.id,
-          providerName: profile.provider,
-        },
-      ],
-    });
-    if (!user) {
-      return false;
-    }
-    return true;
   }
 }

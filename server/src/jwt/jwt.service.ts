@@ -23,7 +23,7 @@ import { AccessTokenSuccess, RefreshTokenSuccess } from './models/Token';
  */
 
 @Injectable()
-export class HelperService {
+export class JwtService {
   constructor(
     @InjectRepository(User) private userRepo: Repository<User>,
     private configService: ConfigService,
@@ -85,7 +85,9 @@ export class HelperService {
   }
 
   /**
-   * A public method to send a cookie with the refresh token
+   * A public method to send two cookies
+   * 1. atlas: refresh token
+   * 2. olympus: access token
    */
   public async sendRefreshCookie(@Res() res, user: User) {
     if (!user) {
@@ -98,11 +100,11 @@ export class HelperService {
 
     if (!refreshToken.ok) {
       throw new HttpException(
-        'Something went wrong generating the refresh token',
+        'Something went wrong validating your identity. This attempt has been logged.',
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
-    res.cookie('safron', refreshToken.refreshToken, {
+    res.cookie('atlas', refreshToken.refreshToken, {
       httpOnly: true,
       expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
       sameSite: 'none',

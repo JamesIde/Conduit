@@ -36,6 +36,9 @@ export class User {
   socialLogin: boolean;
 
   @Column({ default: null })
+  isVerified: boolean;
+
+  @Column({ default: null })
   providerId: string;
 
   @Column({ default: null })

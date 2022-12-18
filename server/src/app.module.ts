@@ -2,7 +2,7 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Credentials } from './identity/entities/Credentials';
 import { User } from './identity/entities/User';
-import { HelperModule } from './helper/helper.module';
+import { JwtModule } from './jwt/jwt.module';
 import { ArticleModule } from './article/article.module';
 import { Article } from './article/entities/Article';
 import { CommentsModule } from './comments/comments.module';
@@ -45,7 +45,7 @@ import { IdentityModule } from './identity/identity.module';
       },
     ),
     IdentityModule,
-    HelperModule,
+    JwtModule,
     ArticleModule,
     CommentsModule,
     ThrottlerModule.forRoot({
