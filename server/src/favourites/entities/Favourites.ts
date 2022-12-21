@@ -1,5 +1,5 @@
 import { Article } from 'src/article/entities/Article';
-import { User } from 'src/user/entities/User';
+import { User } from 'src/identity/entities/User';
 import {
   Column,
   Entity,

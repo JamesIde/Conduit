@@ -20,7 +20,7 @@ export class User {
   @Column({ unique: true })
   username: string;
 
-  @Column({ unique: true })
+  @Column({ default: null })
   email: string;
 
   @Column({ default: null })
@@ -31,6 +31,18 @@ export class User {
 
   @Column({ default: null })
   image_url: string;
+
+  @Column({ default: false })
+  socialLogin: boolean;
+
+  @Column({ default: null })
+  isVerified: boolean;
+
+  @Column({ default: null })
+  providerId: string;
+
+  @Column({ default: null })
+  providerName: string;
 
   @OneToOne(() => Credentials, {
     cascade: true,

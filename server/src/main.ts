@@ -14,8 +14,8 @@ async function bootstrap() {
   app.setGlobalPrefix('api/v1');
   app.enableCors({
     credentials: true,
-    origin: 'https://conduits.ml',
-    // origin: process.env.CLIENT_DOMAIN,
+    // origin: 'https://conduits.ml',
+    origin: process.env.CLIENT_DOMAIN,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     exposedHeaders: ['set-cookie'],
   });

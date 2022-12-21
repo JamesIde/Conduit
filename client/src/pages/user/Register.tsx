@@ -6,9 +6,10 @@ import { useNavigate } from "react-router-dom";
 import { useStore } from "../../utils/store/globalStore";
 import baseAPI from "../../utils/api/api";
 import { APIError } from "../../types/Error";
-import { RegisterUser, UserSignInSuccess } from "../../types/User";
+import { Profile, RegisterUser, UserSignInSuccess } from "../../types/User";
 import Error from "../../components/helper/Error";
 import { toast } from "react-hot-toast";
+import GoogleLoginButton from "./GoogleLoginButton";
 function Register() {
   const navigate = useNavigate();
   const [currentUser, setUser] = useStore((state) => [
@@ -23,11 +24,11 @@ function Register() {
     ["register"],
     baseAPI.signUpUser,
     {
-      onSuccess: (data: UserSignInSuccess) => {
+      onSuccess: (data: Profile) => {
         setUser(data);
         localStorage.setItem("user", JSON.stringify(data));
         navigate("/");
-        notify(data.user.username);
+        notify(data.data.username);
       },
     }
   );
@@ -40,13 +41,11 @@ function Register() {
   } = useForm<RegisterUser>();
 
   const onSubmit: SubmitHandler<RegisterUser> = (data, e) => {
-    console.log(data);
-    reset();
     mutate(data);
   };
 
   return (
-    <div className="xl:w-2/5 md:w-3/5 w-full mx-auto">
+    <div className="xl:w-2/5 md:w-3/5 w-full mx-auto p-3">
       <h1 className="text-center font-tilly text-3xl p-2 text-neutral-700 font-medium xl:mt-24 md:mt-14 mt-0">
         Sign Up
       </h1>
@@ -107,12 +106,14 @@ function Register() {
               <p className="text-sm text-red-500">This field is required</p>
             )}
           </div>
-          <div className="flex justify-end">
+          <div className="flex justify-between">
+            <GoogleLoginButton message={"signup_with"} />
+
             <button
               type="submit"
               className="p-2 bg-[#5CB85C] text-white font-bold rounded"
             >
-              Sign In
+              Sign Up
             </button>
           </div>
         </form>

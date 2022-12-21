@@ -64,20 +64,21 @@ function Profile() {
                   </div>
                   <div>
                     <h5 className="font-bold text-center mt-2 text-lg">
-                      @{profile.username}
+                      {profile.name}
                     </h5>
+                    <h3 className="text-center text-md">@{profile.username}</h3>
                     <p className="text-center italic">
                       {profile.bio ? profile.bio : "No bio yet"}
                     </p>
                   </div>
                 </div>
                 <div className="flex xl:justify-end md:justify-end justify-center mt-2">
-                  {storedUser?.user?.username !== profile.username && (
+                  {storedUser?.data?.username !== profile.username && (
                     <div>
                       <FollowUserButton profile={profile} />
                     </div>
                   )}
-                  {storedUser?.user?.username === profile.username && (
+                  {storedUser?.data?.username === profile.username && (
                     <>
                       <Link to={`/profile/${profile.username}/settings`}>
                         <div className="flex flex-row text-gray-400 cursor-pointer p-2 text-sm border-[1px] border-gray-400 rounded hover:bg-gray-300 hover:text-white">
@@ -106,7 +107,7 @@ function Profile() {
                 >
                   Your Articles
                 </button>
-                {storedUser?.user?.username === profile.username ? (
+                {storedUser?.data?.username === profile.username ? (
                   <button
                     className="p-2 text-[#aaa] hover:text-gray-500"
                     onClick={handleFavouritedClick}

@@ -1,4 +1,5 @@
 import { Comment } from 'src/comments/dto/CommentDto';
+
 export interface UserProfile {
   id?: number;
   username: string;

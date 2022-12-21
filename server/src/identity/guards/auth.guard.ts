@@ -7,7 +7,6 @@ import {
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import * as jwt from 'jsonwebtoken';
-import { JWTPayload } from './dto/RefreshTokenDto';
 @Injectable()
 export class JWTGuard implements CanActivate {
   canActivate(
@@ -25,11 +24,8 @@ export const validateRequest = (request) => {
   }
 
   try {
-    let decodeToken: JWTPayload = jwt.verify(
-      token,
-      process.env.ACCESS_TOKEN_SECRET,
-    ) as JWTPayload;
-    request.user = decodeToken.id;
+    let decodeToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+    request.user = decodeToken;
   } catch (error) {
     throw new HttpException('Invalid token provided', HttpStatus.UNAUTHORIZED);
   }

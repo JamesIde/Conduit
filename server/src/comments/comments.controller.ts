@@ -9,7 +9,7 @@ import {
   UseGuards,
   Req,
 } from '@nestjs/common';
-import { JWTGuard } from 'src/user/auth.guard';
+import { JWTGuard } from 'src/identity/guards/auth.guard';
 import { CommentsService } from './comments.service';
 import { CreateCommentDto } from './dto/CreateCommentDto';
 import { UpdateCommentDto } from './dto/UpdateCommentDto';

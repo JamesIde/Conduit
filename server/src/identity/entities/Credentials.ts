@@ -6,10 +6,10 @@ export class Credentials {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ default: null })
   password: string;
 
-  @Column({ type: 'timestamp with time zone' }) // Recommended
+  @Column({ type: 'timestamp with time zone' })
   createdAt: Date;
 
   @Column({

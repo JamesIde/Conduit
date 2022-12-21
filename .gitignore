@@ -10,3 +10,9 @@ k8s/client.secret.yaml
 k8s/server-secret.yaml
 server/Dockerfile
 server/Dockerfile-backup
+Dockerfile
+cloudbuild.yaml
+Dockerfile-backupv2
+server/Dockerfile
+server/Dockerfile-old
+server/Dockerfile

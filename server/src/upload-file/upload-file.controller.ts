@@ -1,23 +1,13 @@
 import {
   Controller,
-  Get,
   Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
   UseInterceptors,
   UploadedFile,
-  ParseFilePipe,
-  MaxFileSizeValidator,
-  FileTypeValidator,
-  HttpStatus,
-  ParseFilePipeBuilder,
   UseGuards,
   Req,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { JWTGuard } from 'src/user/auth.guard';
+import { JWTGuard } from 'src/identity/guards/auth.guard';
 import { UploadFileService } from './upload-file.service';
 
 @Controller('uploadfile')

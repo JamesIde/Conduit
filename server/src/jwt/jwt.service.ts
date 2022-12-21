@@ -6,11 +6,13 @@ import {
   Res,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
-import { User } from 'src/user/entities/User';
+import { User } from 'src/identity/entities/User';
 import * as jwt from 'jsonwebtoken';
-import { JWTPayload } from 'src/user/dto/RefreshTokenDto';
+import { JWTPayload } from 'src/identity/dto/RefreshTokenDto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { ConfigService } from '@nestjs/config';
+import { AccessTokenSuccess, RefreshTokenSuccess } from './models/Token';
 /*
        ___          _________             _____ ____   ____  _  _______ ______  _____ 
       | \ \        / /__   __|   ___     / ____/ __ \ / __ \| |/ /_   _|  ____|/ ____|
@@ -21,19 +23,34 @@ import { Repository } from 'typeorm';
  */
 
 @Injectable()
-export class HelperService {
-  constructor(@InjectRepository(User) private userRepo: Repository<User>) {}
+export class JwtService {
+  constructor(
+    @InjectRepository(User) private userRepo: Repository<User>,
+    private configService: ConfigService,
+  ) {}
   /**
    * A method to call to generate a jwt access token
    */
-  public async generateAccessToken(user: User): Promise<string> {
+  public async generateAccessToken(user: User): Promise<AccessTokenSuccess> {
+    let payload: JWTPayload = {
+      sub: user.id,
+      iat: Date.now(),
+      id: user.id,
+      username: user.username,
+      socialLogin: user.socialLogin,
+      providerName: user.providerName ? user.providerName : 'local',
+      tokenVersion: user.credentials?.tokenVersion,
+    };
     try {
       let token = jwt.sign(
-        { id: user.id, email: user.email },
-        process.env.ACCESS_TOKEN_SECRET,
+        payload,
+        this.configService.get<string>('ACCESS_TOKEN_SECRET'),
         { expiresIn: '15min' },
       );
-      return token;
+      return {
+        ok: true,
+        accessToken: token,
+      };
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -42,29 +59,42 @@ export class HelperService {
   /**
    * A public method to call to generate a refresh token
    */
-  public async generateRefreshToken(user: User): Promise<string> {
+  public async generateRefreshToken(user: User): Promise<RefreshTokenSuccess> {
+    let payload: JWTPayload = {
+      sub: user.id,
+      iat: Date.now(),
+      id: user.id,
+      username: user.username,
+      socialLogin: user.socialLogin,
+      providerName: user.providerName ? user.providerName : 'local',
+      tokenVersion: user.credentials.tokenVersion,
+    };
     try {
       let token = jwt.sign(
-        {
-          id: user.id,
-          email: user.email,
-          tokenVersion: user.credentials.tokenVersion,
-        },
-        process.env.REFRESH_TOKEN_SECRET,
+        payload,
+        this.configService.get<string>('REFRESH_TOKEN_SECRET'),
         {
           expiresIn: '7day',
         },
       );
-      return token;
+      return {
+        ok: true,
+        refreshToken: token,
+      };
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
   /**
-   * A public method to send a cookie with the refresh token
+   * A public method to send two cookies
+   * 1. atlas: refresh token
+   * 2. olympus: access token
    */
-  public async sendRefreshCookie(@Res() res, user: User) {
+  public async sendRefreshCookie(
+    @Res({ passthrough: true }) res: Response,
+    user: User,
+  ) {
     if (!user) {
       throw new HttpException(
         'Please ensure a user is provided',
@@ -72,17 +102,16 @@ export class HelperService {
       );
     }
     let refreshToken = await this.generateRefreshToken(user);
-
-    if (!refreshToken) {
+    if (!refreshToken.ok) {
       throw new HttpException(
-        'Something went wrong generating the refresh token',
+        'Something went wrong validating your identity. This attempt has been logged.',
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
-
-    res.cookie('safron', refreshToken, {
+    // Send cookie in refresh token
+    res.cookie('atlas', refreshToken.refreshToken, {
       httpOnly: true,
-      expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      maxAge: 1000 * 60 * 60 * 24 * 7,
       sameSite: 'none',
       secure: true,
     });
@@ -92,22 +121,20 @@ export class HelperService {
    * A public method to refresh the access token using refresh token stored in cookies
    */
   public async refreshAccessToken(@Req() req: Request) {
-    if (!req.cookies.safron) {
+    if (!req.cookies['atlas']) {
       throw new HttpException(
         'No cookie found',
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
-
-    let token = req.cookies.safron;
-
-    let payload: JWTPayload;
+    let token = req.cookies['atlas'];
+    let payload;
 
     try {
       payload = jwt.verify(
         token,
-        process.env.REFRESH_TOKEN_SECRET,
-      ) as JWTPayload;
+        this.configService.get<string>('REFRESH_TOKEN_SECRET'),
+      );
     } catch (error) {
       throw new HttpException(
         error.message || error,
@@ -117,9 +144,12 @@ export class HelperService {
 
     // Find user with credentials relation
     let isValidUser = await this.userRepo.findOne({
-      where: {
-        id: payload.id,
-      },
+      where: [
+        { id: payload?.id },
+        {
+          providerId: payload?.id.toString(),
+        },
+      ],
       relations: {
         credentials: true,
       },
@@ -143,14 +173,11 @@ export class HelperService {
    * A public method to revoke the refresh token from the cookie
    */
   public async revokeRefreshToken(@Req() req) {
-    let token = req.cookies.safron;
-    let payload: JWTPayload;
+    let token = req.cookies.atlas;
+    let payload;
 
     try {
-      payload = jwt.verify(
-        token,
-        process.env.REFRESH_TOKEN_SECRET,
-      ) as JWTPayload;
+      payload = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
     } catch (error) {
       throw new HttpException(
         error.message || error,

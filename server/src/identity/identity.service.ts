@@ -3,18 +3,20 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { RegisterUserDto } from './dto/RegisterUserDto';
 import { User } from './entities/User';
-import { HelperService } from 'src/helper/helper.service';
+import { JwtService } from 'src/jwt/jwt.service';
 import { Param, Req, Res } from '@nestjs/common/decorators';
 import { Response } from 'express';
-import { UserSuccessDto } from './dto/UserSuccessDto';
 import { LoginUserDto } from './dto/LoginUserDto';
 import { UpdateProfileDto } from './dto/UpdateProfileDto';
 import { UserProfile } from './dto/UserProfileDto';
 import { Article } from 'src/article/entities/Article';
 import * as bcrypt from 'bcryptjs';
 import { Follows } from 'src/follows/entities/Follows';
-import { Comment } from 'src/comments/entities/Comments';
 import { UpdateProfileSuccess } from './dto/UpdateProfileSuccessDto';
+import { AccessTokenSuccess } from 'src/jwt/models/Token';
+import { ProfileTransformation } from './transformation/ProfileTransformation';
+import { UserData } from './models/Identity';
+import { Comment } from '../comments/dto/CommentDto';
 /*
   _    _  _____ ______ _____            _    _ _______ _    _ ______ _   _ _______ _____ _____       _______ _____ ____  _   _ 
  | |  | |/ ____|  ____|  __ \      /\  | |  | |__   __| |  | |  ____| \ | |__   __|_   _/ ____|   /\|__   __|_   _/ __ \| \ | |
@@ -23,7 +25,7 @@ import { UpdateProfileSuccess } from './dto/UpdateProfileSuccessDto';
  | |__| |____) | |____| | \ \   / ____ \ |__| |  | |  | |  | | |____| |\  |  | |   _| || |____ / ____ \| |   _| || |__| | |\  |
   \____/|_____/|______|_|  \_\ /_/    \_\____/   |_|  |_|  |_|______|_| \_|  |_|  |_____\_____/_/    \_\_|  |_____\____/|_| \_|
                                                                                                                                
-                                                                                                                                                                                                                                                                                                                          
+                                                                                                                                                                                                                                                                                                                         
 */
 
 /**
@@ -31,21 +33,22 @@ import { UpdateProfileSuccess } from './dto/UpdateProfileSuccessDto';
  */
 
 @Injectable()
-export class UserService {
+export class IdentityService {
   constructor(
     @InjectRepository(User) private userRepo: Repository<User>,
     @InjectRepository(Follows) private followRepo: Repository<Follows>,
     @InjectRepository(Article) private articleRepo: Repository<Article>,
-    private authService: HelperService,
+    private jwtService: JwtService,
   ) {}
+
   /**
    * A public method to call to register a user
    * @returns Promise<LoggedUserDto>
    */
   async registerUser(
-    @Res() res: Response,
+    @Res({ passthrough: true }) res: Response,
     registerUser: RegisterUserDto,
-  ): Promise<UserSuccessDto> {
+  ): Promise<UserData> {
     const { username, email, password, confirmPassword } = registerUser;
 
     let isValidEmail = await this.userRepo.findOne({
@@ -53,7 +56,7 @@ export class UserService {
     });
     if (isValidEmail) {
       throw new HttpException(
-        'A user exists with that email',
+        'An account already exists with this email, try signing in instead. ',
         HttpStatus.BAD_REQUEST,
       );
     }
@@ -63,7 +66,7 @@ export class UserService {
     });
     if (isValidUserName) {
       throw new HttpException(
-        'Please enter a unique username',
+        'This username is already taken. Please try again.',
         HttpStatus.BAD_REQUEST,
       );
     }
@@ -75,8 +78,12 @@ export class UserService {
     let hashPwd = await bcrypt.hash(password, 10);
     try {
       let user = this.userRepo.create({
-        username: username,
+        username: username.trim(),
+        name: username,
         email: email,
+        isVerified: true,
+        image_url: 'https://static.productionready.io/images/smiley-cyrus.jpg',
+        providerName: 'local',
         credentials: {
           createdAt: new Date(),
           password: hashPwd,
@@ -85,17 +92,11 @@ export class UserService {
 
       let createdUser = await this.userRepo.save(user);
       if (createdUser) {
-        await this.authService.sendRefreshCookie(res, createdUser);
-        return {
-          user: {
-            username: createdUser.username,
-            email: createdUser.email,
-            image_url:
-              'https://conduit-bucket.s3.amazonaws.com/demo-avatar.png',
-            bio: createdUser.bio,
-          },
-          token: await this.authService.generateAccessToken(createdUser),
-        };
+        const token = await this.jwtService.generateAccessToken(createdUser);
+        if (token.ok) {
+          await this.jwtService.sendRefreshCookie(res, createdUser);
+          return ProfileTransformation.transformUserProfile(createdUser, token);
+        }
       }
     } catch (error) {
       throw new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -107,10 +108,10 @@ export class UserService {
    * Returns the user object, with access token and sends a cookie.
    */
   async loginUser(
-    @Res() res: Response,
+    @Res({ passthrough: true }) res: Response,
     loginUser: LoginUserDto,
-  ): Promise<UserSuccessDto> {
-    const isValidUser = await this.userRepo.findOne({
+  ): Promise<UserData> {
+    const user = await this.userRepo.findOne({
       where: {
         email: loginUser.email,
       },
@@ -119,7 +120,7 @@ export class UserService {
       },
     });
 
-    if (!isValidUser) {
+    if (!user) {
       throw new HttpException(
         `No account found with email ${loginUser.email}`,
         HttpStatus.BAD_REQUEST,
@@ -128,7 +129,7 @@ export class UserService {
 
     const isValidPassword = await bcrypt.compare(
       loginUser.password,
-      isValidUser.credentials.password,
+      user.credentials.password,
     );
 
     if (!isValidPassword) {
@@ -139,16 +140,11 @@ export class UserService {
     }
 
     // Send cookie
-    await this.authService.sendRefreshCookie(res, isValidUser);
-    return {
-      user: {
-        username: isValidUser.username,
-        email: isValidUser.email,
-        image_url: isValidUser.image_url,
-        bio: isValidUser.bio,
-      },
-      token: await this.authService.generateAccessToken(isValidUser),
-    };
+    const token = await this.jwtService.generateAccessToken(user);
+    if (token.ok) {
+      await this.jwtService.sendRefreshCookie(res, user);
+      return ProfileTransformation.transformUserProfile(user, token);
+    }
   }
 
   /**
@@ -159,15 +155,12 @@ export class UserService {
     @Req() req,
     updateProfile: UpdateProfileDto,
   ): Promise<UpdateProfileSuccess> {
-    console.log('the user', req.user);
-    console.log('data received', updateProfile);
-
     try {
-      const user = await this.userRepo.update(req.user, updateProfile);
+      const user = await this.userRepo.update(req.user.id, updateProfile);
       if (user) {
         const updatedUser = await this.userRepo.findOne({
           where: {
-            id: req.user,
+            id: req.user.id,
           },
         });
         return updatedUser as UpdateProfileSuccess;
@@ -222,16 +215,14 @@ export class UserService {
         comments: queryUser.comments as unknown as Comment[],
       };
 
-      // TODO If a logged in user access a profile page, check to see if they have favourited any articles by the user
-
-      if (!req.user) {
+      if (!req.user.id) {
         return user;
       }
 
       const isFollowed = await this.followRepo.findOne({
         where: {
           userBeingFollowed: username,
-          userFollowingThePerson: req.user,
+          userFollowingThePerson: req.user.id,
         },
       });
 
@@ -249,7 +240,7 @@ export class UserService {
    *
    */
   async followUser(@Req() req, username: string) {
-    if (username === req.user) {
+    if (username === req.user.id) {
       throw new HttpException(
         'You cannot follow yourself',
         HttpStatus.BAD_REQUEST,
@@ -271,7 +262,7 @@ export class UserService {
 
     const isUserFollowing = await this.followRepo.findOne({
       where: {
-        userFollowingThePerson: req.user,
+        userFollowingThePerson: req.user.id,
         userBeingFollowed: username,
       },
     });
@@ -285,11 +276,12 @@ export class UserService {
 
     try {
       const createFollow = this.followRepo.create({
-        userFollowingThePerson: req.user,
+        userFollowingThePerson: req.user.id,
         userBeingFollowed: isValidUser.username,
         followerUser: isValidUser,
         dateFollowed: new Date(),
       });
+
       await this.followRepo.save(createFollow);
 
       return {
@@ -309,7 +301,7 @@ export class UserService {
       const follower = await this.followRepo.findOne({
         where: {
           userBeingFollowed: username,
-          followerUser: req.user,
+          followerUser: req.user.id,
         },
       });
       await this.followRepo.remove(follower);
