@@ -49,7 +49,7 @@ function FavouriteArticleButton({
     if (!currentUser) {
       navigate("/login");
     } else {
-      if (article.author.username === currentUser.user.username) {
+      if (article.author.username === currentUser.data.username) {
         notify();
       } else {
         setIsProcessing((prevState) => !prevState);

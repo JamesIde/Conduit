@@ -13,3 +13,6 @@ server/Dockerfile-backup
 Dockerfile
 cloudbuild.yaml
 Dockerfile-backupv2
+server/Dockerfile
+server/Dockerfile-old
+server/Dockerfile

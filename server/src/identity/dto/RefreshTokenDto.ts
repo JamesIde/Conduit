@@ -10,5 +10,5 @@ export interface JWTPayload {
   username: string;
   socialLogin: boolean;
   providerName: string;
-  tokenVersion?: string;
+  tokenVersion?: number;
 }

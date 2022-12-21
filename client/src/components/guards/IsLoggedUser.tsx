@@ -4,7 +4,7 @@ import { Navigate, Outlet } from "react-router-dom";
 function IsLoggedUser() {
   const { username } = useParams();
   const currentUser = useStore((state) => state.currentUser);
-  return username !== currentUser?.user?.username ? (
+  return username !== currentUser?.data?.username ? (
     <Outlet />
   ) : (
     <Navigate to={`/profile/user/${username}`} />

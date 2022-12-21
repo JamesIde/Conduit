@@ -6,17 +6,17 @@ import { User } from './entities/User';
 import { JwtService } from 'src/jwt/jwt.service';
 import { Param, Req, Res } from '@nestjs/common/decorators';
 import { Response } from 'express';
-import { UserSuccessDto } from './dto/UserSuccessDto';
 import { LoginUserDto } from './dto/LoginUserDto';
 import { UpdateProfileDto } from './dto/UpdateProfileDto';
 import { UserProfile } from './dto/UserProfileDto';
 import { Article } from 'src/article/entities/Article';
 import * as bcrypt from 'bcryptjs';
 import { Follows } from 'src/follows/entities/Follows';
-import { Comment } from 'src/comments/entities/Comments';
 import { UpdateProfileSuccess } from './dto/UpdateProfileSuccessDto';
 import { AccessTokenSuccess } from 'src/jwt/models/Token';
 import { ProfileTransformation } from './transformation/ProfileTransformation';
+import { UserData } from './models/Identity';
+import { Comment } from '../comments/dto/CommentDto';
 /*
   _    _  _____ ______ _____            _    _ _______ _    _ ______ _   _ _______ _____ _____       _______ _____ ____  _   _ 
  | |  | |/ ____|  ____|  __ \      /\  | |  | |__   __| |  | |  ____| \ | |__   __|_   _/ ____|   /\|__   __|_   _/ __ \| \ | |
@@ -46,9 +46,9 @@ export class IdentityService {
    * @returns Promise<LoggedUserDto>
    */
   async registerUser(
-    @Res() res: Response,
+    @Res({ passthrough: true }) res: Response,
     registerUser: RegisterUserDto,
-  ): Promise<AccessTokenSuccess> {
+  ): Promise<UserData> {
     const { username, email, password, confirmPassword } = registerUser;
 
     let isValidEmail = await this.userRepo.findOne({
@@ -56,7 +56,7 @@ export class IdentityService {
     });
     if (isValidEmail) {
       throw new HttpException(
-        'A user exists with that email',
+        'An account already exists with this email, try signing in instead. ',
         HttpStatus.BAD_REQUEST,
       );
     }
@@ -66,7 +66,7 @@ export class IdentityService {
     });
     if (isValidUserName) {
       throw new HttpException(
-        'Please enter a unique username',
+        'This username is already taken. Please try again.',
         HttpStatus.BAD_REQUEST,
       );
     }
@@ -78,9 +78,11 @@ export class IdentityService {
     let hashPwd = await bcrypt.hash(password, 10);
     try {
       let user = this.userRepo.create({
-        username: username,
+        username: username.trim(),
+        name: username,
         email: email,
         isVerified: true,
+        image_url: 'https://static.productionready.io/images/smiley-cyrus.jpg',
         providerName: 'local',
         credentials: {
           createdAt: new Date(),
@@ -90,7 +92,6 @@ export class IdentityService {
 
       let createdUser = await this.userRepo.save(user);
       if (createdUser) {
-        console.log('Created user: ', createdUser);
         const token = await this.jwtService.generateAccessToken(createdUser);
         if (token.ok) {
           await this.jwtService.sendRefreshCookie(res, createdUser);
@@ -107,9 +108,9 @@ export class IdentityService {
    * Returns the user object, with access token and sends a cookie.
    */
   async loginUser(
-    @Res() res: Response,
+    @Res({ passthrough: true }) res: Response,
     loginUser: LoginUserDto,
-  ): Promise<AccessTokenSuccess> {
+  ): Promise<UserData> {
     const user = await this.userRepo.findOne({
       where: {
         email: loginUser.email,
@@ -154,15 +155,12 @@ export class IdentityService {
     @Req() req,
     updateProfile: UpdateProfileDto,
   ): Promise<UpdateProfileSuccess> {
-    console.log('the user', req.user);
-    console.log('data received', updateProfile);
-
     try {
-      const user = await this.userRepo.update(req.user, updateProfile);
+      const user = await this.userRepo.update(req.user.id, updateProfile);
       if (user) {
         const updatedUser = await this.userRepo.findOne({
           where: {
-            id: req.user,
+            id: req.user.id,
           },
         });
         return updatedUser as UpdateProfileSuccess;
@@ -217,16 +215,14 @@ export class IdentityService {
         comments: queryUser.comments as unknown as Comment[],
       };
 
-      // TODO If a logged in user access a profile page, check to see if they have favourited any articles by the user
-
-      if (!req.user) {
+      if (!req.user.id) {
         return user;
       }
 
       const isFollowed = await this.followRepo.findOne({
         where: {
           userBeingFollowed: username,
-          userFollowingThePerson: req.user,
+          userFollowingThePerson: req.user.id,
         },
       });
 
@@ -244,7 +240,7 @@ export class IdentityService {
    *
    */
   async followUser(@Req() req, username: string) {
-    if (username === req.user) {
+    if (username === req.user.id) {
       throw new HttpException(
         'You cannot follow yourself',
         HttpStatus.BAD_REQUEST,
@@ -266,7 +262,7 @@ export class IdentityService {
 
     const isUserFollowing = await this.followRepo.findOne({
       where: {
-        userFollowingThePerson: req.user,
+        userFollowingThePerson: req.user.id,
         userBeingFollowed: username,
       },
     });
@@ -280,11 +276,12 @@ export class IdentityService {
 
     try {
       const createFollow = this.followRepo.create({
-        userFollowingThePerson: req.user,
+        userFollowingThePerson: req.user.id,
         userBeingFollowed: isValidUser.username,
         followerUser: isValidUser,
         dateFollowed: new Date(),
       });
+
       await this.followRepo.save(createFollow);
 
       return {
@@ -304,7 +301,7 @@ export class IdentityService {
       const follower = await this.followRepo.findOne({
         where: {
           userBeingFollowed: username,
-          followerUser: req.user,
+          followerUser: req.user.id,
         },
       });
       await this.followRepo.remove(follower);

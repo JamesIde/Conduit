@@ -1,6 +1,7 @@
 import { FavouriteStatus, Filters } from "../../types/Article";
 import {
   FollowMetadata,
+  Profile,
   LoginUser,
   RegisterUser,
   UpdateProfile,
@@ -80,18 +81,20 @@ async function handleFollowUser(metadata: FollowMetadata): Promise<any> {
   let data: any;
   if (!metadata.isFollowed) {
     ({ data } = await baseClient.post(
-      `/auth/profile/${metadata.username}/follow`
+      `/identity/profile/${metadata.username}/follow`
     ));
   } else {
     ({ data } = await baseClient.delete(
-      `auth/profile/${metadata.username}/follow`
+      `identity/profile/${metadata.username}/follow`
     ));
   }
   return data;
 }
 
 async function unfollowUser(username: string): Promise<any> {
-  const { data } = await baseClient.delete(`auth/profile/${username}/follow`);
+  const { data } = await baseClient.delete(
+    `identity/profile/${username}/follow`
+  );
   return data;
 }
 
@@ -104,12 +107,12 @@ async function unfollowUser(username: string): Promise<any> {
   \____/|_____/|______|_|  \_\                        
  */
 
-async function signInUser(userData: LoginUser): Promise<UserSignInSuccess> {
+async function signInUser(userData: LoginUser): Promise<Profile> {
   const { data } = await baseClient.post("identity/login", userData);
   return data;
 }
 
-async function signUpUser(userData: RegisterUser): Promise<UserSignInSuccess> {
+async function signUpUser(userData: RegisterUser): Promise<Profile> {
   const { data } = await baseClient.post("identity/register", userData);
   return data;
 }
@@ -140,6 +143,20 @@ async function updateProfileImage(file: FormData): Promise<any> {
   return data;
 }
 
+/**
+  _____ _____  ______ _   _ _______ _____ _________     __  _____  _____   ______      _______ _____  ______ _____  
+ |_   _|  __ \|  ____| \ | |__   __|_   _|__   __\ \   / / |  __ \|  __ \ / __ \ \    / /_   _|  __ \|  ____|  __ \ 
+   | | | |  | | |__  |  \| |  | |    | |    | |   \ \_/ /  | |__) | |__) | |  | \ \  / /  | | | |  | | |__  | |__) |
+   | | | |  | |  __| | . ` |  | |    | |    | |    \   /   |  ___/|  _  /| |  | |\ \/ /   | | | |  | |  __| |  _  / 
+  _| |_| |__| | |____| |\  |  | |   _| |_   | |     | |    | |    | | \ \| |__| | \  /   _| |_| |__| | |____| | \ \ 
+ |_____|_____/|______|_| \_|  |_|  |_____|  |_|     |_|    |_|    |_|  \_\\____/   \/   |_____|_____/|______|_|  \_\
+ */
+
+async function IdpAuthenticate(idpToken): Promise<any> {
+  const { data } = await baseClient.post("identity/idp", idpToken);
+  return data;
+}
+
 const baseAPI = {
   getArticles,
   getArticleBySlug,
@@ -154,5 +171,6 @@ const baseAPI = {
   unfollowUser,
   logoutUser,
   updateProfileImage,
+  IdpAuthenticate,
 };
 export default baseAPI;

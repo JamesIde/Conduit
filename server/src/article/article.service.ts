@@ -96,6 +96,7 @@ export class ArticleService {
     const limit = req.query.limit ? parseInt(req.query.limit) : 2;
     const user = req.user?.id;
     const tag: string = req.query.tag;
+
     if (!user && !tag) {
       return await this.getDefaultArticles(page, limit);
     }

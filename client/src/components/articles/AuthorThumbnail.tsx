@@ -29,8 +29,7 @@ function AuthorThumbnail({
           className="hover:cursor-pointer"
         >
           <img
-            className="rounded mt-2"
-            style={{ width: size }}
+            className="h-[45px] rounded-[50px] object-cover mr-1"
             src={
               article?.author?.image_url
                 ? article?.author?.image_url

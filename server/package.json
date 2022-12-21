@@ -48,6 +48,7 @@
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^7.2.0",
+    "sharp": "^0.31.2",
     "typeorm": "^0.3.10"
   },
   "devDependencies": {
@@ -63,6 +64,7 @@
     "@types/node": "^16.0.0",
     "@types/passport-github": "^1.1.7",
     "@types/passport-google-oauth20": "^2.0.11",
+    "@types/sharp": "^0.31.0",
     "@types/supertest": "^2.0.11",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
     "@typescript-eslint/parser": "^5.0.0",

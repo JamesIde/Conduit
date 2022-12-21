@@ -39,16 +39,19 @@ function Header() {
               </Link>
               <div
                 className="flex flex-row text-gray-400 cursor-pointer hover:text-gray-600 p-2"
-                onClick={() => handleProfilePrefetch(user.user.username)}
+                onClick={() => handleProfilePrefetch(user.data.username)}
               >
-                <p className="mt-1 mr-1">
-                  <img
-                    src={user.user.image_url}
-                    alt={user.user.username}
-                    className="h-[26px] rounded-[50px] object-cover"
-                  />
-                </p>
-                <p className="">{user.user.username}</p>
+                <img
+                  src={
+                    user.data.image_url
+                      ? user.data.image_url
+                      : "https://api.realworld.io/images/demo-avatar.png"
+                  }
+                  // alt={user.data?.username}
+                  className="h-[26px] rounded-[50px] object-cover mr-1"
+                />
+
+                <p className="">{user.data.username}</p>
               </div>
             </>
           ) : (

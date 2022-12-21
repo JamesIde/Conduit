@@ -1,23 +1,24 @@
 import create from "zustand";
-import {  UserSignInSuccess } from "../../types/User";
+import { Profile } from "../../types/User";
 
 type State = {
-  currentUser: UserSignInSuccess;
+  currentUser: Profile;
 };
 
 type Action = {
-  setUser: (user: UserSignInSuccess) => void;
+  setUser: (user: Profile) => void;
   removeUser: () => void;
-  updateUser: (user: UserSignInSuccess) => void;
+  updateUser: (user: Profile) => void;
 };
 
 export const useStore = create<State & Action>()((set) => ({
   currentUser: JSON.parse(localStorage.getItem("user"))
     ? JSON.parse(localStorage.getItem("user")!)
     : null,
-  setUser: (user: UserSignInSuccess) => set(() => ({ currentUser: user })),
+  setUser: (user: Profile) => set(() => ({ currentUser: user })),
   removeUser: () => set(() => ({ currentUser: null })),
-  updateUser: (user: UserSignInSuccess) => {
+  updateUser: (user: Profile) => {
+    // TODO needs type fixing coz no work!
     set(() => ({ currentUser: user }));
   },
 }));
@@ -55,6 +56,22 @@ export const usePaginationStore = create<paginationState & paginationAction>()(
     page: 1,
     updatePage: (page: number) => {
       set(() => ({ page: page }));
+    },
+  })
+);
+
+type isFileUpload = {
+  isFileUpload: boolean;
+};
+type isFileUploadAction = {
+  updateIsFileUpload: (isFileUpload: boolean) => void;
+};
+
+export const useIsFileUploadStore = create<isFileUpload & isFileUploadAction>()(
+  (set) => ({
+    isFileUpload: false,
+    updateIsFileUpload: (isFileUpload: boolean) => {
+      set(() => ({ isFileUpload: isFileUpload }));
     },
   })
 );

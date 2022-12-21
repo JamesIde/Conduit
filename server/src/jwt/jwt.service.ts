@@ -39,6 +39,7 @@ export class JwtService {
       username: user.username,
       socialLogin: user.socialLogin,
       providerName: user.providerName ? user.providerName : 'local',
+      tokenVersion: user.credentials?.tokenVersion,
     };
     try {
       let token = jwt.sign(
@@ -66,6 +67,7 @@ export class JwtService {
       username: user.username,
       socialLogin: user.socialLogin,
       providerName: user.providerName ? user.providerName : 'local',
+      tokenVersion: user.credentials.tokenVersion,
     };
     try {
       let token = jwt.sign(
@@ -89,7 +91,10 @@ export class JwtService {
    * 1. atlas: refresh token
    * 2. olympus: access token
    */
-  public async sendRefreshCookie(@Res() res, user: User) {
+  public async sendRefreshCookie(
+    @Res({ passthrough: true }) res: Response,
+    user: User,
+  ) {
     if (!user) {
       throw new HttpException(
         'Please ensure a user is provided',
@@ -97,16 +102,16 @@ export class JwtService {
       );
     }
     let refreshToken = await this.generateRefreshToken(user);
-
     if (!refreshToken.ok) {
       throw new HttpException(
         'Something went wrong validating your identity. This attempt has been logged.',
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
+    // Send cookie in refresh token
     res.cookie('atlas', refreshToken.refreshToken, {
       httpOnly: true,
-      expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      maxAge: 1000 * 60 * 60 * 24 * 7,
       sameSite: 'none',
       secure: true,
     });
@@ -116,15 +121,13 @@ export class JwtService {
    * A public method to refresh the access token using refresh token stored in cookies
    */
   public async refreshAccessToken(@Req() req: Request) {
-    if (!req.cookies.safron) {
+    if (!req.cookies['atlas']) {
       throw new HttpException(
         'No cookie found',
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
-
-    let token = req.cookies.safron;
-
+    let token = req.cookies['atlas'];
     let payload;
 
     try {
@@ -170,7 +173,7 @@ export class JwtService {
    * A public method to revoke the refresh token from the cookie
    */
   public async revokeRefreshToken(@Req() req) {
-    let token = req.cookies.safron;
+    let token = req.cookies.atlas;
     let payload;
 
     try {

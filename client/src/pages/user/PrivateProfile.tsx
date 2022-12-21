@@ -51,7 +51,7 @@ function Profile() {
 
   return (
     <>
-      <div className="bg-[#f7f6f6] xl:h-[300px] md:h-[290px] h-[290px]">
+      <div className="bg-[#f7f6f6] xl:h-[320px] md:h-[290px] h-[290px]">
         <div className="max-w-3xl mx-auto xl:pt-10 md:pt-5 pt-4">
           {isLoading && (
             <>
@@ -59,8 +59,8 @@ function Profile() {
                 <div className="mx-auto">
                   <img
                     src={
-                      profile.image_url
-                        ? profile.image_url
+                      profile?.image_url
+                        ? profile?.image_url
                         : "https://api.realworld.io/images/demo-avatar.png"
                     }
                     alt={profile.username}
@@ -69,15 +69,16 @@ function Profile() {
                 </div>
                 <div>
                   <h5 className="font-bold text-center mt-2 text-lg">
-                    @{profile.username}
+                    {profile.name}
                   </h5>
+                  <h3 className="text-center text-md">@{profile.username}</h3>
                   <p className="text-center italic p-[4px]">
                     {profile.bio ? profile.bio : "No bio yet"}
                   </p>
                 </div>
               </div>
               <div className="flex justify-center mt-1">
-                {storedUser?.user?.username !== profile.username && (
+                {storedUser?.data?.username !== profile.username && (
                   <div>
                     <FollowUserButton profile={profile} />
                   </div>

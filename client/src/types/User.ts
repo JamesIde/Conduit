@@ -19,7 +19,7 @@ export interface User {
 }
 
 export interface UpdateProfile {
-  email: string;
+  email?: string;
   bio: string;
 }
 
@@ -28,7 +28,7 @@ export interface UpdateProfileSuccess {
   username: string;
   email: string;
   name: string;
-  image: string;
+  image_url: string;
   bio: string;
 }
 
@@ -36,6 +36,32 @@ export interface UserSignInSuccess {
   message: string;
   user: User;
   token: string;
+}
+
+export interface Data {
+  id?: number;
+  email: string;
+  name: string;
+  username: string;
+  bio: string;
+  image_url: string;
+}
+
+export interface Token {
+  accessToken: string;
+  ok: boolean;
+}
+
+export interface Provider {
+  socialLogin: boolean;
+  providerId?: any;
+  providerName?: any;
+}
+
+export interface Profile {
+  data: Data;
+  token?: Token;
+  provider?: Provider;
 }
 
 export interface AccessTokenSuccess {

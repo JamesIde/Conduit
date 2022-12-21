@@ -1,7 +1,7 @@
 import { FormEvent, useState } from "react";
-import { useStore } from "../../utils/store/globalStore";
+import { useIsFileUploadStore, useStore } from "../../utils/store/globalStore";
 import { useMutation } from "@tanstack/react-query";
-import { UpdateProfile, UserSignInSuccess } from "../../types/User";
+import { Profile, UpdateProfile, UpdateProfileSuccess } from "../../types/User";
 import { AxiosError } from "axios";
 import { APIError } from "../../types/Error";
 import { useNavigate } from "react-router-dom";
@@ -12,10 +12,13 @@ import toast from "react-hot-toast";
 import UserProfileUpload from "../../components/user/UserProfileUpload";
 function Settings() {
   const navigate = useNavigate();
+  const [isDirty, setIsDirty] = useState(true);
   const [currentUser, updateUser] = useStore((state) => [
     state.currentUser,
     state.updateUser,
   ]);
+
+  const isFileUpload = useIsFileUploadStore((state) => state.isFileUpload);
 
   const notify = () => toast.success("Profile updated successfully!");
   const {
@@ -25,11 +28,11 @@ function Settings() {
     isSuccess,
     error = {} as AxiosError,
   } = useMutation(["updateProfile"], baseAPI.updateUser, {
-    onSuccess: (data) => {
-      const oldUser = JSON.parse(localStorage.getItem("user"));
-      oldUser.user = data;
-      const newUser = oldUser;
-      updateUser(newUser);
+    onSuccess: (data: UpdateProfileSuccess) => {
+      const user: Profile = JSON.parse(localStorage.getItem("user"));
+      user.data = data;
+      updateUser(user);
+      localStorage.setItem("user", JSON.stringify(user));
       setTimeout(() => {
         navigate("/");
       }, 1000);
@@ -38,9 +41,10 @@ function Settings() {
   });
 
   const user = {
-    image: currentUser.user.image_url,
-    email: currentUser.user.email,
-    bio: currentUser.user.bio,
+    image_url: currentUser.data.image_url,
+    email: currentUser.data.email,
+    bio: currentUser.data.bio,
+    socialLogin: currentUser.provider.socialLogin ? true : false,
   };
 
   const [fields, setFields] = useState({ ...user });
@@ -56,11 +60,24 @@ function Settings() {
   // Handle submit for email, bio
   const handleSubmit = (e) => {
     e.preventDefault();
-    const data: UpdateProfile = {
-      email: fields.email,
-      bio: fields.bio,
-    };
+
+    let data: UpdateProfile;
+
+    if (currentUser.provider.socialLogin) {
+      data = {
+        bio: fields.bio,
+      };
+    } else {
+      data = {
+        email: fields.email,
+        bio: fields.bio,
+      };
+    }
     mutate(data);
+  };
+
+  const handleFormInput = (e) => {
+    setIsDirty(false);
   };
 
   return (
@@ -70,11 +87,6 @@ function Settings() {
           Your Settings
         </h1>
         <div className="mb-2">
-          <div>
-            {isLoading && (
-              <p className="text-center text-sm">Updating your profile...</p>
-            )}
-          </div>
           <div>{/*  */}</div>
           <div className="flex justify-center text-sm">
             {isError && <Error error={error as AxiosError<APIError>} />}
@@ -84,16 +96,16 @@ function Settings() {
         <div className="mx-auto flex justify-center">
           <img
             src={
-              user.image
-                ? user.image
+              user.image_url
+                ? user.image_url
                 : "https://api.realworld.io/images/demo-avatar.png"
             }
-            alt={user.image}
+            alt={user.image_url}
             className="w-[125px] object-cover rounded-full"
           />
         </div>
         <UserProfileUpload />
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} onKeyDown={handleFormInput}>
           <textarea
             className="p-2 w-full border-[1px] border-gray-300 rounded-md mb-4"
             rows={7}
@@ -105,17 +117,25 @@ function Settings() {
             value={fields.bio}
           />
           <input
-            className="p-2 w-full border-[1px] border-gray-300 rounded-md mb-4"
+            className="p-2 w-full border-[1px] border-gray-300 rounded-md mb-1"
             onChange={handleUpdate}
             name="email"
             value={fields.email}
+            hidden={user.socialLogin}
           />
           <div className="flex justify-end">
-            <button type="submit">
-              <p className="p-3 bg-green-600 hover:bg-green-800 duration-500 w-max hover:cursor-pointer text-white font-bold rounded">
-                Update Settings
-              </p>
+            <button
+              style={{
+                backgroundColor: isFileUpload || isDirty ? "#ccc" : "#28a745",
+                cursor: isFileUpload || isDirty ? "not-allowed" : "pointer",
+              }}
+              type="submit"
+              disabled={isFileUpload || isDirty}
+              className="p-3 bg-green-600 hover:bg-green-800 duration-500 w-max hover:cursor-pointer text-white font-bold rounded"
+            >
+              Update Settings
             </button>
+            {isFileUpload}
           </div>
           <hr className="mt-3 mb-3" />
           <Logout />

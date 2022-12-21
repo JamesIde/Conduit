@@ -18,7 +18,7 @@ export interface Comment {
 export interface UserProfile {
   username: string;
   name?: any;
-  image_url?: any;
+  image_url: string;
   bio?: any;
   isFollowed: boolean;
   articles: Article[];

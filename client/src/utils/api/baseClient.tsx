@@ -1,5 +1,5 @@
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
-import { AccessTokenSuccess, UserSignInSuccess } from "../../types/User";
+import { AccessTokenSuccess, Profile } from "../../types/User";
 
 const baseClient = axios.create({
   // This needs to be updated to run locally (nginx routes /api/v1 to backend in k8s)
@@ -13,8 +13,8 @@ const baseClient = axios.create({
 // https://thedutchlab.com/blog/using-axios-interceptors-for-refreshing-your-api-token
 const onRequest = (config: AxiosRequestConfig): AxiosRequestConfig => {
   if (localStorage.getItem("user")) {
-    const user: UserSignInSuccess = JSON.parse(localStorage.getItem("user"));
-    config.headers!["Authorization"] = `Bearer ${user.token}`;
+    const user: Profile = JSON.parse(localStorage.getItem("user"));
+    config.headers!["Authorization"] = `Bearer ${user.token.accessToken}`;
     return config;
   } else {
     return config;
@@ -35,12 +35,10 @@ const onResponseError = async (error: AxiosError) => {
     if (error.response.status == 401) {
       try {
         axios.defaults.withCredentials = true;
-        const { data } = await baseClient.get(`/auth/refresh_token`);
+        const { data } = await baseClient.get(`/identity/refresh_token`);
         const rs = data as AccessTokenSuccess;
-        const user: UserSignInSuccess = JSON.parse(
-          localStorage.getItem("user")
-        );
-        user.token = rs.accessToken;
+        const user: Profile = JSON.parse(localStorage.getItem("user"));
+        user.token.accessToken = rs.accessToken;
         localStorage.setItem("user", JSON.stringify(user));
         //Return the original request with new token
         return baseClient(originalConfig);

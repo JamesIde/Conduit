@@ -1,20 +1,19 @@
 import { AccessTokenSuccess } from 'src/jwt/models/Token';
+import { UserData } from '../models/Identity';
 import { User } from '../entities/User';
-import { IdpRegisterSuccessTransformed } from '../models/Identity';
-
 export class ProfileTransformation {
   public static transformUserProfile(
     profile: User,
     token: AccessTokenSuccess,
-  ): any {
-    const user = {
+  ): UserData {
+    const user: UserData = {
       data: {
         id: profile?.id,
         email: profile?.email,
         name: profile?.username,
         username: profile?.username,
         bio: profile?.bio,
-        image: profile?.image_url,
+        image_url: profile?.image_url,
       },
       token: {
         accessToken: token.accessToken,

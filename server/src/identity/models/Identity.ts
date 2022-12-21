@@ -89,3 +89,32 @@ export interface IdpRegisterSuccessTransformed {
   name?: string | undefined;
   bio?: string | undefined;
 }
+
+//////////////////////////////////
+/// User Login/ Register Model ///
+//////////////////////////////////
+export interface Data {
+  id: number;
+  email: string;
+  name: string;
+  username: string;
+  bio?: any;
+  image_url: string;
+}
+
+export interface Token {
+  accessToken: string;
+  ok: boolean;
+}
+
+export interface Provider {
+  socialLogin: boolean;
+  providerId?: any;
+  providerName: string;
+}
+
+export interface UserData {
+  data: Data;
+  token: Token;
+  provider: Provider;
+}

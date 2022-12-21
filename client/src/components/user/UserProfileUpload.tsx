@@ -2,26 +2,31 @@ import { useMutation } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { useRef, useState } from "react";
 import { toast } from "react-hot-toast";
-import { useStore } from "../../utils/store/globalStore";
+import { useIsFileUploadStore, useStore } from "../../utils/store/globalStore";
 import baseAPI from "../../utils/api/api";
+import { Profile } from "../../types/User";
 function UserProfileUpload() {
   const updateUser = useStore((state) => state.updateUser);
+  const [isFileUpload, updateIsFileUpload] = useIsFileUploadStore((state) => [
+    state.isFileUpload,
+    state.updateIsFileUpload,
+  ]);
   const inputRef = useRef(null);
   const [file, setFile] = useState(null);
   const notify = () => toast.success("Profile image updated successfully!");
   const {
     mutate,
-    isLoading,
     isError,
     error = {} as AxiosError,
   } = useMutation(["updateProfileImage"], baseAPI.updateProfileImage, {
     onSuccess: (data) => {
       notify();
       handleInputReset();
-      const oldUser = JSON.parse(localStorage.getItem("user"));
-      oldUser.user = data;
-      const newUser = oldUser;
-      updateUser(newUser);
+      updateIsFileUpload(false);
+      const user: Profile = JSON.parse(localStorage.getItem("user"));
+      user.data = data;
+      updateUser(user);
+      localStorage.setItem("user", JSON.stringify(user));
     },
     onError: (error: AxiosError) => {
       toast.error(error.message);
@@ -32,11 +37,15 @@ function UserProfileUpload() {
   const handleInputReset = () => {
     inputRef.current.value = null;
     setFile(null);
+    updateIsFileUpload(false);
   };
 
   // Logic to submit the image to backend
   const handleProfileUpload = (e) => {
     e.preventDefault();
+    // Update global store
+    updateIsFileUpload(true);
+
     if (file.size > 1000000) {
       toast.error("Image size must be less than 1MB");
       handleInputReset();
@@ -55,7 +64,7 @@ function UserProfileUpload() {
     <>
       <form onSubmit={handleProfileUpload}>
         <div className="flex justify-evenly mt-3">
-          <div className="mb-3 w-full">
+          <div className="mb-1 w-full">
             <input
               className="form-control
               block w-full p-1 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-30 
@@ -72,9 +81,9 @@ function UserProfileUpload() {
               backgroundColor: file ? "rgb(37 99 235)" : "red",
               cursor: file ? "pointer" : "not-allowed",
             }}
-            disabled={!file}
+            disabled={isFileUpload ? true : !file}
           >
-            {isLoading ? "Uploading..." : "Upload"}
+            {isFileUpload ? "Uploading..." : "Upload"}
           </button>
         </div>
       </form>

@@ -7,6 +7,7 @@ import { IdentityProfile } from './models/IdentityProfile';
 import jwt_decode from 'jwt-decode';
 import { JwtService } from 'src/jwt/jwt.service';
 import { ProfileTransformation } from './transformation/ProfileTransformation';
+import { UserData } from './models/Identity';
 @Injectable()
 export class IdentityProviderService {
   constructor(
@@ -19,7 +20,7 @@ export class IdentityProviderService {
    * The decoded token contains the profile information we insert into the database.
    * The identity will then be validated and a server generated JWT will be sent back to the client.
    */
-  async validateIdpToken(@Res() res, idpToken: IdPToken): Promise<any> {
+  async validateIdpToken(@Res() res, idpToken: IdPToken): Promise<UserData> {
     const { token } = idpToken;
     var decoded: IdentityProfile = jwt_decode(token);
     decoded.provider = 'google';
@@ -29,12 +30,14 @@ export class IdentityProviderService {
   /**
    * Public method to register a user from a third party provider (google/github)
    * It will check if the user exists in the database and if not, it will register the user.
-   * Returning a JWT token and a refresh token in cookie
+   * It will call underlying JWT service to generate access and refresh tokens.
+   * The access token is injected into the response with the user profile.
+   * The refresh token is sent as a HttpOnly cookie.
    */
   async validateIdPUserIdentity(
     @Res() res,
     profile: IdentityProfile,
-  ): Promise<any> {
+  ): Promise<UserData> {
     if (!profile) {
       throw new HttpException('No profile provided', HttpStatus.BAD_REQUEST);
     }
@@ -45,18 +48,21 @@ export class IdentityProviderService {
     if (!isRegistered) {
       user = await this.registerIdPUser(profile);
       validated = true;
-    } else {
-      user = await this.loginIdPUser(profile);
-      validated = true;
     }
 
-    console.log('usr', user);
-    if (validated && user) {
-      const token = await this.jwtService.generateAccessToken(user);
-      if (token.ok) {
-        await this.jwtService.sendRefreshCookie(res, user);
-        return ProfileTransformation.transformUserProfile(user, token);
-      }
+    user = await this.loginIdPUser(profile);
+    validated = true;
+
+    if (!validated || !user) {
+      throw new HttpException(
+        'Identity could not be confirmed',
+        HttpStatus.UNAUTHORIZED,
+      );
+    }
+    const token = await this.jwtService.generateAccessToken(user);
+    if (token.ok) {
+      await this.jwtService.sendRefreshCookie(res, user);
+      return ProfileTransformation.transformUserProfile(user, token);
     }
   }
 
@@ -64,18 +70,21 @@ export class IdentityProviderService {
    * A private method to register a user authenticated with github (or any other IdP)
    */
   async registerIdPUser(profile: IdentityProfile): Promise<User> {
+    // Remove space from username James Ide --> JamesIde
+    const username = profile.name.replace(/\s/g, '');
     const newIdpUser = this.userRepository.create({
-      username: profile.name,
+      username: username,
       email: profile.email,
       name: profile.name,
       isVerified: profile.email_verified,
       socialLogin: true,
       providerId: profile.sub,
       providerName: profile.provider,
-      image_url: profile.picture,
+      image_url: 'https://static.productionready.io/images/smiley-cyrus.jpg',
       credentials: {
         password: null,
         createdAt: new Date(),
+        tokenVersion: 0,
       },
     });
     const regIdpUser = await this.userRepository.save(newIdpUser);
@@ -96,7 +105,9 @@ export class IdentityProviderService {
   private async loginIdPUser(profile: IdentityProfile): Promise<User> {
     const user = await this.userRepository.findOne({
       where: { providerId: profile.sub },
+      relations: ['credentials'],
     });
+
     if (!user) {
       throw new HttpException(
         'An error occured logging in your profile. Please try again later.',
@@ -124,10 +135,3 @@ export class IdentityProviderService {
     return true;
   }
 }
-
-/**
- * Then set up logic to generate access token, refresh token and cookie for that.
- * Modify the existing helper.Service to serve both user/pass users and IdP users
- * The resp objs for register and login for user/pass should be ok: boolean, token: string.
- * UI then calls getProfile and displays the data...
- */

@@ -23,26 +23,26 @@ import { IdentityModule } from './identity/identity.module';
     }),
     TypeOrmModule.forRoot(
       // prod
-      // {
-      //   name: 'default',
-      //   type: 'postgres',
-      //   port: parseInt(process.env.POSTGRES_PORT),
-      //   url: process.env.DATABASE_URI,
-      //   synchronize: true,
-      //   logging: true,
-      //   entities: [User, Credentials, Article, Comment, Favourites, Follows],
-      // },
       {
-        // Local dev
         name: 'default',
         type: 'postgres',
         port: parseInt(process.env.POSTGRES_PORT),
-        username: process.env.POSTGRES_USER,
-        password: process.env.POSTGRES_PASSWORD,
-        database: process.env.POSTGRES_DB,
+        url: process.env.DATABASE_URI,
         synchronize: true,
+        logging: true,
         entities: [User, Credentials, Article, Comment, Favourites, Follows],
       },
+      // {
+      //   // Local dev
+      //   name: 'default',
+      //   type: 'postgres',
+      //   port: parseInt(process.env.POSTGRES_PORT),
+      //   username: process.env.POSTGRES_USER,
+      //   password: process.env.POSTGRES_PASSWORD,
+      //   database: process.env.POSTGRES_DB,
+      //   synchronize: true,
+      //   entities: [User, Credentials, Article, Comment, Favourites, Follows],
+      // },
     ),
     IdentityModule,
     JwtModule,
@@ -50,7 +50,8 @@ import { IdentityModule } from './identity/identity.module';
     CommentsModule,
     ThrottlerModule.forRoot({
       ttl: 60,
-      limit: 125,
+      // TODO change
+      limit: 350,
     }),
     UploadFileModule,
   ],
