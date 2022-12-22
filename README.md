@@ -16,6 +16,7 @@ A good opportunity to learn new tools and frameworks like NestJS, React-Query an
 
 ## Features
 - JWT authentication with cookies for traditional sign on
+- OAuth integration with Google for quick login/register
 - CRU\* users (register up & settings page - no deleting)
 - CR\*D Articles
 - CR\*\* Comments on articles (no updating)
