@@ -117,7 +117,7 @@ function Login() {
 
               <button
                 type="submit"
-                className="p-2 bg-[#5CB85C] text-white font-bold rounded"
+                className="p-2 bg-[#5CB85C] hover:bg-[#1e6d1e] duration-500 text-white font-bold rounded"
               >
                 Sign In
               </button>
