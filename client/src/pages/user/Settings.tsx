@@ -131,7 +131,7 @@ function Settings() {
               }}
               type="submit"
               disabled={isFileUpload || isDirty}
-              className="p-3 bg-green-600 hover:bg-green-800 duration-500 w-max hover:cursor-pointer text-white font-bold rounded"
+              className="p-3 bg-[#5CB85C] hover:bg-[#1e6d1e] duration-500 w-max hover:cursor-pointer text-white font-bold rounded"
             >
               Update Settings
             </button>
