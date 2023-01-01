@@ -51,7 +51,7 @@ import { IdentityModule } from './identity/identity.module';
     ThrottlerModule.forRoot({
       ttl: 60,
       // TODO change
-      limit: 350,
+      limit: 45,
     }),
     UploadFileModule,
   ],

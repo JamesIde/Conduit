@@ -215,7 +215,7 @@ export class IdentityService {
         comments: queryUser.comments as unknown as Comment[],
       };
 
-      if (!req.user.id) {
+      if (!req.user) {
         return user;
       }
 
